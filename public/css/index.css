@@ -1,0 +1,334 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.scroll-top {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    text-decoration: none;
+    border-radius: 50%;
+    transition: background-color 0.3s ease;
+    z-index: 1000;
+}
+
+.scroll-top img {
+    height: 10vh;
+}
+
+.scroll-top:hover {
+    background-color: #555;
+}
+
+body::-webkit-scrollbar {
+    width: 10px;
+}
+
+body::-webkit-scrollbar-thumb {
+    background-image: linear-gradient(180deg, #fdb44f 0%, #e84643 99%);
+    box-shadow: inset 2px 2px 5px 0 rgba(#fff, 0.5);
+    border-radius: 0;
+}
+
+.navbar {
+    background-color: #F37037;
+    height: 10vh;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.navbar img {
+    height: 80%;
+}
+
+.navegacao {
+    display: flex;
+    justify-content: space-around;
+    margin: 2%;
+}
+
+.navegacao p {
+    margin-left: 20px;
+}
+
+.banner {
+    margin-top: 2%;
+    display: flex;
+    text-align: justify;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.banner img {
+    height: 400px;
+}
+
+.banner p {
+    font-size: 50px;
+}
+
+.banner span {
+    color: #F37037;
+}
+
+.sobre {
+    justify-content: center;
+}
+
+.titulo {
+    margin-top: 4%;
+    text-align: center;
+    font-size: 30px;
+}
+
+.cards {
+    display: flex;
+    justify-content: space-evenly;
+    text-align: justify;
+
+}
+
+.card {
+    margin: 5%;
+    background-color: #F37037;
+    border-radius: 12px;
+    width: 20%;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 12px -2px;
+}
+
+.cards img {
+    margin: auto;
+    margin-top: 5%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 25vh;
+}
+
+.title {
+    font-weight: bold;
+    font-size: xx-large;
+    text-align: center;
+}
+
+.desc {
+    margin: 15px;
+    color: white;
+    font-size: larger;
+}
+
+.info-negocio {
+    background-color: #f9f9f9;
+    padding: 60px 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.info-conteudo {
+    display: flex;
+    max-width: 1200px;
+    flex-wrap: wrap;
+    gap: 40px;
+    align-items: center;
+}
+
+.info-texto {
+    flex: 1;
+    min-width: 300px;
+}
+
+.info-texto h2 {
+    font-size: 2em;
+    color: #222;
+    margin-bottom: 20px;
+}
+
+.info-texto p {
+    font-size: 1em;
+    color: #444;
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+.info-imagem {
+    flex: 1;
+    min-width: 300px;
+    text-align: center;
+}
+
+.info-imagem img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.como-funciona {
+    background-color: #fff;
+    padding: 60px 30px;
+    text-align: center;
+}
+
+.como-funciona .titulo p {
+    font-size: 2em;
+    margin-bottom: 50px;
+    font-weight: bold;
+}
+
+.trilha {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    position: relative;
+}
+
+.etapa {
+    width: 220px;
+    margin: 20px;
+    position: relative;
+}
+
+.etapa .numero {
+    width: 50px;
+    height: 50px;
+    background-color: #FF8800;
+    color: white;
+    border-radius: 50%;
+    font-size: 1.5em;
+    line-height: 50px;
+    margin: 0 auto 15px auto;
+    font-weight: bold;
+}
+
+.etapa h3 {
+    font-size: 1.2em;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.etapa p {
+    font-size: 0.95em;
+    color: #555;
+}
+
+.linha {
+    width: 30px;
+    height: 3px;
+    background-color: #ccc;
+    align-self: center;
+    margin: 0 10px;
+}
+
+.contato {
+    padding: 40px;
+    background-color: #f5f5f5;
+}
+
+.contato .title {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #222;
+}
+
+.formulario {
+    padding: auto;
+    display: flex;
+    flex-direction: column;
+    max-width: 400px;
+    margin: auto;
+    border: solid;
+    border-color: #F37037;
+    border-radius: 10px;
+    box-shadow: #F37037 10px 10px;
+}
+
+.formulario label {
+    margin-left: 5%;
+    font-weight: bold;
+    margin-top: 15px;
+    margin-bottom: 5px;
+}
+
+.formulario input,
+.formulario textarea {
+    margin-left: 5%;
+    width: 80%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    resize: none;
+}
+
+.formulario input:focus,
+.formulario textarea:focus {
+    outline: none;
+}
+
+.formulario button {
+    width: 80%;
+    margin-left: 10%;
+    margin-bottom: 4%;
+    margin-top: 20px;
+    padding: 12px;
+    font-size: 16px;
+    background-color: #F37037;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.formulario button:hover {
+    background-color: #db4c00;
+}
+
+.footer{
+    background-color: #F37037;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.footer .title{
+    margin-top: 2%;
+}
+.footer p{
+    text-align: center;
+}
+.regua {
+    display:block;
+    padding:0;
+    margin: 20px 0;
+    width: 70%;
+    margin-left: auto;
+    margin-right: auto;
+    height:1px;
+    background-color:#ddd}
+.direitos{
+    margin-bottom: 2%;
+    text-align: center;
+}
+.opcoes{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+.opcoes .logo img{
+    height: 30vh;
+    transform: translateY(-25%)
+}
+.opcoes span{
+    color: #db4c00;
+    font-weight: bold;
+    font-size: larger;
+}
+.navigation span, .navigation p{
+    text-align: left;
+}
+

@@ -15,29 +15,29 @@
   <link rel="preconnect" href="https://fonts.gstatic.com">
 </head>
 
-<a href="#" class="scroll-top" title="Voltar ao topo">
+<a href="#topo" class="scroll-top">
   <img src="./assets/imgs/seta.png" alt="">
 </a>
 
-<body>
+<body id="topo">
   <div class="container">
     <div class="navbar">
       <img src="./assets/imgs/logo.png" alt="">
       <div class="navegacao">
-        <p>Sobre</p>
+        <a href="#sobre"><p>Sobre</p></a>
 
-        <p>Contato</p>
+        <a href="#contato"><p>Contato</p></a>
 
-        <p>Login</p>
+        <a href="login.html"><p>Login</p></a>
 
-        <p>Cadastro</p>
+        <a href="cadastro.html"><p>Cadastro</p></a>
       </div>
     </div>
     <div class="banner">
-      <p>A <span>InfraPro</span> une profissionais a <br>clientes que buscam realizar seus <br>projetos.</p>
+      <p>A <span>InfraPro</span> une profissionais a <br>clientes que buscam realizar <br>seus projetos.</p>
       <img src="./assets/imgs/logo_extenso.png" alt="">
     </div>
-    <div class="sobre">
+    <div class="sobre" id="sobre">
       <div class="titulo">
         <p>Sobre a InfraPro</p>
       </div>
@@ -137,7 +137,7 @@
     </div>
 
 
-    <div class="contato">
+    <div class="contato" id="contato">
       <div class="title">Contate-nos</div>
       <form class="formulario" action="#" method="POST">
         <label for="nome">Nome</label>
@@ -167,6 +167,7 @@
       </div>
       <div class="navigation">
         <span>Links úteis</span>
+        <p>Discord</p>
         <p>Figma</p>
         <p>Trello</p>
       </div>
@@ -177,11 +178,13 @@
       </div>
       <div class="navigation">
         <span>Navegue</span>
-        <p>Home</p>
-        <p>Sobre</p>
-        <p>O que somos?</p>
         <p>Como funciona?</p>
+        <p>O que somos?</p>
         <p>Contate-nos</p>
+        <p>Sobre</p>
+        <p>Home</p>
+        
+        
       </div>
     </div>
     <div class="direitos">
@@ -191,12 +194,3 @@
 </body>
 
 </html>
-<script>
-  document.querySelector('.scroll-top').addEventListener('click', function (e) {
-    e.preventDefault();
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
-  });
-</script>

@@ -1,0 +1,289 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+@font-face {
+    font-family: interRegular;
+    src: url(../fonts/Inter-Regular.otf);
+}
+
+body {
+    background-image: url(https://www.hdwallpapers.in/download/orange_abstract_geometric_triangle_background_4k_5k_hd_orange-3840x2160.jpg);
+    font-family: interRegular;
+    background-size: cover;
+    background-position: center;
+}
+
+.navbar {
+    background-color: #F37037;
+    height: auto;
+    padding: 10px 5%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.navbar img {
+    height: 50px;
+}
+
+.navbar a {
+    height: 100%;
+}
+
+.navegacao {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+}
+
+.navegacao p {
+    margin: 0;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+}
+
+.cadastro {
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 5%;
+    padding: 20px;
+    background-color: rgb(214, 217, 221);
+    border-radius: 20px;
+    height: 70vh;
+    width: 90%;
+}
+
+.area {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 250px;
+    padding: 10px;
+}
+
+.title {
+    text-align: center;
+    font-size: x-large;
+}
+.topo-etapa{
+    display: flex;
+}
+.titulo-etapa{
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 30px;
+}
+.selecao {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+
+.etapa {
+    display: none;
+}
+
+.etapa.ativa {
+    display: block;
+}
+
+.cadastro .rodar {
+    height: 40px;
+    transform: rotate(270deg);
+    margin-bottom: 10px;
+}
+
+.cadastro a {
+    width: 40px;
+}
+
+.entrar{
+    margin-top: 15%;
+    opacity: 70%;
+}
+.entrar a{
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.cadastro .user {
+    height: 25vh;
+    max-width: 100%;
+    margin: 0 auto;
+    margin-top: 65px;
+}
+
+.cadastro .banner {
+    flex: 1;
+    display: flex;
+    padding: 10px;
+    min-width: 250px;
+    height: 65vh;
+}
+
+.cadastro .banner img {
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+    object-fit: cover;
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .navegacao {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .cadastro {
+        flex-direction: column;
+    }
+
+    .cadastro .user {
+        height: 20vh;
+    }
+
+    .cadastro .rodar {
+        transform: rotate(0deg);
+    }
+}
+
+/* LOGIN */
+  
+  .login .container {
+    justify-content: center;
+    align-items: center;
+    height: auto;
+  }
+  .linha-campos {
+    display: flex;
+    gap: 16px;
+  }
+  
+  .campo.metade {
+    flex: 1;
+  }
+  
+  .card {
+    width: 80%;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .card h2 {
+    margin: 0;
+    font-size: 30px;
+  }
+  
+  .formulario {
+    display: flex;
+    height: 100%;
+    width: 80%;
+    justify-content: center;
+  }
+  
+  .formulario input {
+    border-radius: 5px;
+    margin: 0;
+  }
+  
+  .campo {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    margin-bottom: 15px;
+  }
+  .loading-div {
+    width: 50px;
+    display: none;
+  }
+  
+  .loading-div img {
+    height: 50px;
+    width: 50px;
+  }
+  
+  #div_erros_login {
+    display: none
+  } 
+
+  .alerta_erro{
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .card_erro {
+    display: none;
+    background-color: #fff;
+    color: black;
+    width: 230px;
+    position: fixed;
+    border-radius: 4px;
+    border: #ED145B 3px solid;
+    padding: 10px;
+    margin-right: 10%;
+  }
+  
+  .card_erro #mensagem_erro{
+    font-weight: 500;
+    font-size: 20px;
+  }
+  
+  .formulario .tipo_campo {
+    font-size: 20px;
+    font-weight: 600 !important;
+  }
+  
+  .formulario {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  input {
+    margin-bottom: 10px;
+    border: 2px solid transparent;
+    padding: 10px;
+  }
+  
+  .btn {
+    font-family: "Barlow", sans-serif;
+    border: 0;
+    border-radius: 5px;
+    font-weight: 600;
+    font-size: 18px;
+    padding: 10px 15px;
+    color: white;
+    background-color: #F37037;
+    width: 120px;
+    align-self: center;
+    margin-top: 5px;
+  }
+  
+  .loading-div {
+    width: 50px;
+    margin: auto;
+    display: none;
+  }
+  
+  .loading-div img {
+    height: 50px;
+    width: 50px;
+  }

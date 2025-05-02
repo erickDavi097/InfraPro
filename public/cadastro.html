@@ -1,256 +1,197 @@
-<!--<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-br">
 
 <head>
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>InfraPro</title>
+  <link rel="stylesheet" href="./css/cadastro.css">
+  <link rel="icon" href="./assets/icon/logo.png" />
 
-  <title>AquaTech | Cadastro</title>
-
-  <script src="./js/sessao.js"></script>
-
-  <link rel="stylesheet" href="./css/estilo.css" />
-  <link rel="icon" href="./assets/icon/favicon2.ico" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" />
 </head>
-
-<body onload="listar()">
-  <div class="header">
-    <div class="container">
-      <h1 class="titulo">AquaTech</h1>
-      <ul class="navbar">
-        <li>
-          <a href="index.html">Inicial</a>
-        </li>
-        <li>
-          <a href="simulador.html">Simulador</a>
-        </li>
-        <li>|</li>
-        <li>
-          <a href="login.html">Login</a>
-        </li>
-        <li class="agora">
-          <a href="#">Cadastro</a>
-        </li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="login">
-    <div class="alerta_erro">
-      <div class="card_erro" id="cardErro">
-        <span id="mensagem_erro"></span>
+<body id="pagina">
+  <div class="container">
+    <div class="navbar">
+      <a href="index.html"><img src="./assets/imgs/logo.png" alt=""></a>
+      <div class="navegacao">
+        <a href="./index.html">
+          <p>Sobre</p>
+        </a>
+        <a href="./index.html">
+          <p>Contato</p>
+        </a>
+        <a href="./login.html">
+          <p>Login</p>
+        </a>
+        <a href="./cadastro.html">
+          <p>Cadastro</p>
+        </a>
       </div>
     </div>
-    <div class="container">
-      <div class="card card-cadastro">
-        <h2>Bem-vindo!</h2>
-        <div class="formulario">
-         
-          <div class="campo">
-            <span>Código de ativação:</span>
-            <input id="codigo_input" type="text" placeholder="Insira aqui seu código" />
-          </div>
-          <div class="campo">
-            <span>Nome:</span>
-            <input id="nome_input" type="text" placeholder="Seu nome" />
-          </div>
-          <div class="campo">
-            <span>CPF:</span>
-            <input id="cpf_input" type="text" placeholder="Seu Cadastro de Pessoa Física" />
-          </div>
-          <div class="campo">
-            <span>E-mail:</span>
-            <input id="email_input" type="text" placeholder="meuemail@provedor.com" />
-          </div>
-          <div class="campo">
-            <span>Senha:</span>
-            <input id="senha_input" type="password" placeholder="******" />
-          </div>
-          <div class="campo">
-            <span>Confirmação da Senha:</span>
-            <input id="confirmacao_senha_input" type="password" placeholder="******" />
-          </div>
-          <button class="botao" onclick="cadastrar()">Cadastrar</button>
+    <div class="cadastro">
+      <div class="area">
+        <div class="topo-etapa">
+          <a href="#" onclick="voltarEtapa()" id="btnVoltar">
+            <img src="./assets/imgs/seta.png" alt="" class="rodar">
+          </a>
+          <div class="titulo-etapa" id="tituloEtapa">Escolha como deseja continuar</div>
         </div>
-        <div id="div_aguardar" class="loading-div">
-          <img src="./assets/circle-loading.gif" id="loading-gif" />
-        </div>
+        <div id="etapas">
+          <div class="etapa" id="inicio">
+            <div class="selecao">
+              <div class="usuario">
+                <img src="./assets/imgs/userCli.png" class="user" onclick="irPara(1)" />
+                <div class="title">Cliente</div>
+              </div>
+              <div class="usuario">
+                <img src="./assets/imgs/userProf.png" class="user" onclick="irPara(3)" />
+                <div class="title">Profissional</div>
+              </div>
+            </div>
+            <div class="entrar">
+              <p>Já tem uma conta? <a href="./login.html">Entrar</a></p>
+            </div>
+          </div>
+          <div class="etapa" id="cliente">
+            <div class="login">
+              <div class="alerta_erro">
+                <div class="card_erro" id="cardErro">
+                  <span id="mensagem_erro"></span>
+                </div>
+              </div>
+              <div class="container">
+                <div class="card card-cadastro">
+                  <div class="formulario">
+                    <div class="campo">
+                      <input id="nome_input" type="text" placeholder="Nome" />
+                    </div>
+                    <div class="campo">
+                      <input id="telefone_input" type="text" placeholder="Telefone" />
+                    </div>
+                    <div class="campo">
+                      <input id="email_input" type="text" placeholder="Email" />
+                    </div>
+                    <div class="campo">
+                      <input id="senha_input" type="password" placeholder="Senha" />
+                    </div>
+                    <div class="campo">
+                      <input id="confirmacao_senha_input" type="password" placeholder="Confirmar Senha" />
+                    </div>
+                    <p>Etapa 1 de 2</p>
+                    <button onclick="irPara(2)" class="btn">Continuar</button>
+                  </div>
+                  <div id="div_aguardar" class="loading-div">
+                    <img src="./assets/circle-loading.gif" id="loading-gif" />
+                  </div>
 
-        <div id="div_erros_login"></div>
+                  <div id="div_erros_login"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="etapa" id="cliente2">
+            <p>Formulário detalhado aqui...</p>
+            <a href="cadastro-cliente.html"><button>Finalizar</button></a>
+          </div>
+
+          <div class="etapa" id="profissional">
+            <div class="login">
+              <div class="alerta_erro">
+                <div class="card_erro" id="cardErro">
+                  <span id="mensagem_erro"></span>
+                </div>
+              </div>
+              <div class="container">
+                <div class="card card-cadastro">
+
+                  <div class="formulario">
+
+                    <div class="linha-campos">
+                      <div class="campo metade">
+                        <input id="nome_input" type="text" placeholder="Nome" />
+                      </div>
+                      <div class="campo metade">
+                        <input id="sobrenome_input" type="text" placeholder="Sobrenome" />
+                      </div>
+                    </div>
+                    <div class="campo">
+                      <input id="cpf_input" type="text" placeholder="CPF" />
+                    </div>
+                    <div class="campo">
+                      <input id="telefone_input" type="text" placeholder="Telefone" />
+                    </div>
+                    <div class="campo">
+                      <input id="email_input" type="text" placeholder="Email" />
+                    </div>
+                    <div class="campo">
+                      <input id="senha_input" type="password" placeholder="Senha" />
+                    </div>
+                    <div class="campo">
+                      <input id="confirmacao_senha_input" type="password" placeholder="Confirmar Senha" />
+                    </div>
+                    <p>Etapa 1 de 2</p>
+                    <button onclick="irPara(4)" class="btn">Continuar</button>
+                  </div>
+                  <div id="div_aguardar" class="loading-div">
+                    <img src="./assets/circle-loading.gif" id="loading-gif" />
+                  </div>
+
+                  <div id="div_erros_login"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="etapa" id="profissional2">
+            <p>Formulário detalhado aqui...</p>
+            <a href="cadastro-profissional.html"><button>Finalizar</button></a>
+          </div>
+        </div>
+      </div>
+
+      <div class="banner">
+        <img src="./assets/imgs/homem_furadeira.jpg" alt="">
       </div>
     </div>
   </div>
 
- 
-  <div class="footer">
-    <div class="container">
-      <h4>Feito com amor por aluno &hearts; SPTech &copy; 2023</h4>
-      <span class="version">v1.0.0</span>
-    </div>
-  </div>
-  -->
-</body>
+  <script>
+    const etapas = [inicio, cliente, cliente2, profissional, profissional2];
+    const historico = [];
 
-</html>
+    function mostrarEtapa(index) {
+      etapas.forEach(e => e.style.display = 'none');
+      etapas[index].style.display = 'block';
+      historico.push(index);
 
-<script>
-/*
-  // Array para armazenar empresas cadastradas para validação de código de ativação 
-  let listaEmpresasCadastradas = [];
+      const id = etapas[index].id;
+      const titulo = document.getElementById("tituloEtapa");
 
-  function cadastrar() {
-    // aguardar();
-
-    //Recupere o valor da nova input pelo nome do id
-    // Agora vá para o método fetch logo abaixo
-    var nomeVar = nome_input.value;
-    var cpfVar = cpf_input.value;
-    var emailVar = email_input.value;
-    var senhaVar = senha_input.value;
-    var confirmacaoSenhaVar = confirmacao_senha_input.value;
-    var codigoVar = codigo_input.value;
-    var idEmpresaVincular
-
-    // Verificando se há algum campo em branco
-    if (
-      nomeVar == "" ||
-      cpfVar == "" ||
-      emailVar == "" ||
-      senhaVar == "" ||
-      confirmacaoSenhaVar == "" ||
-      codigoVar == ""
-    ) {
-      cardErro.style.display = "block";
-      mensagem_erro.innerHTML =
-        "(Mensagem de erro para todos os campos em branco)";
-
-      finalizarAguardar();
-      return false;
-    } else {
-      setInterval(sumirMensagem, 5000);
-    }
-
-    if(nomeVar.length <= 1){
-      cardErro.style.display = "block";
-      mensagem_erro.innerHTML +=
-        "(Seu nome deve conter mais de 1 carácteres)";
-
-      finalizarAguardar();
-      
-    }
-    if (emailVar.includes('@').includes('.') == true){
-      cardErro.style.display = "block";
-      mensagem_erro.innerHTML +=
-        "(Seu email deve conter '@' e '.')";
-
-      finalizarAguardar();
-      
-    }
-    if(senhaVar.length <= 6){
-      cardErro.style.display = "block";
-      mensagem_erro.innerHTML +=
-        "(Sua senha deve conter mais de 6 carácteres)";
-
-      finalizarAguardar();
-      
-    }
-    if(confirmacaoSenhaVar == senhaVar){
-      cardErro.style.display = "block";
-      mensagem_erro.innerHTML +=
-        "(Suas senhas devem coincidir)";
-
-      finalizarAguardar();
-      
-    }
-    if(cpf.length == 11){
-      cardErro.style.display = "block";
-      mensagem_erro.innerHTML +=
-        "(O tamanho do CPF deve ser exatamente 11 e conter somente valores numéricos)";
-
-      finalizarAguardar();
-       
-    }
-
-    // Verificando se o código de ativação é de alguma empresa cadastrada
-    for (let i = 0; i < listaEmpresasCadastradas.length; i++) {
-      if (listaEmpresasCadastradas[i].codigo_ativacao == codigoVar) {
-        idEmpresaVincular = listaEmpresasCadastradas[i].id
-        console.log("Código de ativação válido.");
-        break;
+      if (id === "inicio") {
+        titulo.textContent = "Escolha como deseja continuar";
       } else {
-        cardErro.style.display = "block";
-        mensagem_erro.innerHTML = "(Mensagem de erro para código inválido)";
-        finalizarAguardar();
+        titulo.textContent = "Informações básicas";
       }
     }
 
-    // Enviando o valor da nova input
-    fetch("/usuarios/cadastrar", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        // crie um atributo que recebe o valor recuperado aqui
-        // Agora vá para o arquivo routes/usuario.js
-        nomeServer: nomeVar,
-        cpfServer: cpfVar,
-        emailServer: emailVar,
-        senhaServer: senhaVar,
-        idEmpresaVincularServer: idEmpresaVincular
-      }),
-    })
-      .then(function (resposta) {
-        console.log("resposta: ", resposta);
+    function irPara(index) {
+      mostrarEtapa(index);
+    }
 
-        if (resposta.ok) {
-          cardErro.style.display = "block";
+    function voltarEtapa() {
+      historico.pop(); // remove atual
+      const anterior = historico.pop(); // pega anterior
+      if (anterior !== undefined) {
+        mostrarEtapa(anterior);
+      } else {
+        window.location.href = "index.html";
+      }
+    }
 
-          mensagem_erro.innerHTML =
-            "Cadastro realizado com sucesso! Redirecionando para tela de Login...";
+    window.onload = () => mostrarEtapa(0);
+  </script>
+</body>
 
-          setTimeout(() => {
-            window.location = "login.html";
-          }, "2000");
-
-          limparFormulario();
-          finalizarAguardar();
-        } else {
-          throw "Houve um erro ao tentar realizar o cadastro!";
-        }
-      })
-      .catch(function (resposta) {
-        console.log(`#ERRO: ${resposta}`);
-        finalizarAguardar();
-      });
-
-    return false;
-  }
-
-  // Listando empresas cadastradas 
-  function listar() {
-    fetch("/empresas/listar", {
-      method: "GET",
-    })
-      .then(function (resposta) {
-        resposta.json().then((empresas) => {
-          empresas.forEach((empresa) => {
-            listaEmpresasCadastradas.push(empresa);
-
-            console.log("listaEmpresasCadastradas")
-            console.log(listaEmpresasCadastradas[0].codigo_ativacao)
-          });
-        });
-      })
-      .catch(function (resposta) {
-        console.log(`#ERRO: ${resposta}`);
-      });
-  }
-
-  function sumirMensagem() {
-    cardErro.style.display = "none";
-  }
-*/
-</script>
+</html>

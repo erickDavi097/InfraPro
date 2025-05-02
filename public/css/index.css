@@ -2,23 +2,28 @@
     margin: 0;
     padding: 0;
 }
+@font-face{
+    font-family: interRegular;
+    src: url(../fonts/Inter-Regular.otf);
+}
+body{
+    font-family: interRegular;
+}
 
+html{
+    scroll-behavior: smooth;
+}
 .scroll-top {
     position: fixed;
     bottom: 20px;
     right: 20px;
     text-decoration: none;
     border-radius: 50%;
-    transition: background-color 0.3s ease;
     z-index: 1000;
 }
 
 .scroll-top img {
     height: 10vh;
-}
-
-.scroll-top:hover {
-    background-color: #555;
 }
 
 body::-webkit-scrollbar {
@@ -42,6 +47,9 @@ body::-webkit-scrollbar-thumb {
 .navbar img {
     height: 80%;
 }
+.navbar a {
+    height: 100%;
+}
 
 .navegacao {
     display: flex;
@@ -52,7 +60,10 @@ body::-webkit-scrollbar-thumb {
 .navegacao p {
     margin-left: 20px;
 }
-
+a{
+    text-decoration: none;
+    color: black
+}
 .banner {
     margin-top: 2%;
     display: flex;

@@ -15,7 +15,8 @@ var HOST_APP = process.env.APP_HOST;
 var app = express();
 
 var indexRouter = require("./src/routes/index");
-//var usuarioRouter = require("./src/routes/usuarios");
+var enderecoRouter = require("./src/routes/enderecos");
+var usuarioRouter = require("./src/routes/usuarios");
 
 
 app.use(express.json());
@@ -25,7 +26,8 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(cors());
 
 app.use("/", indexRouter);
-//app.use("/usuarios", usuarioRouter);
+app.use("/endereco", enderecoRouter);
+app.use("/usuario", usuarioRouter);
 
 app.listen(PORTA_APP, function () {
     console.log(`                                                                                               

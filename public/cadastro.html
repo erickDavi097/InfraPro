@@ -6,10 +6,11 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>InfraPro</title>
+  <script src="./js/sessao.js"></script>
   <link rel="stylesheet" href="./css/cadastro.css">
   <link rel="icon" href="./assets/icon/logo.png" />
-
 </head>
+
 <body id="pagina">
   <div class="container">
     <div class="navbar">
@@ -41,122 +42,185 @@
           <div class="etapa" id="inicio">
             <div class="selecao">
               <div class="usuario">
-                <img src="./assets/imgs/userCli.png" class="user" onclick="irPara(1)" />
-                <div class="title">Cliente</div>
+                <img src="./assets/imgs/userCli.png" class="user" onclick="tipoSelecionado = 'cliente'; irPara(1)" />
+                <div class="title" id="cliente-escolha">Cliente</div>
               </div>
               <div class="usuario">
-                <img src="./assets/imgs/userProf.png" class="user" onclick="irPara(3)" />
-                <div class="title">Profissional</div>
+                <img src="./assets/imgs/userProf.png" class="user"
+                  onclick="tipoSelecionado = 'profissional'; irPara(3)" />
+                <div class="title" id="profissional-escolha">Profissional</div>
               </div>
             </div>
             <div class="entrar">
               <p>Já tem uma conta? <a href="./login.html">Entrar</a></p>
             </div>
           </div>
-          <div class="etapa" id="cliente">
-            <div class="login">
-              <div class="alerta_erro">
-                <div class="card_erro" id="cardErro">
-                  <span id="mensagem_erro"></span>
-                </div>
-              </div>
-              <div class="container">
-                <div class="card card-cadastro">
-                  <div class="formulario">
-                    <div class="campo">
-                      <input id="nome_input" type="text" placeholder="Nome" />
-                    </div>
-                    <div class="campo">
-                      <input id="telefone_input" type="text" placeholder="Telefone" />
-                    </div>
-                    <div class="campo">
-                      <input id="email_input" type="text" placeholder="Email" />
-                    </div>
-                    <div class="campo">
-                      <input id="senha_input" type="password" placeholder="Senha" />
-                    </div>
-                    <div class="campo">
-                      <input id="confirmacao_senha_input" type="password" placeholder="Confirmar Senha" />
-                    </div>
-                    <p>Etapa 1 de 2</p>
-                    <button onclick="irPara(2)" class="btn">Continuar</button>
-                  </div>
-                  <div id="div_aguardar" class="loading-div">
-                    <img src="./assets/circle-loading.gif" id="loading-gif" />
-                  </div>
 
-                  <div id="div_erros_login"></div>
+          <div class="etapa" id="cliente">
+            <div class="container">
+              <div class="card card-cadastro">
+                <div class="formulario">
+                  <div class="campo"><input id="input_nome_cliente" type="text" placeholder="Nome" required /></div>
+                  <div class="campo"><input id="input_telefone_cliente" type="text" placeholder="Telefone" required />
+                  </div>
+                  <div class="campo"><input id="input_email_cliente" type="text" placeholder="Email" required /></div>
+                  <div class="campo"><input id="input_senha_cliente" type="password" placeholder="Senha" required />
+                  </div>
+                  <div class="campo"><input id="input_confirmacao_senha_cliente" type="password"
+                      placeholder="Confirmar Senha" required /></div>
+                  <p>Etapa 1 de 2</p>
+                  <button onclick="irPara(2)" class="btn">Continuar</button>
                 </div>
               </div>
             </div>
           </div>
 
           <div class="etapa" id="cliente2">
-            <p>Formulário detalhado aqui...</p>
-            <a href="cadastro-cliente.html"><button>Finalizar</button></a>
+            <div class="formulario">
+              <div class="linha-campos">
+                <div class="campo metade"><input id="input_cep" type="text" placeholder="CEP" required /></div>
+                <div class="campo metade">
+                  <select id="select_uf_cliente" required>
+                    <option value="" disabled selected>UF</option>
+                    <option value="AC">AC - Acre</option>
+                    <option value="AL">AL - Alagoas</option>
+                    <option value="AP">AP - Amapá</option>
+                    <option value="AM">AM - Amazonas</option>
+                    <option value="BA">BA - Bahia</option>
+                    <option value="CE">CE - Ceará</option>
+                    <option value="DF">DF - Distrito Federal</option>
+                    <option value="ES">ES - Espírito Santo</option>
+                    <option value="GO">GO - Goiás</option>
+                    <option value="MA">MA - Maranhão</option>
+                    <option value="MT">MT - Mato Grosso</option>
+                    <option value="MS">MS - Mato Grosso do Sul</option>
+                    <option value="MG">MG - Minas Gerais</option>
+                    <option value="PA">PA - Pará</option>
+                    <option value="PB">PB - Paraíba</option>
+                    <option value="PR">PR - Paraná</option>
+                    <option value="PE">PE - Pernambuco</option>
+                    <option value="PI">PI - Piauí</option>
+                    <option value="RJ">RJ - Rio de Janeiro</option>
+                    <option value="RN">RN - Rio Grande do Norte</option>
+                    <option value="RS">RS - Rio Grande do Sul</option>
+                    <option value="RO">RO - Rondônia</option>
+                    <option value="RR">RR - Roraima</option>
+                    <option value="SC">SC - Santa Catarina</option>
+                    <option value="SP">SP - São Paulo</option>
+                    <option value="SE">SE - Sergipe</option>
+                    <option value="TO">TO - Tocantins</option>
+                  </select>
+
+                </div>
+              </div>
+              <div class="campo"><input id="input_bairro_cliente" type="text" placeholder="Bairro" required /></div>
+              <div class="campo"><input id="input_cidade_cliente" type="text" placeholder="Cidade" required /></div>
+              <div class="linha-campos">
+                <div class="campo"><input id="input_logradouro_cliente" type="text" placeholder="Logradouro" required />
+                </div>
+                <div class="campo"><input id="input_numero_cliente" type="text" placeholder="Num" required /></div>
+              </div>
+              <div id="div_aguardar" class="loading-div" style="display: none;">
+                <img src="./assets/imgs/carregamento.gif" id="loading-gif" />
+              </div>
+              <p>Etapa 2 de 2</p>
+              <button type="button" class="btn" onclick="cadastrar()">Finalizar</button>
+            </div>
           </div>
 
           <div class="etapa" id="profissional">
-            <div class="login">
-              <div class="alerta_erro">
-                <div class="card_erro" id="cardErro">
-                  <span id="mensagem_erro"></span>
-                </div>
-              </div>
-              <div class="container">
-                <div class="card card-cadastro">
-
-                  <div class="formulario">
-
-                    <div class="linha-campos">
-                      <div class="campo metade">
-                        <input id="nome_input" type="text" placeholder="Nome" />
-                      </div>
-                      <div class="campo metade">
-                        <input id="sobrenome_input" type="text" placeholder="Sobrenome" />
-                      </div>
-                    </div>
-                    <div class="campo">
-                      <input id="cpf_input" type="text" placeholder="CPF" />
-                    </div>
-                    <div class="campo">
-                      <input id="telefone_input" type="text" placeholder="Telefone" />
-                    </div>
-                    <div class="campo">
-                      <input id="email_input" type="text" placeholder="Email" />
-                    </div>
-                    <div class="campo">
-                      <input id="senha_input" type="password" placeholder="Senha" />
-                    </div>
-                    <div class="campo">
-                      <input id="confirmacao_senha_input" type="password" placeholder="Confirmar Senha" />
-                    </div>
-                    <p>Etapa 1 de 2</p>
-                    <button onclick="irPara(4)" class="btn">Continuar</button>
+            <div class="container">
+              <div class="card card-cadastro">
+                <div class="formulario">
+                  <div class="linha-campos">
+                    <div class="campo metade"><input id="input_nome_profissional" type="text" placeholder="Nome"
+                        required /></div>
+                    <div class="campo metade"><input id="input_sobrenome_profissional" type="text"
+                        placeholder="Sobrenome" required /></div>
                   </div>
-                  <div id="div_aguardar" class="loading-div">
-                    <img src="./assets/circle-loading.gif" id="loading-gif" />
+                  <div class="campo"><input id="input_cpf_profissional" type="text" placeholder="CPF" required /></div>
+                  <div class="campo"><input id="input_telefone_profissional" type="text" placeholder="Telefone"
+                      required /></div>
+                  <div class="campo"><input id="input_email_profissional" type="text" placeholder="Email" required />
                   </div>
-
-                  <div id="div_erros_login"></div>
+                  <div class="campo"><input id="input_senha_profissional" type="password" placeholder="Senha"
+                      required /></div>
+                  <div class="campo"><input id="input_confirmacao_senha_profissional" type="password"
+                      placeholder="Confirmar Senha" required /></div>
+                  <p>Etapa 1 de 2</p>
+                  <button onclick="irPara(4)" class="btn">Continuar</button>
                 </div>
               </div>
             </div>
           </div>
 
           <div class="etapa" id="profissional2">
-            <p>Formulário detalhado aqui...</p>
-            <a href="cadastro-profissional.html"><button>Finalizar</button></a>
+            <div class="container">
+              <div class="card card-cadastro">
+                <div class="formulario">
+                  <div class="linha-campos">
+                    <div class="campo metade"><input id="input_cep_profissional" type="text" placeholder="CEP"
+                        required /></div>
+                    <div class="campo metade">
+                      <select id="select_uf_profissional" required>
+                        <option value="" disabled selected>UF</option>
+                        <option value="AC">AC - Acre</option>
+                        <option value="AL">AL - Alagoas</option>
+                        <option value="AP">AP - Amapá</option>
+                        <option value="AM">AM - Amazonas</option>
+                        <option value="BA">BA - Bahia</option>
+                        <option value="CE">CE - Ceará</option>
+                        <option value="DF">DF - Distrito Federal</option>
+                        <option value="ES">ES - Espírito Santo</option>
+                        <option value="GO">GO - Goiás</option>
+                        <option value="MA">MA - Maranhão</option>
+                        <option value="MT">MT - Mato Grosso</option>
+                        <option value="MS">MS - Mato Grosso do Sul</option>
+                        <option value="MG">MG - Minas Gerais</option>
+                        <option value="PA">PA - Pará</option>
+                        <option value="PB">PB - Paraíba</option>
+                        <option value="PR">PR - Paraná</option>
+                        <option value="PE">PE - Pernambuco</option>
+                        <option value="PI">PI - Piauí</option>
+                        <option value="RJ">RJ - Rio de Janeiro</option>
+                        <option value="RN">RN - Rio Grande do Norte</option>
+                        <option value="RS">RS - Rio Grande do Sul</option>
+                        <option value="RO">RO - Rondônia</option>
+                        <option value="RR">RR - Roraima</option>
+                        <option value="SC">SC - Santa Catarina</option>
+                        <option value="SP">SP - São Paulo</option>
+                        <option value="SE">SE - Sergipe</option>
+                        <option value="TO">TO - Tocantins</option>
+                      </select>
+
+                    </div>
+                  </div>
+                  <div class="campo"><input id="input_bairro_profissional" type="text" placeholder="Bairro" required />
+                  </div>
+                  <div class="campo"><input id="input_cidade_profissional" type="text" placeholder="Cidade" required />
+                  </div>
+                  <div class="linha-campos">
+                    <div class="campo"><input id="input_logradouro_profissional" type="text" placeholder="Logradouro"
+                        required /></div>
+                    <div class="campo"><input id="input_numero_profissional" type="text" placeholder="Num" required />
+                    </div>
+                  </div>
+                  <div id="div_aguardar" class="loading-div" style="display: none;">
+                    <img src="./assets/imgs/carregamento.gif" id="loading-gif" />
+                  </div>
+                  <p>Etapa 2 de 2</p>
+                  <button type="button" class="btn" onclick="cadastrar()">Finalizar</button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-
-      <div class="banner">
-        <img src="./assets/imgs/homem_furadeira.jpg" alt="">
-      </div>
+      <div class="banner"><img src="./assets/imgs/homem_furadeira.jpg" alt=""></div>
     </div>
   </div>
 
+  <div id="toast-container"></div>
   <script>
     const etapas = [inicio, cliente, cliente2, profissional, profissional2];
     const historico = [];
@@ -165,15 +229,8 @@
       etapas.forEach(e => e.style.display = 'none');
       etapas[index].style.display = 'block';
       historico.push(index);
-
       const id = etapas[index].id;
-      const titulo = document.getElementById("tituloEtapa");
-
-      if (id === "inicio") {
-        titulo.textContent = "Escolha como deseja continuar";
-      } else {
-        titulo.textContent = "Informações básicas";
-      }
+      document.getElementById("tituloEtapa").textContent = id === "inicio" ? "Escolha como deseja continuar" : "Informações básicas";
     }
 
     function irPara(index) {
@@ -181,8 +238,8 @@
     }
 
     function voltarEtapa() {
-      historico.pop(); // remove atual
-      const anterior = historico.pop(); // pega anterior
+      historico.pop();
+      const anterior = historico.pop();
       if (anterior !== undefined) {
         mostrarEtapa(anterior);
       } else {
@@ -191,7 +248,168 @@
     }
 
     window.onload = () => mostrarEtapa(0);
+
+    function showToast(message, type = 'error') {
+      const toast = document.createElement('div');
+      toast.classList.add('toast', type);
+      toast.textContent = message;
+      document.getElementById('toast-container').appendChild(toast);
+      setTimeout(() => toast.remove(), 4000);
+    }
+
+    function finalizarAguardar() {
+      document.getElementById("div_aguardar").style.display = 'none';
+    }
+
+    function cadastrar() {
+  document.getElementById("div_aguardar").style.display = 'block';
+
+  let nomeVar, sobrenomeVar = '', cpfVar = '', telefoneVar, emailVar, senhaVar, confirmacaoSenhaVar;
+  let cepVar, ufVar, bairroVar, cidadeVar, logradouroVar, numeroVar;
+
+  if (tipoSelecionado === 'cliente') {
+    nomeVar = document.getElementById('input_nome_cliente').value;
+    telefoneVar = document.getElementById('input_telefone_cliente').value;
+    emailVar = document.getElementById('input_email_cliente').value;
+    senhaVar = document.getElementById('input_senha_cliente').value;
+    confirmacaoSenhaVar = document.getElementById('input_confirmacao_senha_cliente').value;
+    cepVar = document.getElementById('input_cep').value;
+    ufVar = document.getElementById('select_uf_cliente').value;
+    bairroVar = document.getElementById('input_bairro_cliente').value;
+    cidadeVar = document.getElementById('input_cidade_cliente').value;
+    logradouroVar = document.getElementById('input_logradouro_cliente').value;
+    numeroVar = document.getElementById('input_numero_cliente').value;
+  } else {
+    nomeVar = document.getElementById('input_nome_profissional').value;
+    sobrenomeVar = document.getElementById('input_sobrenome_profissional').value;
+    cpfVar = document.getElementById('input_cpf_profissional').value;
+    telefoneVar = document.getElementById('input_telefone_profissional').value;
+    emailVar = document.getElementById('input_email_profissional').value;
+    senhaVar = document.getElementById('input_senha_profissional').value;
+    confirmacaoSenhaVar = document.getElementById('input_confirmacao_senha_profissional').value;
+    cepVar = document.getElementById('input_cep_profissional').value;
+    ufVar = document.getElementById('select_uf_profissional').value;
+    bairroVar = document.getElementById('input_bairro_profissional').value;
+    cidadeVar = document.getElementById('input_cidade_profissional').value;
+    logradouroVar = document.getElementById('input_logradouro_profissional').value;
+    numeroVar = document.getElementById('input_numero_profissional').value;
+  }
+
+  console.log({ nomeVar, sobrenomeVar, cpfVar, telefoneVar, emailVar, senhaVar, confirmacaoSenhaVar, cepVar, ufVar, bairroVar, cidadeVar, logradouroVar, numeroVar });
+
+  if (!nomeVar || !telefoneVar || !emailVar || !senhaVar || !confirmacaoSenhaVar ||
+    !cepVar || !ufVar || !bairroVar || !cidadeVar || !logradouroVar || !numeroVar ||
+    (tipoSelecionado === 'profissional' && (!sobrenomeVar || !cpfVar))) {
+    showToast("Preencha todos os campos obrigatórios.");
+    finalizarAguardar();
+    return;
+  }
+
+  if (nomeVar.length <= 1 || (tipoSelecionado === 'profissional' && sobrenomeVar.length <= 1)) {
+    showToast("Nome ou sobrenome muito curto.");
+    finalizarAguardar();
+    return;
+  }
+
+  if (!emailVar.includes('@') || !emailVar.includes('.')) {
+    showToast("Email inválido.");
+    finalizarAguardar();
+    return;
+  }
+
+  if (senhaVar.length <= 6) {
+    showToast("A senha deve ter mais de 6 caracteres.");
+    finalizarAguardar();
+    return;
+  }
+
+  if (senhaVar !== confirmacaoSenhaVar) {
+    showToast("As senhas não coincidem.");
+    finalizarAguardar();
+    return;
+  }
+
+  if (tipoSelecionado === 'profissional' && cpfVar.length !== 11) {
+    showToast("O CPF deve ter 11 dígitos.");
+    finalizarAguardar();
+    return;
+  }
+
+  // Enviar endereço
+  fetch("http://localhost:3333/endereco/cadastrar", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      cepServer: cepVar,
+      ufServer: ufVar,
+      cidadeServer: cidadeVar,
+      bairroServer: bairroVar,
+      logradouroServer: logradouroVar,
+      numeroServer: numeroVar
+    }),
+  })
+    .then(res => res.json())
+    .then(data => {
+      console.log("Resposta do endereço:", data);
+      const idEndereco = parseInt(data.insertId, 10);
+
+      if (!isNaN(idEndereco)) {
+        console.log("ID do endereço obtido:", idEndereco);
+        cadastrarUsuario({
+          nome: nomeVar,
+          sobrenome: sobrenomeVar,
+          cpf: cpfVar,
+          telefone: telefoneVar,
+          email: emailVar,
+          senha: senhaVar,
+          tipo: tipoSelecionado,
+          idEndereco: idEndereco
+        });
+      } else {
+        console.log("ID do endereço inválido.");
+        showToast("Erro no cadastro de endereço.");
+        finalizarAguardar();
+      }
+    })
+    .catch(err => {
+      console.error("Erro ao cadastrar endereço:", err);
+      showToast("Erro ao cadastrar endereço.");
+      finalizarAguardar();
+    });
+}
+
+function cadastrarUsuario({ nome, sobrenome, cpf, telefone, email, senha, tipo, idEndereco }) {
+  console.log("Enviando dados para o cadastro do usuário com idEndereco:", idEndereco);
+  fetch("http://localhost:3333/usuario/cadastrar", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      nomeServer: nome,
+      sobrenomeServer: sobrenome,
+      cpfServer: cpf,
+      telefoneServer: telefone,
+      emailServer: email,
+      senhaServer: senha,
+      tipoServer: tipo,
+      idEndereco: idEndereco
+    }),
+  })
+    .then(res => res.json())
+    .then(data => {
+      console.log("Usuário cadastrado com sucesso:", data);
+      showToast("Cadastro realizado com sucesso!", "success");
+      setTimeout(() => window.location.href = "login.html", 2000);
+    })
+    .catch(err => {
+      console.error("Erro ao cadastrar usuário:", err);
+      showToast("Erro ao cadastrar usuário.");
+    })
+    .finally(finalizarAguardar);
+}
+
+
   </script>
+
 </body>
 
 </html>

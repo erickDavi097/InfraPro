@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/cadastro.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="navbar">
+            <a href="index.html"><img src="../../assets/imgs/logo.png" alt=""></a>
+            <div class="navegacao">
+                <a href="../../index.html">
+                    <p>Sobre</p>
+                </a>
+                <a href="../../index.html">
+                    <p>Contato</p>
+                </a>
+                <a href="../../login.html">
+                    <p>Login</p>
+                </a>
+                <a href="../../cadastro.html">
+                    <p>Cadastro</p>
+                </a>
+            </div>
+        </div>
+        <div class="cadastro">
+            <div class="area">
+                <div class="topo-etapa">
+                    <a href="#" onclick="voltarEtapa()" id="btnVoltar">
+                        <img src="../../assets/imgs/seta.png" alt="" class="rodar">
+                    </a>
+                    <div class="titulo-etapa" id="tituloEtapa">Escolha como deseja continuar</div>
+                </div>
+                <div class="container">
+                    <div class="card card-cadastro">
+                        <div class="formulario">
+                            <form id="formCadastroAdmin"> <!-- Colocando o formulário aqui -->
+                                <div class="campo"><input id="input_codigo_verificacao" type="text" placeholder="Código de Verificação" required /></div>
+                                <div class="campo"><input id="input_nome" type="text" placeholder="Nome" required /></div>
+                                <div class="campo"><input id="input_email" type="text" placeholder="Email" required /></div>
+                                <div class="campo"><input id="input_senha" type="password" placeholder="Senha" required /></div>
+                                <div class="campo"><input id="input_confirmacao_senha" type="password" placeholder="Confirmar Senha" required /></div>
+                                <button type="submit" class="btn">Cadastrar</button>
+                            </form>
+
+                            <div style="display: flex; flex-direction: column; height: 100px;">
+                                <div></div>
+                                <div style="margin-top: auto;">
+                                    <a href="../../login.html" style="width: auto;">Caso já tenha conta, realize o Login!</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="banner"><img src="../../assets/imgs/gato.gif" alt=""></div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('formCadastroAdmin').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const nomeVar = document.getElementById('input_nome').value;
+            const emailVar = document.getElementById('input_email').value;
+            const senhaVar = document.getElementById('input_senha').value;
+            const codigoVerificacao = document.getElementById('input_codigo_verificacao').value; // Corrigindo referência
+
+            // Validar o código de verificação
+            if (codigoVerificacao !== 'ADMIN-1234') {  // Código predefinido
+                alert('Código de verificação inválido!');
+                return;
+            }
+
+            // Enviar dados para o servidor para cadastro
+            fetch('/usuario/cadastrarAdmin', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    nomeServer: nomeVar,
+                    emailServer: emailVar,
+                    senhaServer: senhaVar,
+                    tipoServer: 'administrador',
+                    idEndereco: 1,
+                    codigo_verificacao: codigoVerificacao
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.mensagem || 'Administrador cadastrado!');
+                // Redireciona se quiser
+            })
+            .catch(error => {
+                console.error('Erro ao cadastrar administrador:', error);
+                alert('Erro ao cadastrar administrador: ' + error);
+            });
+
+        });
+    </script>
+
+</body>
+
+</html>

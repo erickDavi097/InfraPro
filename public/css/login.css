@@ -87,20 +87,6 @@ a {
   font-size: 30px;
 }
 
-.selecao {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-evenly;
-}
-
-.etapa {
-  display: none;
-}
-
-.etapa.ativa {
-  display: block;
-}
-
 .cadastro .rodar {
   height: 40px;
   transform: rotate(270deg);
@@ -210,11 +196,6 @@ a {
   margin: 0;
 }
 
-.formulario select {
-  border-radius: 5px;
-  margin: 0;
-}
-
 .campo {
   display: flex;
   flex-direction: column;
@@ -271,13 +252,8 @@ a {
 input {
   margin-bottom: 10px;
   border: 2px solid transparent;
-  padding: 10px;
-}
-
-select {
-  margin-bottom: 10px;
-  border: 2px solid transparent;
-  padding: 10px;
+  padding: 20px 10px;
+  font-size: 18px;
 }
 
 .btn {
@@ -286,10 +262,10 @@ select {
   border-radius: 5px;
   font-weight: 600;
   font-size: 18px;
-  padding: 10px 15px;
+  padding: 20px 15px;
   color: white;
   background-color: #F37037;
-  width: 120px;
+  width: 220px;
   align-self: center;
   margin-top: 5px;
 }
@@ -321,83 +297,6 @@ button:active {
   justify-content: flex-end;
 }
 
-.card_erro {
-  display: none;
-  background-color: #fff;
-  color: black;
-  width: 230px;
-  position: fixed;
-  border-radius: 4px;
-  border: #ED145B 3px solid;
-  padding: 10px;
-  margin-right: 10%;
-}
-
-.card_erro #mensagem_erro {
-  font-weight: 500;
-  font-size: 20px;
-}
-
-/* ALERTA */
-
-  #alerta {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-}
-
-.mensagem-alarme {
-  background-color: white;
-  border-radius: 5px;
-  width: 300px;
-  height: 80px;
-  margin: 10px;
-  padding: 10px 0;
-  display: flex;
-  justify-content: space-evenly;
-  align-items: center;
-}
-
-.mensagem-alarme h3 {
-  font-size: 14px;
-  margin: 0;
-}
-
-.mensagem-alarme .informacao {
-  width: 66%;
-}
-
-.alarme-sino {
-  width: 48px;
-  height: 48px;
-  animation-name: bell;
-  animation-duration: 4s;
-  background-image: url('https://cdn-icons-png.flaticon.com/512/1157/1157000.png');
-  background-size: cover;
-  animation-iteration-count: infinite;
-}
-
-@keyframes bell {
-  0% {
-    transform: rotate(25deg)
-  }
-
-  25% {
-    transform: rotate(-25deg)
-  }
-
-  50% {
-    transform: rotate(25deg)
-  }
-
-  75% {
-    transform: rotate(-25deg)
-  }
-
-  100% {
-    transform: rotate(25deg)
-  }
-}
 .toast {
   position: fixed;
   bottom: 20px;

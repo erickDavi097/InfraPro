@@ -3,7 +3,7 @@ USE infraPro;
 
 CREATE TABLE endereco(
 	id INT PRIMARY KEY AUTO_INCREMENT,
-    cep INT,
+    cep VARCHAR(15),
     uf CHAR(2),
     cidade VARCHAR(45),
     bairro VARCHAR(45),

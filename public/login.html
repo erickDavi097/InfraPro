@@ -6,107 +6,94 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>AquaTech | Login</title>
+    <title>InfraPro</title>
 
     <script src="./js/sessao.js"></script>
 
-    <link rel="stylesheet" href="./css/estilo.css">
-    <link rel="icon" href="./assets/icon/favicon2.ico">
+    <link rel="stylesheet" href="./css/login.css">
+    <link rel="icon" href="./assets/icon/logo.png">
     <link rel="preconnect" href="https://fonts.gstatic.com">
 </head>
 
-<body>
+<body id="pagina">
 
-    
-
-    <div class="header">
-        <div class="container">
-            <h1 class="titulo">AquaTech</h1>
-            <ul class="navbar">
-                <li>
-                    <a href="index.html">Inicial</a>
-                </li>
-                <li>
-                    <a href="simulador.html">Simulador</a>
-                </li>
-                <li>|</li>
-                <li class="agora">
-                    <a href="#">Login</a>
-                </li>
-                <li>
-                    <a href="cadastro.html">Cadastro</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-
-
-    <div class="login">
-        <div class="alerta_erro">
-            <div class="card_erro" id="cardErro">
-                <span id="mensagem_erro"></span>
+    <div class="container">
+        <div class="navbar">
+            <a href="index.html"><img src="./assets/imgs/logo.png" alt=""></a>
+            <div class="navegacao">
+                <a href="./index.html">
+                    <p>Sobre</p>
+                </a>
+                <a href="./index.html">
+                    <p>Contato</p>
+                </a>
+                <a href="./login.html">
+                    <p>Login</p>
+                </a>
+                <a href="./cadastro.html">
+                    <p>Cadastro</p>
+                </a>
             </div>
         </div>
-        <div class="container">
-            <div class="card card-login">
-                <h2>Olá de volta!</h2>
-                <div class="formulario">
-                    <div class="campo">
-                        <span>E-mail:</span>
-                        <input id="email_input" type="text" placeholder="Login">
-                    </div>
-                    <div class="campo">
-                        <span>Senha:</span>
-                        <input id="senha_input" type="password" placeholder="******">
-                    </div>
-                    <button class="botao" onclick="entrar()">Entrar</button>
+        <div class="cadastro">
+            <div class="area">
+                <div class="topo-etapa">
+                    <a href="./index.html" id="btnVoltar">
+                        <img src="./assets/imgs/seta.png" alt="" class="rodar">
+                    </a>
+                    <div class="titulo-etapa" id="tituloEtapa">Olá novamente</div>
                 </div>
-
-                <div id="div_aguardar" class="loading-div">
-                    <img src="./assets/circle-loading.gif" id="loading-gif">
-                </div>
-
-                <div id="div_erros_login"></div>
+                
+                    <div class="container">
+                        <div class="card card-cadastro">
+                            <div class="formulario">
+                                <div class="campo"><input id="input_email" type="text" placeholder="Email"
+                                        required /></div>
+                                <div class="campo"><input id="input_senha" type="password" placeholder="Senha"
+                                        required />
+                                </div>
+                                <p>Recuperar Senha</p>
+                                <button onclick="entrar()" class="btn">Continuar</button>
+                                
+                                <div id="div_aguardar" class="loading-div" style="display: none;">
+                                    <img src="./assets/imgs/carregamento.gif" id="loading-gif" />
+                                </div>
+                                <p>Não tem uma conta? <a href="./cadastro.html" style="font-weight: bold;">Cadastre-se</a></p>
+                            </div>
+                        </div>
+                    </div>
+                
             </div>
+            <div class="banner"><img src="./assets/imgs/homem_furadeira.jpg" alt=""></div>
         </div>
     </div>
-
-    
-    <div class="footer">
-        <div class="container">
-            <h4>Feito com amor por aluno &hearts; SPTech &copy; 2023</h4>
-            <span class="version">v1.0.0</span>
-        </div>
-    </div>
-
-
-</body>
-
-</html>
+    <div id="toast-container"></div>
 
 <script>
+    function showToast(message, type = 'error') {
+      const toast = document.createElement('div');
+      toast.classList.add('toast', type);
+      toast.textContent = message;
+      document.getElementById('toast-container').appendChild(toast);
+      setTimeout(() => toast.remove(), 4000);
+    }
 
-/*
     function entrar() {
         aguardar();
 
-        var emailVar = email_input.value;
-        var senhaVar = senha_input.value;
+        var emailVar = input_email.value;
+        var senhaVar = input_senha.value;
 
         if (emailVar == "" || senhaVar == "") {
-            cardErro.style.display = "block"
-            mensagem_erro.innerHTML = "(Mensagem de erro para todos os campos em branco)";
+            showToast("Nome ou senha não preenchidos.");
             finalizarAguardar();
             return false;
-        }
-        else {
-            setInterval(sumirMensagem, 5000)
         }
 
         console.log("FORM LOGIN: ", emailVar);
         console.log("FORM SENHA: ", senhaVar);
 
-        fetch("/usuarios/autenticar", {
+        fetch("/usuario/autenticar", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -119,26 +106,29 @@
             console.log("ESTOU NO THEN DO entrar()!")
 
             if (resposta.ok) {
-                console.log(resposta);
-
                 resposta.json().then(json => {
                     console.log(json);
-                    console.log(JSON.stringify(json));
                     sessionStorage.EMAIL_USUARIO = json.email;
                     sessionStorage.NOME_USUARIO = json.nome;
                     sessionStorage.ID_USUARIO = json.id;
-                    sessionStorage.AQUARIOS = JSON.stringify(json.aquarios)
+                    sessionStorage.TIPO_USUARIO = json.tipo; // <- salvar o tipo
 
                     setTimeout(function () {
-                        window.location = "./dashboard/cards.html";
-                    }, 1000); // apenas para exibir o loading
-
+                        if (json.tipo === 'cliente') {
+                            window.location.href = "./front/cliente/home.html";
+                        } else if (json.tipo === 'profissional') {
+                            window.location.href = "./front/profissional/dashboard.html";
+                        } else if (json.tipo === 'administrador') {
+                            window.location.href = "./front/admin/dashboard.html";
+                        } else {
+                            showToast("Tipo de usuário desconhecido.");
+                            finalizarAguardar();
+                        }
+                    }, 1000); // tempo para exibir o loading
                 });
 
             } else {
-
                 console.log("Houve um erro ao tentar realizar o login!");
-
                 resposta.text().then(texto => {
                     console.error(texto);
                     finalizarAguardar(texto);
@@ -147,13 +137,11 @@
 
         }).catch(function (erro) {
             console.log(erro);
-        })
+        });
 
         return false;
     }
-
-    function sumirMensagem() {
-        cardErro.style.display = "none"
-    }
-*/
 </script>
+
+</body>
+</html>

@@ -37,11 +37,14 @@ body::-webkit-scrollbar-thumb {
 }
 
 .navbar {
+    position: sticky;
+    top: 0;
     background-color: #F37037;
     height: 10vh;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    z-index: 1;
 }
 
 .navbar img {
@@ -326,6 +329,7 @@ a{
     text-align: center;
 }
 .opcoes{
+    height: 25vh;
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
@@ -343,3 +347,9 @@ a{
     text-align: left;
 }
 
+.cima{
+    gap: 25px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}

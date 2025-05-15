@@ -89,8 +89,6 @@ function autenticarAdmin(req, res) {
 function cadastrar(req, res) {
     var {
         nomeServer: nome,
-        sobrenomeServer: sobrenome,
-        cpfServer: cpf,
         telefoneServer: telefone,
         emailServer: email,
         senhaServer: senha,
@@ -104,7 +102,7 @@ function cadastrar(req, res) {
         return res.status(400).json({ mensagem: "idEndereco é obrigatório" });
     }
 
-    usuarioModel.cadastrar(idEndereco, nome, sobrenome, cpf, telefone, email, senha, tipo)
+    usuarioModel.cadastrar(idEndereco, nome, telefone, email, senha, tipo)
         .then(resultadoUsuario => {
             res.status(200).json({ mensagem: "Cadastro realizado com sucesso!", resultadoUsuario });
         })

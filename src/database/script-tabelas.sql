@@ -16,7 +16,6 @@ CREATE TABLE usuario(
     fkEndereco INT NOT NULL,
     nome VARCHAR(45) NOT NULL,
     sobrenome VARCHAR(45),
-    cpf VARCHAR(14),
     telefone VARCHAR(15),
     email VARCHAR(100) NOT NULL,
     senha VARCHAR(225) NOT NULL,

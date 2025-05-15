@@ -24,8 +24,6 @@ function cadastrar(req, res) {
     var uf = req.body.ufServer;
     var cidade = req.body.cidadeServer;
     var bairro = req.body.bairroServer;
-    var logradouro = req.body.logradouroServer;
-    var numero = req.body.numeroServer;
 
     if (cep == undefined) {
         res.status(400).send("Seu cep está undefined!");
@@ -35,13 +33,9 @@ function cadastrar(req, res) {
         res.status(400).send("Sua cidade está undefined!");
     } else if (bairro == undefined) {
         res.status(400).send("Seu bairro está undefined!");
-    } else if (logradouro == undefined) {
-        res.status(400).send("Seu logradouro está undefined!");
-    } else if (numero == undefined) {
-        res.status(400).send("Seu número está undefined!");
     } else {
 
-        enderecoModel.cadastrar(cep, uf, cidade, bairro, logradouro, numero)
+        enderecoModel.cadastrar(cep, uf, cidade, bairro)
             .then(
                 function (resultado) {
                     res.json(resultado);

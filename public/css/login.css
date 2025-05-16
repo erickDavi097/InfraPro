@@ -247,6 +247,7 @@ a {
 .formulario {
   display: flex;
   flex-direction: column;
+  transform: translateX(65px);
 }
 
 input {
@@ -325,3 +326,4 @@ button:active {
   90% { opacity: 1; }
   100% { opacity: 0; }
 }
+

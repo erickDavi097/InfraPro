@@ -11,7 +11,7 @@
 <body>
     <div class="container">
         <div class="navbar">
-            <a href="index.html"><img src="../../assets/imgs/logo.png" alt=""></a>
+            <a href="../../index.html"><img src="../../assets/imgs/logo.png" alt=""></a>
             <div class="navegacao">
                 <a href="../../index.html">
                     <p>Sobre</p>
@@ -36,7 +36,7 @@
                 <div class="container">
                     <div class="card card-cadastro">
                         <div class="formulario">
-                            <form id="formCadastroAdmin"> <!-- Colocando o formulário aqui -->
+                            <form id="formCadastroAdmin">
                                 <div class="campo"><input id="input_codigo_verificacao" type="text" placeholder="Código de Verificação" required /></div>
                                 <div class="campo"><input id="input_nome" type="text" placeholder="Nome" required /></div>
                                 <div class="campo"><input id="input_email" type="text" placeholder="Email" required /></div>
@@ -60,21 +60,27 @@
     </div>
 
     <script>
+        function showToast(message, type = 'error') {
+            const toast = document.createElement('div');
+            toast.classList.add('toast', type);
+            toast.textContent = message;
+            document.getElementById('toast-container').appendChild(toast);
+            setTimeout(() => toast.remove(), 4000);
+        }
+
         document.getElementById('formCadastroAdmin').addEventListener('submit', function (event) {
             event.preventDefault();
 
             const nomeVar = document.getElementById('input_nome').value;
             const emailVar = document.getElementById('input_email').value;
             const senhaVar = document.getElementById('input_senha').value;
-            const codigoVerificacao = document.getElementById('input_codigo_verificacao').value; // Corrigindo referência
+            const codigoVerificacao = document.getElementById('input_codigo_verificacao').value;
 
-            // Validar o código de verificação
-            if (codigoVerificacao !== 'ADMIN-1234') {  // Código predefinido
+            if (codigoVerificacao !== 'ADMIN-1234') {
                 alert('Código de verificação inválido!');
                 return;
             }
 
-            // Enviar dados para o servidor para cadastro
             fetch('/usuario/cadastrarAdmin', {
                 method: 'POST',
                 headers: {
@@ -91,8 +97,8 @@
             })
             .then(response => response.json())
             .then(data => {
-                alert(data.mensagem || 'Administrador cadastrado!');
-                // Redireciona se quiser
+                alert("Administrador cadastrado com sucesso.");
+                
             })
             .catch(error => {
                 console.error('Erro ao cadastrar administrador:', error);

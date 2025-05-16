@@ -18,8 +18,62 @@ function cadastrar(fkEndereco, nome, telefone, email, senha, tipo) {
     console.log("Executando a instrução SQL: \n" + instrucaoSql);
     return database.executar(instrucaoSql);
 }
+function listarTodos() {
+    const instrucao = `SELECT id, nome, email, tipo, ativo FROM usuario;`;
+    return database.executar(instrucao);
+}
+
+function editar(id, nome, email, tipo) {
+    const instrucaoSql = `UPDATE usuario SET nome = '${nome}', email = '${email}', tipo = '${tipo}' WHERE id = ${id};`;
+    console.log("Executando SQL de edição:", instrucaoSql);
+    return database.executar(instrucaoSql);
+}
+
+function trocarStatus(id) {
+    return database.executar(`UPDATE usuario SET ativo = CASE WHEN ativo = 1 THEN 0 ELSE 1 END WHERE id = ${id}`);
+}
+
+function buscarPorId(id) {
+    const instrucaoSql = `SELECT id, nome, email, tipo FROM usuario WHERE id = ${id}`;
+    console.log("Executando SQL de edição:", instrucaoSql);
+    return database.executar(instrucaoSql);
+}
+
+function contarSeguidores(idUsuario) {
+    var instrucaoSql = `
+        SELECT COUNT(u.id) AS count
+        FROM seguidores s
+        JOIN usuario u ON s.fkSeguidor = u.id
+        WHERE s.fkUsuario = ${idUsuario} AND s.statusSeguidores = 'ativo';
+    `;
+    console.log("Executando a instrução SQL: \n" + instrucaoSql);
+    return database.executar(instrucaoSql);
+}
+function buscarPerfilPublico(id) {
+    const instrucaoSql = `SELECT u.id, u.nome, u.email, u.biografia, u.foto,
+               e.cidade, e.bairro, e.uf
+            FROM usuario u
+            LEFT JOIN endereco e ON u.fkEndereco = e.id
+            WHERE u.id = ${id};`
+    return database.executar(instrucaoSql);
+}
+    function listarSeguidores(idUsuario){
+        const instrucaoSql = `
+            SELECT u.id, u.nome, u.foto
+            FROM seguidores s
+            JOIN usuario u ON s.fkSeguidor = u.id
+            WHERE s.fkUsuario = ${idUsuario} AND s.statusSeguidores = 'ativo'`;
+            return database.executar(instrucaoSql);
+    }
 
 module.exports = {
     autenticar,
-    cadastrar
+    cadastrar,
+    listarTodos,
+    editar,
+    trocarStatus,
+    buscarPorId,
+    contarSeguidores,
+    buscarPerfilPublico,
+    listarSeguidores,
 };

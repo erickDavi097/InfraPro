@@ -117,11 +117,11 @@
 
                     setTimeout(function () {
                         if (json.tipo === 'cliente') {
-                            window.location.href = "./front/cliente/home.html";
+                            window.location.href = "./perfil.html";
                         } else if (json.tipo === 'profissional') {
                             window.location.href = "./front/profissional/dashboard.html";
                         } else if (json.tipo === 'administrador') {
-                            window.location.href = "./front/admin/dashboard.html";
+                            window.location.href = "./front/admin/gerenciarUsuarios.html";
                         } else {
                             showToast("Tipo de usuário desconhecido.");
                             finalizarAguardar();
@@ -132,6 +132,9 @@
             } else {
                 console.log("Houve um erro ao tentar realizar o login!");
                 resposta.text().then(texto => {
+
+                    showToast("Usuário não cadastrado.");
+
                     console.error(texto);
                     finalizarAguardar(texto);
                 });

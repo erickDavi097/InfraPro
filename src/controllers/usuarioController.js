@@ -1,6 +1,9 @@
-// usuarioController.js
 var usuarioModel = require("../models/usuarioModel");
 var enderecoModel = require("../models/enderecoModel");
+const portifolioModel = require('../models/portifolioModel');
+const publicacaoModel = require('../models/publicacaoModel');
+
+
 function autenticar(req, res) {
     var email = req.body.emailServer;
     var senha = req.body.senhaServer;
@@ -128,7 +131,7 @@ function cadastrarAdmin(req, res) {
         return res.status(400).send("Código de verificação inválido.");
     }
 
-    usuarioModel.cadastrar(idEndereco || 1, nomeServer, '', '', '', emailServer, senhaServer, tipoServer)
+    usuarioModel.cadastrar(idEndereco || 1, nomeServer, '',  emailServer, senhaServer, tipoServer)
         .then(() => {
             res.status(200).json({ mensagem: "Admin cadastrado com sucesso!" });
         })
@@ -137,10 +140,131 @@ function cadastrarAdmin(req, res) {
             res.status(500).json({ mensagem: "Erro ao cadastrar administrador", erro: erro.sqlMessage });
         });
 }
+function listarUsuarios(req, res) {
+    usuarioModel.listarTodos()
+        .then((resultado) => res.status(200).json(resultado))
+        .catch((erro) => {
+            console.error("Erro ao listar usuários:", erro);
+            res.status(500).json({ erro: erro.sqlMessage });
+        });
+}
+
+function editar(req, res) {
+    console.log('Editar chamado com id:', req.params.id);
+    console.log('Dados recebidos no corpo:', req.body);
+
+    const { id } = req.params;
+    const { nome, email, tipo } = req.body;
+
+    usuarioModel.editar(id, nome, email, tipo)
+        .then(() => res.sendStatus(200))
+        .catch(erro => {
+        console.error('Erro ao editar usuário:', erro);
+        res.status(500).json({ erro: erro.sqlMessage || erro.message || erro });
+    });
+
+}
+
+function suspenderUsuario(req, res) {
+    const id = req.params.id;
+    usuarioModel.trocarStatus(id)
+        .then(() => res.status(200).json({ mensagem: "Status alterado com sucesso" }))
+        .catch(erro => res.status(500).json({ erro: erro.sqlMessage }));
+}
+
+function buscarPorId(req, res) {
+    const id = req.params.id;
+    usuarioModel.buscarPorId(id)
+        .then(usuario => {
+            if (usuario.length === 0) return res.status(404).send("Usuário não encontrado");
+            
+            // Busca endereços relacionados para enviar junto
+            enderecoModel.buscarEnderecosPorUsuario(id)
+                .then(enderecos => {
+                    res.json({...usuario[0], enderecos});
+                })
+                .catch(err => res.status(500).json({ erro: err.sqlMessage }));
+        })
+        .catch(err => res.status(500).json({ erro: err.sqlMessage }));
+}
+
+function contarSeguidores(req, res) {
+    const idUsuario = req.params.id;
+
+    usuarioModel.contarSeguidores(idUsuario)
+        .then((resultado) => {
+            if (resultado.length === 0) {
+                return res.json({ count: 0 });
+            }
+            return res.json({ count: resultado[0].count });
+        })
+        .catch((erro) => {
+            console.error("Erro ao contar seguidores:", erro);
+            res.status(500).json({ erro: erro.sqlMessage || erro.message });
+        });
+}
+function buscarPerfilPublico(req, res) {
+    const id = req.params.id;
+    usuarioModel.buscarPerfilPublico(id)
+        .then(usuario => {
+            if (usuario.length === 0) return res.status(404).send("Usuário não encontrado");
+            enderecoModel.buscarEnderecosPorUsuario(id)
+                .then(enderecos => {
+                    res.json({ ...usuario[0], enderecos });
+                })
+                .catch(err => res.status(500).json({ erro: err.sqlMessage }));
+        })
+        .catch(err => res.status(500).json({ erro: err.sqlMessage }));
+}
+function listarSeguidoresController(req, res) {
+    const id = req.params.id;
+    usuarioModel.listarSeguidores(id)
+        .then(resultado => {
+            res.json(resultado);
+        })
+        .catch(erro => {
+            console.error(erro);
+            res.status(500).json({ mensagem: "Erro ao buscar seguidores" });
+        });
+}
+async function perfilPublicoCompleto(req, res) {
+  const id = req.params.id;
+
+  try {
+    const usuario = await usuarioModel.buscarPorId(id);
+    if (usuario.length === 0) {
+      return res.status(404).json({ mensagem: "Usuário não encontrado" });
+    }
+
+    const endereco = await enderecoModel.buscarPorUsuarioId(id);
+    const portifolio = await portifolioModel.buscarPorUsuarioId(id);
+    const publicacoes = await publicacaoModel.buscarPublicacoesPorUsuarioId(id);
+    
+    res.json({
+      usuario: usuario[0],
+      endereco: endereco[0] || null,
+      portifolio: portifolio || [],
+      publicacoes: publicacoes || [],
+    });
+  } catch (erro) {
+    console.error(erro);
+    res.status(500).json({ mensagem: "Erro ao buscar perfil público completo" });
+  }
+}
+
 
 module.exports = {
     cadastrar,
     cadastrarAdmin,
     autenticar,
-    autenticarAdmin
+    autenticarAdmin,
+    listarUsuarios,
+    editar,
+    suspenderUsuario,
+    buscarPorId,
+    contarSeguidores,
+    buscarPerfilPublico,
+    listarSeguidoresController,
+    perfilPublicoCompleto
 };
+    

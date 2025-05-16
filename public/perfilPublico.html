@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="./assets/icon/logo.png" type="image/x-icon">
+    <link rel="stylesheet" href="./css/perfilpublico.css">
+    <title>Perfil Público</title>
+</head>
+
+<body>
+    <aside class="sidebar">
+        <h1>InfraPro</h1>
+        <nav>
+            <ul>
+                <li><a href="/home.html">Home</a></li>
+                <li><a href="/perfil.html">Perfil</a></li>
+                <li><a href="/mensagens.html">Mensagens</a></li>
+                <li><a href="/configuracoes.html">Configurações</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <main>
+    <section class="perfil-header">
+      <h1 id="nomeUsuario"></h1>
+      <p id="emailUsuario"></p>
+      <p id="biografiaUsuario"></p>
+      <p id="areaAtuacao"></p>
+      <button id="btnSeguir"></button>
+    </section>
+
+    <section class="cards-container">
+      <div id="portifolio"></div>
+      <div id="publicacoes"></div>
+    </section>
+  </main>
+
+    <!-- Modal Seguidores -->
+<div id="modalSeguidores" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+    background-color: rgba(0,0,0,0.5); z-index: 1000;">
+
+  <div style="background: white; max-width: 400px; margin: 100px auto; padding: 20px; border-radius: 8px; position: relative;">
+    <h2>Seguidores</h2>
+    <ul id="listaSeguidores" style="list-style: none; padding: 0; max-height: 300px; overflow-y: auto;">
+      <!-- Seguidores serão inseridos aqui -->
+    </ul>
+    <button onclick="fecharModal()" style="margin-top: 15px; padding: 8px 12px;">Fechar</button>
+  </div>
+
+</div>
+
+
+
+
+    <script>
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const idPerfil = urlParams.get("id");
+        const idLogado = sessionStorage.ID_USUARIO;
+
+        function carregarPerfil() {
+            fetch(`/usuario/perfilPublicoCompleto/${idPerfil}`)
+                .then(res => {
+                    if (!res.ok) throw new Error(`Resposta não OK: ${res.status}`);
+                    return res.json();
+                })
+                .then(data => {
+                    const usuario = data.usuario;
+                    const endereco = data.endereco;
+                    const portifolio = data.portifolio;
+                    const publicacoes = data.publicacoes;
+
+                    document.getElementById("nomeUsuario").textContent = usuario.nome;
+                    document.getElementById("emailUsuario").textContent = usuario.email;
+                    document.getElementById("biografiaUsuario").textContent = usuario.biografia || "Usuário sem biografia.";
+                    if (usuario.foto) {
+                        document.getElementById("fotoUsuario").src = usuario.foto;
+                    }
+
+                    if (endereco) {
+                        document.getElementById("areaAtuacao").textContent = `${endereco.cidade || ""}, ${endereco.bairro || ""}, ${endereco.uf || ""}`;
+                    } else {
+                        document.getElementById("areaAtuacao").textContent = "Endereço não disponível";
+                    }
+
+                    mostrarPortifolio(portifolio);
+                    mostrarPublicacoes(publicacoes);
+                })
+                .catch(err => {
+                    alert("Não foi possível carregar o perfil: " + err.message);
+                });
+        }
+        function mostrarPortifolio(portifolio) {
+            const div = document.getElementById("portifolio");
+            if (!portifolio || portifolio.length === 0) {
+                div.innerHTML = "<p>Portfólio vazio</p>";
+                return;
+            }
+            div.innerHTML = portifolio.map(item => `<div>${item.nome}</div>`).join("");
+        }
+
+        function mostrarPublicacoes(publicacoes) {
+            const div = document.getElementById("publicacoes");
+            if (!publicacoes || publicacoes.length === 0) {
+                div.innerHTML = "<p>Sem publicações ainda.</p>";
+                return;
+            }
+
+            div.innerHTML = publicacoes.map(pub => `
+        <div class="card">
+            <h3>${pub.titulo}</h3>
+            <p>${pub.conteudo}</p>
+            <small>Publicado em: ${new Date(pub.data).toLocaleDateString()}</small>
+        </div>
+    `).join("");
+        }
+
+
+
+        function atualizarBotaoSeguir() {
+            if (idLogado === idPerfil) {
+                document.getElementById("btnSeguir").style.display = "none";
+                return;
+            }
+            fetch(`/seguidores/verificar/${idPerfil}/${idLogado}`)
+                .then((res) => {
+                    if (!res.ok) throw new Error(`Resposta não OK: ${res.status}`);
+                    return res.json();
+                })
+                .then((data) => {
+                    const btn = document.getElementById("btnSeguir");
+                    if (data.ativo) {
+                        btn.textContent = "Deixar de seguir";
+                        btn.onclick = () => desseguir();
+                    } else {
+                        btn.textContent = "Seguir";
+                        btn.onclick = () => seguir();
+                    }
+                })
+                .catch(() => {
+                    document.getElementById("btnSeguir").style.display = "none";
+                });
+        }
+
+        function seguir() {
+            fetch("/seguidores/seguir", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ fkUsuario: idPerfil, fkSeguidor: idLogado }),
+            }).then(() => atualizarBotaoSeguir());
+        }
+
+        function desseguir() {
+            fetch("/seguidores/desseguir", {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ fkUsuario: idPerfil, fkSeguidor: idLogado }),
+            }).then(() => atualizarBotaoSeguir());
+        }
+
+        function carregarSeguidores() {
+            fetch(`/usuario/listarSeguidores/${idPerfil}`)
+                .then((res) => {
+                    if (!res.ok) throw new Error(`Resposta não OK: ${res.status}`);
+                    return res.json();
+                })
+                .then((data) => {
+                    const lista = document.getElementById("listaSeguidores");
+                    lista.innerHTML = "";
+                    if (data && data.length > 0) {
+                        data.forEach((seguidor) => {
+                            const li = document.createElement("li");
+
+                            const link = document.createElement("a");
+                            link.textContent = seguidor.nome;
+                            if (seguidor.id === Number(idLogado)) {
+                                link.href = "/perfil.html";
+                            } else {
+                                link.href = `/perfilpublico.html?id=${seguidor.id}`;
+                            }
+                            link.style.cursor = "pointer";
+                            link.style.color = "blue";
+                            link.style.textDecoration = "underline";
+
+                            li.appendChild(link);
+                            li.appendChild(document.createTextNode(" "));
+
+                            if (seguidor.id !== Number(idLogado)) {
+                                const btn = document.createElement("button");
+
+                                fetch(`/seguidores/verificar/${seguidor.id}/${idLogado}`)
+                                    .then(res => res.json())
+                                    .then(info => {
+                                        if (info.ativo) {
+                                            btn.textContent = "Deixar de seguir";
+                                            btn.onclick = () => {
+                                                fetch("/seguidores/desseguir", {
+                                                    method: "PATCH",
+                                                    headers: { "Content-Type": "application/json" },
+                                                    body: JSON.stringify({ fkUsuario: seguidor.id, fkSeguidor: idLogado }),
+                                                }).then(() => {
+                                                    carregarSeguidores();
+                                                    carregarNumeroSeguidores();
+                                                });
+                                            };
+                                        } else {
+                                            btn.textContent = "Seguir";
+                                            btn.onclick = () => {
+                                                fetch("/seguidores/seguir", {
+                                                    method: "POST",
+                                                    headers: { "Content-Type": "application/json" },
+                                                    body: JSON.stringify({ fkUsuario: seguidor.id, fkSeguidor: idLogado }),
+                                                }).then(() => {
+                                                    carregarSeguidores();
+                                                    carregarNumeroSeguidores();
+                                                });
+                                            };
+                                        }
+                                    });
+                                li.appendChild(btn);
+                            }
+                            lista.appendChild(li);
+                        });
+                    } else {
+                        lista.innerHTML = "<li>Nenhum seguidor encontrado.</li>";
+                    }
+                })
+                .catch(() => {
+                    document.getElementById("listaSeguidores").innerHTML =
+                        "<li>Erro ao carregar seguidores.</li>";
+                });
+        }
+        function fecharModal() {
+            document.getElementById("modalSeguidores").style.display = "none";
+        }
+
+
+
+        function carregarNumeroSeguidores() {
+            fetch(`/usuario/seguidores/count/${idPerfil}`)
+                .then(res => res.json())
+                .then(data => {
+                    const spanNum = document.getElementById("numSeguidores");
+                    if (spanNum) {
+                        spanNum.textContent = data.count || 0;
+                        spanNum.onclick = () => {
+                            carregarSeguidores();
+                            document.getElementById("modalSeguidores").style.display = "block";
+                        };
+                    }
+                })
+        }
+
+        function fecharModal() {
+            document.getElementById("modalSeguidores").style.display = "none";
+        }
+
+        window.onload = function () {
+            carregarNumeroSeguidores();
+            carregarPerfil();
+            atualizarBotaoSeguir();
+            carregarSeguidores();
+        }
+    </script>
+
+</body>
+
+</html>

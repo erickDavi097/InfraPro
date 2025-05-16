@@ -325,80 +325,74 @@
   }
 
   function cadastrar() {
+  document.getElementById("div_aguardar").style.display = 'block';
 
-    document.getElementById("div_aguardar").style.display = 'block';
+  const dados = pegarDadosDoFormulario(tipoSelecionado);
 
-    const dados = pegarDadosDoFormulario(tipoSelecionado);
+  dados.telefone = limparMascara(dados.telefone);
+  dados.cep = limparMascara(dados.cep);
 
-    dados.telefone = limparMascara(dados.telefone);
-    dados.cep = limparMascara(dados.cep);
+  console.log(dados);
 
-    console.log(dados);
+  fetch("http://localhost:3333/endereco/cadastrar", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      cepServer: dados.cep,
+      ufServer: dados.uf,
+      cidadeServer: dados.cidade,
+      bairroServer: dados.bairro
+    }),
+  })
+    .then(res => res.json())
+    .then(data => {
+      console.log("Resposta do endereço:", data);
+      const idEndereco = parseInt(data.insertId, 10);
 
-    fetch("http://localhost:3333/endereco/cadastrar", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        cepServer: dados.cep,
-        ufServer: dados.uf,
-        cidadeServer: dados.cidade,
-        bairroServer: dados.bairro
-      }),
-    })
-      .then(res => res.json())
-      .then(data => {
-        console.log("Resposta do endereço:", data);
-        const idEndereco = parseInt(data.insertId, 10);
-
-        if (!isNaN(idEndereco)) {
-          console.log("ID do endereço obtido:", idEndereco);
-          cadastrarUsuario({
-            nome: dados.nome,
-            telefone: dados.telefone,
-            email: dados.email,
-            senha: dados.senha,
-            tipo: tipoSelecionado,
-            idEndereco: idEndereco
-          });
-        } else {
-          console.log("ID do endereço inválido.");
-          showToast("Erro no cadastro de endereço.");
-          finalizarAguardar();
-        }
-      })
-      .catch(err => {
-        console.error("Erro ao cadastrar endereço:", err);
-        showToast("Erro ao cadastrar endereço.");
+      if (!isNaN(idEndereco)) {
+        console.log("ID do endereço obtido:", idEndereco);
+        dados.idEndereco = idEndereco;
+        cadastrarUsuario(dados);
+      } else {
+        console.log("ID do endereço inválido.");
+        showToast("Erro no cadastro de endereço.");
         finalizarAguardar();
-      });
-  }
-
-  function cadastrarUsuario(dados, idEndereco) {
-    console.log("Enviando dados para o cadastro do usuário com idEndereco:", idEndereco);
-    fetch("http://localhost:3333/usuario/cadastrar", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        nomeServer: dados.nome,
-        telefoneServer: dados.telefone,
-        emailServer: dados.email,
-        senhaServer: dados.senha,
-        tipoServer: tipoSelecionado,
-        idEndereco: idEndereco
-      }),
+      }
     })
-      .then(res => res.json())
-      .then(data => {
-        console.log("Usuário cadastrado com sucesso:", data);
-        showToast("Cadastro realizado com sucesso!", "success");
-        setTimeout(() => window.location.href = "login.html", 2000);
-      })
-      .catch(err => {
-        console.error("Erro ao cadastrar usuário:", err);
-        showToast("Erro ao cadastrar usuário.");
-      })
-      .finally(finalizarAguardar);
-  }
+    .catch(err => {
+      console.error("Erro ao cadastrar endereço:", err);
+      showToast("Erro ao cadastrar endereço.");
+      finalizarAguardar();
+    });
+}
+
+function cadastrarUsuario(dados) {
+  console.log("Enviando dados para o cadastro do usuário com idEndereco:", dados.idEndereco);
+  fetch("http://localhost:3333/usuario/cadastrar", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      nomeServer: dados.nome,
+      telefoneServer: dados.telefone,
+      emailServer: dados.email,
+      senhaServer: dados.senha,
+      tipoServer: tipoSelecionado,
+      idEndereco: dados.idEndereco 
+    }),
+  })
+    .then(res => res.json())
+    .then(data => {
+      console.log("Usuário cadastrado com sucesso:", data);
+      showToast("Cadastro realizado com sucesso!", "success");
+      setTimeout(() => window.location.href = "login.html", 2000);
+    })
+    .catch(err => {
+      console.error("Erro ao cadastrar usuário:", err);
+      showToast("Erro ao cadastrar usuário.");
+    })
+    .finally(finalizarAguardar);
+}
+
 
   function mascaraTelefone(input) {
     input.addEventListener('input', function () {

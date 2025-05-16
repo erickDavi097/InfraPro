@@ -17,6 +17,7 @@ var app = express();
 var indexRouter = require("./src/routes/index");
 var enderecoRouter = require("./src/routes/enderecos");
 var usuarioRouter = require("./src/routes/usuarios");
+var seguidoresRouter = require("./src/routes/seguidores");
 
 
 app.use(express.json());
@@ -28,6 +29,8 @@ app.use(cors());
 app.use("/", indexRouter);
 app.use("/endereco", enderecoRouter);
 app.use("/usuario", usuarioRouter);
+app.use("/seguidores", seguidoresRouter);
+
 
 app.listen(PORTA_APP, function () {
     console.log(`                                                                                               

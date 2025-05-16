@@ -32,9 +32,18 @@ function cadastrar(cep, uf, cidade, bairro) {
     console.log("Executando a instrução SQL: \n" + instrucaoSql);
     return database.executar(instrucaoSql);
 }
+function buscarPorUsuarioId(idUsuario) {
+  const instrucaoSql = `
+    SELECT * FROM endereco WHERE id IN (
+      SELECT fkEndereco FROM usuario WHERE id = ${idUsuario}
+    )
+  `;
+  return database.executar(instrucaoSql);
+}
 
 
 module.exports = {
     cadastrar,
-    buscarEnderecosPorUsuario
+    buscarEnderecosPorUsuario,
+    buscarPorUsuarioId
 };

@@ -11,7 +11,6 @@
         <p>Email: <span id="emailUsuario"></span></p>
         <p>Tipo de Usuário: <span id="tipoUsuario"></span></p>
 
-        <!-- Exemplo de conteúdo dependendo do tipo de usuário -->
         <div id="conteudoProfissional" style="display: none;">
             <p>Conteúdo exclusivo para Profissionais.</p>
         </div>
@@ -22,23 +21,19 @@
 
     <script>
         window.onload = function() {
-            // Pega os dados do usuário do sessionStorage
             const nome = sessionStorage.getItem('NOME_USUARIO');
             const email = sessionStorage.getItem('EMAIL_USUARIO');
             const tipo = sessionStorage.getItem('TIPO_USUARIO');
 
-            // Verifica se os dados existem, se não, redireciona para o login
             if (!nome || !email || !tipo) {
-                window.location.href = '/login.html';  // Se não houver dados no sessionStorage, redireciona
+                window.location.href = '/login.html'; 
                 return;
             }
 
-            // Exibe os dados na página
             document.getElementById('nomeUsuario').textContent = nome;
             document.getElementById('emailUsuario').textContent = email;
             document.getElementById('tipoUsuario').textContent = tipo;
 
-            // Exibe conteúdo específico para cada tipo de usuário
             if (tipo === 'profissional') {
                 document.getElementById('conteudoProfissional').style.display = 'block';
             } else if (tipo === 'administrador') {

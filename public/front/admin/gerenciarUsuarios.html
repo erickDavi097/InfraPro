@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Usuários Cadastrados - Admin</title>
     <link rel="shortcut icon" href="../../assets/icon/logo.png" type="image/x-icon">
-    <link rel="stylesheet" href="./css/usuarios.css">
+    <link rel="stylesheet" href="../../css/gerenciar.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap">
 </head>
 
@@ -46,116 +46,126 @@
 
 
 
-   <script>
-    function showToast(message, type = 'error') {
-        const toast = document.createElement('div');
-        toast.classList.add('toast', type);
-        toast.textContent = message;
-        document.getElementById('toast-container').appendChild(toast);
-        setTimeout(() => toast.remove(), 4000);
+    <script>
+        function showToast(message, type = 'error') {
+            const toast = document.createElement('div');
+            toast.classList.add('toast', type);
+            toast.textContent = message;
+            document.getElementById('toast-container').appendChild(toast);
+            setTimeout(() => toast.remove(), 4000);
+        }
+
+        let usuarios = [];
+
+        function carregarUsuarios() {
+            fetch('/usuario/listar')
+                .then(res => res.json())
+                .then(data => {
+                    usuarios = data;
+                    mostrarUsuarios(usuarios);
+                })
+                .catch(err => {
+                    showToast("Erro ao carregar usuários.", "error");
+                    console.error(err);
+                });
+        }
+
+        function mostrarUsuarios(lista) {
+    const tbody = document.getElementById("tbody_usuarios");
+    tbody.innerHTML = "";
+    for (let i = 0; i < lista.length; i++) {
+        const usuario = lista[i];
+        usuario.ativo = usuario.ativo === 1 || usuario.ativo === true;
+
+        let textoBotao;
+        if (usuario.ativo) {
+            textoBotao = "🚫 Suspender";
+        } else {
+            textoBotao = "✅ Reativar";
+        }
+
+        tbody.innerHTML += `
+            <tr>
+                <td>${usuario.id}</td>
+                <td>${usuario.nome}</td>
+                <td>${usuario.email}</td>
+                <td>${usuario.tipo}</td>
+                <td>
+                    <button onclick="abrirModalEditar(this)"
+                        data-id="${usuario.id}"
+                        data-nome="${usuario.nome}"
+                        data-email="${usuario.email}"
+                        data-tipo="${usuario.tipo}">
+                        ✏️ Editar
+                    </button>
+                    <button onclick="suspenderUsuario(${usuario.id})">
+                        ${textoBotao}
+                    </button>
+                </td>
+            </tr>
+        `;
     }
+}
 
-    let usuarios = [];
 
-    function carregarUsuarios() {
-        fetch('/usuario/listar')
-            .then(res => res.json())
-            .then(data => {
-                usuarios = data;
-                mostrarUsuarios(usuarios);
-            })
-            .catch(err => {
-                showToast("Erro ao carregar usuários.", "error");
-                console.error(err);
-            });
-    }
-
-    function mostrarUsuarios(lista) {
-        const tbody = document.getElementById("tbody_usuarios");
-        tbody.innerHTML = "";
-        lista.forEach(usuario => {
-            usuario.ativo = usuario.ativo === 1 || usuario.ativo === true;
-            tbody.innerHTML += `
-                <tr>
-                    <td>${usuario.id}</td>
-                    <td>${usuario.nome}</td>
-                    <td>${usuario.email}</td>
-                    <td>${usuario.tipo}</td>
-                    <td>
-                        <button onclick="abrirModalEditar(this)"
-                            data-id="${usuario.id}"
-                            data-nome="${usuario.nome}"
-                            data-email="${usuario.email}"
-                            data-tipo="${usuario.tipo}">
-                            ✏️ Editar
-                        </button>
-                        <button onclick="suspenderUsuario(${usuario.id})">
-                            ${usuario.ativo ? "🚫 Suspender" : "✅ Reativar"}
-                        </button>
-                    </td>
-                </tr>
-            `;
+        document.getElementById("campo_pesquisa").addEventListener("input", function () {
+            const valor = this.value.toLowerCase();
+            const filtrados = usuarios.filter(u =>
+                u.nome.toLowerCase().includes(valor) || u.email.toLowerCase().includes(valor)
+            );
+            mostrarUsuarios(filtrados);
         });
-    }
 
-    document.getElementById("campo_pesquisa").addEventListener("input", function () {
-        const valor = this.value.toLowerCase();
-        const filtrados = usuarios.filter(u =>
-            u.nome.toLowerCase().includes(valor) || u.email.toLowerCase().includes(valor)
-        );
-        mostrarUsuarios(filtrados);
-    });
+        function abrirModalEditar(botao) {
+            document.getElementById('editar_id').value = botao.dataset.id;
+            document.getElementById('editar_nome').value = botao.dataset.nome;
+            document.getElementById('editar_email').value = botao.dataset.email;
+            document.getElementById('editar_tipo').value = botao.dataset.tipo;
+            document.getElementById('modalEditar').style.display = 'block';
+        }
 
-    function abrirModalEditar(botao) {
-        document.getElementById('editar_id').value = botao.dataset.id;
-        document.getElementById('editar_nome').value = botao.dataset.nome;
-        document.getElementById('editar_email').value = botao.dataset.email;
-        document.getElementById('editar_tipo').value = botao.dataset.tipo;
-        document.getElementById('modalEditar').style.display = 'block';
-    }
+        function fecharModal() {
+            document.getElementById('modalEditar').style.display = 'none';
+        }
 
-    function fecharModal() {
-        document.getElementById('modalEditar').style.display = 'none';
-    }
+        function salvarEdicao() {
+            const id = document.getElementById('editar_id').value;
+            const nome = document.getElementById('editar_nome').value;
+            const email = document.getElementById('editar_email').value;
+            const tipo = document.getElementById('editar_tipo').value;
 
-    function salvarEdicao() {
-        const id = document.getElementById('editar_id').value;
-        const nome = document.getElementById('editar_nome').value;
-        const email = document.getElementById('editar_email').value;
-        const tipo = document.getElementById('editar_tipo').value;
-
-        fetch(`/usuario/${id}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ nome, email, tipo })
-        }).then(res => {
-            if (res.ok) {
-                alert("Usuário atualizado com sucesso!");
-                fecharModal();
-                carregarUsuarios();
-            } else {
-                alert("Erro ao atualizar usuário.");
-            }
-        });
-    }
-
-    function suspenderUsuario(id) {
-        fetch(`/usuario/suspender/${id}`, {
-            method: "PATCH"
-        })
-            .then(res => res.json())
-            .then(data => {
-                showToast(data.mensagem || "Status alterado!", "success");
-                carregarUsuarios();
-            })
-            .catch(erro => {
-                console.error("Erro no suspenderUsuario:", erro);
-                showToast("Erro ao alterar status.", "error");
+            fetch(`/usuario/${id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ nome, email, tipo })
+            }).then(res => {
+                if (res.ok) {
+                    alert("Usuário atualizado com sucesso!");
+                    fecharModal();
+                    carregarUsuarios();
+                } else {
+                    alert("Erro ao atualizar usuário.");
+                }
             });
-    }
+        }
 
-    window.onload = carregarUsuarios;
-</script>
+        function suspenderUsuario(id) {
+            fetch(`/usuario/suspender/${id}`, {
+                method: "PATCH"
+            })
+                .then(res => res.json())
+                .then(data => {
+                    showToast(data.mensagem || "Status alterado!", "success");
+                    carregarUsuarios();
+                })
+                .catch(erro => {
+                    console.error("Erro no suspenderUsuario:", erro);
+                    showToast("Erro ao alterar status.", "error");
+                });
+        }
+
+        window.onload = carregarUsuarios;
+    </script>
 
 </body>
 

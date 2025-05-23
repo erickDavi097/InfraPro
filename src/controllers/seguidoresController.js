@@ -1,6 +1,4 @@
 var seguidoresModel = require("../models/seguidoresModel");
-var usuarioModel = require("../models/usuarioModel");
-
 
 function seguir(req, res) {
     const { fkUsuario, fkSeguidor } = req.body;

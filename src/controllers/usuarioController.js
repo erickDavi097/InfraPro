@@ -145,7 +145,7 @@ function listarUsuarios(req, res) {
         .then((resultado) => res.status(200).json(resultado))
         .catch((erro) => {
             console.error("Erro ao listar usuários:", erro);
-            res.status(500).json({ erro: erro.sqlMessage });
+            res.status(500).json({ erro: erro.sqlMessage || erro.message || erro});
         });
 }
 
@@ -239,7 +239,11 @@ async function perfilPublicoCompleto(req, res) {
     const endereco = await enderecoModel.buscarPorUsuarioId(id);
     const portifolio = await portifolioModel.buscarPorUsuarioId(id);
     const publicacoes = await publicacaoModel.buscarPublicacoesPorUsuarioId(id);
-    
+
+    if (usuario[0].foto) {
+      usuario[0].foto = `/uploads/${usuario[0].foto}`;
+    }
+
     res.json({
       usuario: usuario[0],
       endereco: endereco[0] || null,
@@ -251,6 +255,45 @@ async function perfilPublicoCompleto(req, res) {
     res.status(500).json({ mensagem: "Erro ao buscar perfil público completo" });
   }
 }
+
+
+function salvarFoto(req, res) {
+  const imagem = req.file.filename;
+  const { nome, email, senha, fkEndereco, tipo } = req.body;
+
+  const usuario = {nome, email, senha, tipo, fkEndereco, foto: imagem};
+
+  usuarioModel.salvar(usuario)
+    .then(() => res.status(201).send("Usuário criado com sucesso"))
+    .catch(err => res.status(500).send(err));
+}
+function atualizarFoto(req, res) {
+  if (!req.file) return res.status(400).send("Nenhuma imagem enviada.");
+  
+  const id = req.params.id;
+  const imagem = req.file.filename;
+
+  usuarioModel.atualizarFoto(id, imagem)
+    .then(() => res.status(200).send("Foto atualizada com sucesso"))
+    .catch(err => res.status(500).send(err));
+}
+function buscarFoto(req, res) {
+    const id = req.params.id;
+
+    usuarioModel.buscarImagemPorId(id) 
+        .then(resultado => {
+            if (resultado.length > 0 && resultado[0].foto) {
+                res.status(200).json({ foto: `/uploads/${resultado[0].foto}` });
+            } else {
+                res.status(404).json({ mensagem: 'Usuário não encontrado ou sem foto.' });
+            }
+        })
+        .catch(erro => {
+            console.error('Erro no buscarFoto:', erro); // log do erro
+            res.status(500).json({ erro: erro.message || erro.toString() });
+        });
+}
+
 
 
 module.exports = {
@@ -265,6 +308,9 @@ module.exports = {
     contarSeguidores,
     buscarPerfilPublico,
     listarSeguidoresController,
-    perfilPublicoCompleto
+    perfilPublicoCompleto,
+    salvarFoto,
+    atualizarFoto,
+    buscarFoto
 };
     

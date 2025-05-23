@@ -39,114 +39,111 @@
             <div class="area">
                 <div class="topo-etapa">
                     <a href="./index.html" id="btnVoltar">
-                        <img src="./assets/imgs/seta.png" alt="" class="rodar">
+                        <img src="./assets/imgs/seta.png" class="rodar">
                     </a>
                     <div class="titulo-etapa" id="tituloEtapa">Olá novamente</div>
                 </div>
-                
-                    <div class="container">
-                        <div class="card card-cadastro">
-                            <div class="formulario">
-                                <div class="campo"><input id="input_email" type="text" placeholder="Email"
-                                        required /></div>
-                                <div class="campo"><input id="input_senha" type="password" placeholder="Senha"
-                                        required />
-                                </div>
-                                <p>Recuperar Senha</p>
-                                <button onclick="entrar()" class="btn">Continuar</button>
-                                
-                                <div id="div_aguardar" class="loading-div" style="display: none;">
-                                    <img src="./assets/imgs/carregamento.gif" id="loading-gif" />
-                                </div>
-                                <p>Não tem uma conta? <a href="./cadastro.html" style="font-weight: bold;">Cadastre-se</a></p>
+                <div class="container">
+                    <div class="card card-cadastro">
+                        <div class="formulario">
+                            <div class="campo"><input id="input_email" type="text" placeholder="Email" required /></div>
+                            <div class="campo"><input id="input_senha" type="password" placeholder="Senha" required />
                             </div>
+                            <p>Recuperar Senha</p>
+                            <button onclick="entrar()" class="btn">Continuar</button>
+
+                            <div id="div_aguardar" class="loading-div" style="display: none;">
+                                <img src="./assets/imgs/carregamento.gif" id="loading-gif" />
+                            </div>
+                            <p>Não tem uma conta? <a href="./cadastro.html" style="font-weight: bold;">Cadastre-se</a>
+                            </p>
                         </div>
                     </div>
-                
+                </div>
             </div>
-            <div class="banner"><img src="./assets/imgs/homem_furadeira.jpg" alt=""></div>
+            <div class="banner"><img src="./assets/imgs/homem_furadeira.jpg"></div>
         </div>
     </div>
     <div id="toast-container"></div>
 
-<script>
-    function showToast(message, type = 'error') {
-      const toast = document.createElement('div');
-      toast.classList.add('toast', type);
-      toast.textContent = message;
-      document.getElementById('toast-container').appendChild(toast);
-      setTimeout(() => toast.remove(), 4000);
-    }
-
-    function entrar() {
-        aguardar();
-
-        var emailVar = input_email.value;
-        var senhaVar = input_senha.value;
-
-        if (emailVar == "" || senhaVar == "") {
-            showToast("Nome ou senha não preenchidos.");
-            finalizarAguardar();
-            return false;
+    <script>
+        function showToast(message, type = 'error') {
+            const toast = document.createElement('div');
+            toast.classList.add('toast', type);
+            toast.textContent = message;
+            document.getElementById('toast-container').appendChild(toast);
+            setTimeout(() => toast.remove(), 4000);
         }
 
-        console.log("FORM LOGIN: ", emailVar);
-        console.log("FORM SENHA: ", senhaVar);
+        function entrar() {
+            aguardar();
 
-        fetch("/usuario/autenticar", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                emailServer: emailVar,
-                senhaServer: senhaVar
-            })
-        }).then(function (resposta) {
-            console.log("ESTOU NO THEN DO entrar()!")
+            var emailVar = input_email.value;
+            var senhaVar = input_senha.value;
 
-            if (resposta.ok) {
-                resposta.json().then(json => {
-                    console.log(json);
-                    sessionStorage.EMAIL_USUARIO = json.email;
-                    sessionStorage.NOME_USUARIO = json.nome;
-                    sessionStorage.ID_USUARIO = json.id;
-                    sessionStorage.TIPO_USUARIO = json.tipo;
-                    sessionStorage.setItem('ENDERECOS_USUARIO', JSON.stringify(json.enderecos));
-
-
-                    setTimeout(function () {
-                        if (json.tipo === 'cliente') {
-                            window.location.href = "./perfil.html";
-                        } else if (json.tipo === 'profissional') {
-                            window.location.href = "./front/profissional/dashboard.html";
-                        } else if (json.tipo === 'administrador') {
-                            window.location.href = "./front/admin/gerenciarUsuarios.html";
-                        } else {
-                            showToast("Tipo de usuário desconhecido.");
-                            finalizarAguardar();
-                        }
-                    }, 1000); // tempo para exibir o loading
-                });
-
-            } else {
-                console.log("Houve um erro ao tentar realizar o login!");
-                resposta.text().then(texto => {
-
-                    showToast("Usuário não cadastrado.");
-
-                    console.error(texto);
-                    finalizarAguardar(texto);
-                });
+            if (emailVar == "" || senhaVar == "") {
+                showToast("Nome ou senha não preenchidos.");
+                finalizarAguardar();
+                return false;
             }
 
-        }).catch(function (erro) {
-            console.log(erro);
-        });
+            console.log("FORM LOGIN: ", emailVar);
+            console.log("FORM SENHA: ", senhaVar);
 
-        return false;
-    }
-</script>
+            fetch("/usuario/autenticar", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    emailServer: emailVar,
+                    senhaServer: senhaVar
+                })
+            })
+            .then(function (resposta) {
+                console.log("ESTOU NO THEN DO entrar()!")
 
+                if (resposta.ok) {
+                    resposta.json().then(json => {
+                        console.log(json);
+                        sessionStorage.EMAIL_USUARIO = json.email;
+                        sessionStorage.NOME_USUARIO = json.nome;
+                        sessionStorage.ID_USUARIO = json.id;
+                        sessionStorage.TIPO_USUARIO = json.tipo;
+                        sessionStorage.setItem('ENDERECOS_USUARIO', JSON.stringify(json.enderecos));
+
+
+                        setTimeout(function () {
+                            if (json.tipo === 'cliente') {
+                                window.location.href = "./perfil.html";
+                            } else if (json.tipo === 'profissional') {
+                                window.location.href = "./front/profissional/publicacoes.html";
+                            } else if (json.tipo === 'administrador') {
+                                window.location.href = "./front/admin/gerenciarUsuarios.html";
+                            } else {
+                                showToast("Tipo de usuário desconhecido.");
+                                finalizarAguardar();
+                            }
+                        }, 1000); // tempo para exibir o loading
+                    });
+
+                } else {
+                    console.log("Houve um erro ao tentar realizar o login!");
+                    resposta.text()
+                    .then(texto => {
+                        showToast("Usuário não cadastrado.");
+
+                        console.error(texto);
+                        finalizarAguardar(texto);
+                    });
+                }
+
+            })
+            .catch(function (erro) {
+                console.log(erro);
+            });
+            return false;
+        }
+    </script>
 </body>
 </html>

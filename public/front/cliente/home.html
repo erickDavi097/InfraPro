@@ -1,45 +1,119 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Publicações</title>
+    <link rel="stylesheet" href="../../css/publicacao.css">
 </head>
-<body>
-    <div class="container">
-        <h1>Bem-vindo, <span id="nomeUsuario"></span></h1>
-        <p>Email: <span id="emailUsuario"></span></p>
-        <p>Tipo de Usuário: <span id="tipoUsuario"></span></p>
 
-        <div id="conteudoProfissional" style="display: none;">
-            <p>Conteúdo exclusivo para Profissionais.</p>
-        </div>
-        <div id="conteudoAdministrador" style="display: none;">
-            <p>Conteúdo exclusivo para Administradores.</p>
-        </div>
+<body onload="carregarPublicacoes()">
+    <div class="container">
+        <h1>Publicações Recentes</h1>
+        <div id="containerPublicacoes"></div>
+
+
     </div>
 
     <script>
-        window.onload = function() {
-            const nome = sessionStorage.getItem('NOME_USUARIO');
-            const email = sessionStorage.getItem('EMAIL_USUARIO');
-            const tipo = sessionStorage.getItem('TIPO_USUARIO');
 
-            if (!nome || !email || !tipo) {
-                window.location.href = '/login.html'; 
-                return;
+        function tempoAtras(dataPublicacao) {
+            const agora = new Date();
+            const publicado = new Date(dataPublicacao);
+            const diffMs = agora - publicado;
+
+            const segundos = Math.floor(diffMs / 1000);
+            const minutos = Math.floor(segundos / 60);
+            const horas = Math.floor(minutos / 60);
+            const dias = Math.floor(horas / 24);
+
+            if (dias > 0) {
+                let plural = '';
+                if (dias > 1) {
+                    plural = 's';
+                } else {
+                    plural = '';
+                }
+                return `Publicado há ${dias} dia${plural}`;
+            } else if (horas > 0) {
+                let plural = '';
+                if (horas > 1) {
+                    plural = 's';
+                } else {
+                    plural = '';
+                }
+                return `Publicado há ${horas} hora${plural}`;
+            } else if (minutos > 0) {
+                let plural = '';
+                if (minutos > 1) {
+                    plural = 's';
+                } else {
+                    plural = '';
+                }
+                return `Publicado há ${minutos} minuto${plural}`;
+            } else {
+                let plural = '';
+                if (segundos > 1) {
+                    plural = 's';
+                } else {
+                    plural = '';
+                }
+                return `Publicado há ${segundos} segundo${plural}`;
             }
 
-            document.getElementById('nomeUsuario').textContent = nome;
-            document.getElementById('emailUsuario').textContent = email;
-            document.getElementById('tipoUsuario').textContent = tipo;
+        }
 
-            if (tipo === 'profissional') {
-                document.getElementById('conteudoProfissional').style.display = 'block';
-            } else if (tipo === 'administrador') {
-                document.getElementById('conteudoAdministrador').style.display = 'block';
-            }
-        };
+        function carregarPublicacoes() {
+            fetch('/publicacoes')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erro ao buscar publicações');
+                    }
+                    return response.json();
+                })
+                .then(publicacoes => {
+                    const container = document.getElementById('containerPublicacoes');
+                    container.innerHTML = '';
+
+                    for (let i = 0; i < publicacoes.length; i++) {
+                        const pub = publicacoes[i];
+
+                        const card = document.createElement('div');
+                        card.classList.add('card-publicacao');
+
+                        const tempo = tempoAtras(pub.dtCriacao);
+
+                        card.innerHTML = `
+                    <img src="../../assets/${pub.imagem}" alt="Imagem da publicação">
+                    <h3>${pub.titulo}</h3>
+                    <p>${pub.conteudo}</p>
+                    
+                    <p><strong>Publicado por:</strong> 
+                    <a href="../../PerfilPublico.html?id=${pub.usuarioId}" style="text-decoration:none; color:inherit;">
+                        ${pub.usuarioNome}
+                    </a>
+                    </p>
+
+                    <a href="../../PerfilPublico.html?id=${pub.usuarioId}">
+                        <img src="../../uploads/${pub.foto}" alt="Foto do usuário" class="foto-usuario">
+                    </a>
+
+                    <p><strong>Serviço:</strong> ${pub.servicoNome}</p>
+                    <p><strong>Valor base:</strong> R$ ${pub.valorBase}</p>
+                    
+                    <p><em>Publicado em: ${new Date(pub.dtCriacao).toLocaleDateString()}</em></p>
+                    <p><em>${tempo}</em></p>
+                `;
+
+                        container.appendChild(card);
+                    }
+                })
+                .catch(erro => {
+                    console.error('Erro ao carregar publicações:', erro);
+                });
+        }
+
     </script>
 </body>
+
 </html>

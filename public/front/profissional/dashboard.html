@@ -1,49 +1,80 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dashboard do Profissional</title>
+  <link rel="stylesheet" href="../../css/dashboard.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <div class="container">
-        <h1>Bem-vindo, <span id="nomeUsuario"></span></h1>
-        <p>Email: <span id="emailUsuario"></span></p>
-        <p>Tipo de Usuário: <span id="tipoUsuario"></span></p>
+  <div class="sidebar">
+    <h2>Menu</h2>
+    <nav>
+      <ul>
+        <li><a href="#">Dashboard</a></li>
+        <li><a href="./publicacoes.html">Minhas Publicações</a></li>
+        <li><a href="/perfil.html">Perfil</a></li>
+        <li><a href="#">Configurações</a></li>
+      </ul>
+    </nav>
+  </div>
 
-        <!-- Exemplo de conteúdo dependendo do tipo de usuário -->
-        <div id="conteudoProfissional" style="display: none;">
-            <p>Conteúdo exclusivo para Profissionais.</p>
-        </div>
-        <div id="conteudoAdministrador" style="display: none;">
-            <p>Conteúdo exclusivo para Administradores.</p>
-        </div>
+  <div class="main-content">
+    <header>
+      <h1>Bem-vindo, Profissional</h1>
+    </header>
 
-</div>
-    </div>
+    <section class="charts">
+      <div class="chart-container">
+        <h3>Publicações no último mês</h3>
+        <canvas id="publicacoesChart"></canvas>
+      </div>
+    </section>
+  </div>
 
-    <script>
-        window.onload = function() {
-            const nome = sessionStorage.getItem('NOME_USUARIO');
-            const email = sessionStorage.getItem('EMAIL_USUARIO');
-            const tipo = sessionStorage.getItem('TIPO_USUARIO');
+  <script>
+    const ctx = document.getElementById('publicacoesChart').getContext('2d');
 
-            if (!nome || !email || !tipo) {
-                window.location.href = '/login.html'; 
-                return;
-            }
+const publicacoesChart = new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: [
+      'Semana 1',
+      'Semana 2',
+      'Semana 3',
+      'Semana 4'
+    ],
+    datasets: [{
+      label: 'Publicações',
+      data: [3, 7, 5, 8],
+      backgroundColor: 'rgba(46, 204, 113, 0.7)',
+      borderColor: 'rgba(46, 204, 113, 1)',
+      borderWidth: 1,
+      borderRadius: 4
+    }]
+  },
+  options: {
+    scales: {
+      y: {
+        beginAtZero: true,
+        stepSize: 1
+      }
+    },
+    plugins: {
+      legend: {
+        display: true,
+        position: 'top',
+        labels: {
+          font: {
+            size: 14
+          }
+        }
+      }
+    }
+  }
+});
 
-            document.getElementById('nomeUsuario').textContent = nome;
-            document.getElementById('emailUsuario').textContent = email;
-            document.getElementById('tipoUsuario').textContent = tipo;
-
-            
-            if (tipo === 'profissional') {
-                document.getElementById('conteudoProfissional').style.display = 'block';
-            } else if (tipo === 'administrador') {
-                document.getElementById('conteudoAdministrador').style.display = 'block';
-            }
-        };
-    </script>
+  </script>
 </body>
 </html>

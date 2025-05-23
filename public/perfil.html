@@ -8,30 +8,32 @@
 </head>
 
 <body>
-    <nav class="sidebar">
-        <h2>InfraPro</h2>
-        <a href="#">Dashboard</a>
-        <a href="#">Perfil</a>
-        <a href="#">Usuários</a>
-        <a href="#">Configurações</a>
-    </nav>
+    <div class="container">
 
-    <main class="content">
+        <nav class="sidebar">
+            <a href="#">
+                <h2>InfraPro</h2>
+            </a>
+            <a href="./front/cliente/home.html">Home</a>
+            <a href="#">Chat</a>
+            <a href="#">Perfil</a>
+            <a href="#">Configurações</a>
+        </nav>
 
-        <div class="profile-card">
+        <div class="content">
             <div>
                 <label for="upload-photo" class="profile-photo" title="Clique para alterar foto" tabindex="0"
                     role="button" aria-label="Alterar foto do perfil">
-                    <img id="photo-preview" src="https://via.placeholder.com/140" alt="Foto do usuário"
+                    <img id="photo-preview" src="/public/assets/imgs/userCli.png" alt="Foto do usuário"
                         style="border-radius: 50%; width: 140px; height: 140px; object-fit: cover;" />
                 </label>
             </div>
+
             <input type="file" id="upload-photo" style="display:none" accept="image/*" />
 
             <div class="profile-name">
                 <span id="name-display">João Silva</span>
                 <input type="text" id="name-input" value="João Silva" />
-                <span class="edit-btn" id="edit-name-btn" title="Editar nome" role="button" tabindex="0">✏️</span>
             </div>
 
             <div class="profile-description">
@@ -47,11 +49,9 @@
                 Seguidores: <strong id="followers-count">120</strong>
             </div>
         </div>
-    </main>
+    </div>
 
     <script>
-
-        // Função para carregar dados do sessionStorage e preencher a página
         function carregarPerfil() {
             const nomeUsuario = sessionStorage.NOME_USUARIO || 'Usuário';
             const enderecosUsuario = JSON.parse(sessionStorage.getItem('ENDERECOS_USUARIO')) || [];
@@ -71,65 +71,39 @@
             }
         }
 
-        // Evento para editar nome
-        const editBtn = document.getElementById('edit-name-btn');
-        const nameDisplay = document.getElementById('name-display');
-        const nameInput = document.getElementById('name-input');
-
-        editBtn.addEventListener('click', () => {
-            nameDisplay.style.display = 'none';
-            nameInput.style.display = 'inline-block';
-            nameInput.focus();
-            editBtn.style.display = 'none';
-        });
-
-        nameInput.addEventListener('blur', () => {
-            const novoNome = nameInput.value.trim();
-            if (novoNome !== '') {
-                nameDisplay.textContent = novoNome;
-                sessionStorage.NOME_USUARIO = novoNome; // atualiza sessionStorage
+        async function carregarFotoPerfil() {
+            const userId = sessionStorage.ID_USUARIO;
+            if (!userId) {
+                photoPreview.src = '/public/assets/imgs/userCli.png';
+                return;
             }
-            nameDisplay.style.display = 'inline-block';
-            nameInput.style.display = 'none';
-            editBtn.style.display = 'inline-block';
-        });
 
-        // Inicializa a página carregando os dados
-        window.addEventListener('DOMContentLoaded', carregarPerfil);
+            try {
+                const response = await fetch(`/usuario/foto/${userId}`);
 
-        const photoPreview = document.getElementById('photo-preview');
-        const uploadInput = document.getElementById('upload-photo');
+                if (!response.ok) throw new Error('Erro ao buscar a foto');
 
-        function carregarFotoPerfil() {
-            const fotoSalva = sessionStorage.FOTO_USUARIO;
-            if (fotoSalva) {
-                photoPreview.src = fotoSalva;
+                const data = await response.json();
+
+                if (data.foto && data.foto.trim() !== '') {
+                    photoPreview.src = `${data.foto}`;
+                } else {
+                    photoPreview.src = '/public/assets/imgs/userCli.png';
+                }
+            } catch (error) {
+                console.error(error);
+                photoPreview.src = '/public/assets/imgs/userCli.png';
             }
         }
 
-        // Ao trocar a foto
-        uploadInput.addEventListener('change', () => {
-            const file = uploadInput.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    photoPreview.src = e.target.result;
-                    sessionStorage.FOTO_USUARIO = e.target.result; // salva a imagem em base64 na sessão
-                };
-                reader.readAsDataURL(file);
-            }
-        });
 
-        window.addEventListener('DOMContentLoaded', () => {
-            carregarFotoPerfil();
-        });
 
         async function atualizarSeguidores() {
             const userId = sessionStorage.ID_USUARIO;
             if (!userId) return;
 
             try {
-                const response = await fetch(`/usuario/seguidores/count/${sessionStorage.ID_USUARIO}`);
+                const response = await fetch(`/usuario/seguidores/count/${userId}`);
                 if (!response.ok) throw new Error('Erro ao buscar seguidores');
 
                 const data = await response.json();
@@ -140,13 +114,47 @@
             }
         }
 
-        window.addEventListener('DOMContentLoaded', () => {
-            atualizarSeguidores();
+        const photoPreview = document.getElementById('photo-preview');
+        const uploadInput = document.getElementById('upload-photo');
+
+        uploadInput.addEventListener('change', async () => {
+            const file = uploadInput.files[0];
+            const userId = sessionStorage.ID_USUARIO;
+
+            if (file && userId) {
+                const formData = new FormData();
+                formData.append('foto', file);
+
+                try {
+                    const response = await fetch(`/usuario/uploadFoto/${userId}`, {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    if (response.ok) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            photoPreview.src = e.target.result;
+                            sessionStorage.FOTO_USUARIO = e.target.result;
+                        };
+                        reader.readAsDataURL(file);
+
+                        alert('Foto atualizada com sucesso!');
+                    } else {
+                        alert('Erro ao atualizar a foto.');
+                    }
+                } catch (error) {
+                    console.error('Erro:', error);
+                    alert('Erro ao enviar a foto.');
+                }
+            }
         });
 
-
-
-
+        window.onload = function () {
+            carregarPerfil();
+            carregarFotoPerfil();
+            atualizarSeguidores();
+        };
     </script>
 </body>
 

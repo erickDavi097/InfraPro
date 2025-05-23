@@ -239,12 +239,20 @@
   const historico = [];
 
   function mostrarEtapa(index) {
-    etapas.forEach(e => e.style.display = 'none');
+    for (let i = 0; i < etapas.length; i++) {
+        etapas[i].style.display = 'none';
+    }
     etapas[index].style.display = 'block';
     historico.push(index);
     const id = etapas[index].id;
-    document.getElementById("tituloEtapa").textContent = id === "inicio" ? "Escolha como deseja continuar" : "Informações básicas";
+
+    if (id === "inicio") {
+        document.getElementById("tituloEtapa").textContent = "Escolha como deseja continuar";
+    } else {
+        document.getElementById("tituloEtapa").textContent = "Informações básicas";
+    }
   }
+
 
   function irPara(index) {
     mostrarEtapa(index);
@@ -272,12 +280,14 @@
     document.getElementById("div_aguardar").style.display = 'none';
   }
 
-  //  CAMPOS QUE N PODE CARACTERE ESPECIAL
-  document.querySelectorAll('.sem-especiais').forEach(input => {
-    input.addEventListener('input', function () {
+  // CAMPOS QUE N PODEM TER CARACTERE ESPECIAL
+  const inputs = document.querySelectorAll('.sem-especiais');
+  for (let i = 0; i < inputs.length; i++) {
+    inputs[i].addEventListener('input', function () {
       this.value = this.value.replace(/[^a-zA-ZÀ-ÿ0-9\s]/g, '');
     });
-  });
+  }
+
 
   function pegarDadosDoFormulario(prefixo) {
     return {
@@ -431,14 +441,18 @@ function cadastrarUsuario(dados) {
     return valor.replace(/\D/g, '');
   }
 
-  document.querySelectorAll('#input_cep_cliente, #input_cep_profissional').forEach(input => {
-    input.addEventListener('input', () => mascaraCep(input));
-  });
+  const ceps = document.querySelectorAll('#input_cep_cliente, #input_cep_profissional');
+  for (let i = 0; i < ceps.length; i++) {
+    ceps[i].addEventListener('input', () => mascaraCep(ceps[i]));
+  }
 
   window.onload = () => {
     mostrarEtapa(0);
-    document.querySelectorAll('#input_telefone_cliente, #input_telefone_profissional').forEach(input => mascaraTelefone(input));
 
+    const telefones = document.querySelectorAll('#input_telefone_cliente, #input_telefone_profissional');
+    for (let i = 0; i < telefones.length; i++) {
+      mascaraTelefone(telefones[i]);
+    }
   }
 </script>
 

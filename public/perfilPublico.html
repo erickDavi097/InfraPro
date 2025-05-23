@@ -23,37 +23,35 @@
     </aside>
 
     <main>
-    <section class="perfil-header">
-      <h1 id="nomeUsuario"></h1>
-      <p id="emailUsuario"></p>
-      <p id="biografiaUsuario"></p>
-      <p id="areaAtuacao"></p>
-      <button id="btnSeguir"></button>
-    </section>
-
-    <section class="cards-container">
-      <div id="portifolio"></div>
-      <div id="publicacoes"></div>
-    </section>
-  </main>
-
-    <!-- Modal Seguidores -->
-<div id="modalSeguidores" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-    background-color: rgba(0,0,0,0.5); z-index: 1000;">
-
-  <div style="background: white; max-width: 400px; margin: 100px auto; padding: 20px; border-radius: 8px; position: relative;">
-    <h2>Seguidores</h2>
-    <ul id="listaSeguidores" style="list-style: none; padding: 0; max-height: 300px; overflow-y: auto;">
-      <!-- Seguidores serão inseridos aqui -->
-    </ul>
-    <button onclick="fecharModal()" style="margin-top: 15px; padding: 8px 12px;">Fechar</button>
-  </div>
-
-</div>
+        <section class="perfil-header">
+            <img id="fotoUsuario" alt="Foto do Usuário"
+                style="width: 150px; height: 150px; object-fit: cover; border-radius: 50%;">
+            <h1 id="nomeUsuario"></h1>
+            <p>Seguidores: <span id="numSeguidores" style="cursor:pointer; color:blue; text-decoration:underline;">0</span></p>
+            <p id="emailUsuario"></p>
+            <p id="biografiaUsuario"></p>
+            <p id="areaAtuacao"></p>
+            <button id="btnSeguir"></button>
+        </section>
 
 
+        <section class="cards-container">
+            <div id="portifolio"></div>
+            <div id="publicacoes"></div>
+        </section>
+    </main>
 
+    <div id="modalSeguidores" style="display:none;">
 
+        <div
+            style="background: white; max-width: 400px; margin: 100px auto; padding: 20px; border-radius: 8px; position: relative;">
+            <h2>Seguidores</h2>
+            <ul id="listaSeguidores">
+            </ul>
+            <button onclick="fecharModal()" style="margin-top: 15px; padding: 8px 12px;">Fechar</button>
+        </div>
+
+    </div>
     <script>
 
         const urlParams = new URLSearchParams(window.location.search);
@@ -68,6 +66,7 @@
                 })
                 .then(data => {
                     const usuario = data.usuario;
+                    console.log("Foto do usuário:", usuario.foto);
                     const endereco = data.endereco;
                     const portifolio = data.portifolio;
                     const publicacoes = data.publicacoes;
@@ -108,16 +107,25 @@
                 return;
             }
 
-            div.innerHTML = publicacoes.map(pub => `
-        <div class="card">
-            <h3>${pub.titulo}</h3>
-            <p>${pub.conteudo}</p>
-            <small>Publicado em: ${new Date(pub.data).toLocaleDateString()}</small>
-        </div>
-    `).join("");
+            div.innerHTML = publicacoes.map(pub => {
+                const dataPub = new Date(pub.dtCriacao);
+                let dataFormatada;
+
+                if (isNaN(dataPub)) {
+                    dataFormatada = "Data inválida";
+                } else {
+                    dataFormatada = dataPub.toLocaleDateString();
+                }
+
+                return `
+                    <div class="card">
+                    <h3>${pub.titulo}</h3>
+                    <p>${pub.conteudo}</p>
+                    <small>Publicado em: ${dataFormatada}</small>
+                    </div>
+                `;
+            }).join("");
         }
-
-
 
         function atualizarBotaoSeguir() {
             if (idLogado === idPerfil) {
@@ -149,7 +157,8 @@
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ fkUsuario: idPerfil, fkSeguidor: idLogado }),
-            }).then(() => atualizarBotaoSeguir());
+            })
+                .then(() => atualizarBotaoSeguir());
         }
 
         function desseguir() {
@@ -157,7 +166,8 @@
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ fkUsuario: idPerfil, fkSeguidor: idLogado }),
-            }).then(() => atualizarBotaoSeguir());
+            })
+                .then(() => atualizarBotaoSeguir());
         }
 
         function carregarSeguidores() {
@@ -170,16 +180,19 @@
                     const lista = document.getElementById("listaSeguidores");
                     lista.innerHTML = "";
                     if (data && data.length > 0) {
-                        data.forEach((seguidor) => {
+                        for (let i = 0; i < data.length; i++) {
+                            const seguidor = data[i];
                             const li = document.createElement("li");
 
                             const link = document.createElement("a");
                             link.textContent = seguidor.nome;
+
                             if (seguidor.id === Number(idLogado)) {
                                 link.href = "/perfil.html";
                             } else {
                                 link.href = `/perfilpublico.html?id=${seguidor.id}`;
                             }
+
                             link.style.cursor = "pointer";
                             link.style.color = "blue";
                             link.style.textDecoration = "underline";
@@ -221,17 +234,18 @@
                                     });
                                 li.appendChild(btn);
                             }
+
                             lista.appendChild(li);
-                        });
+                        }
                     } else {
                         lista.innerHTML = "<li>Nenhum seguidor encontrado.</li>";
                     }
                 })
                 .catch(() => {
-                    document.getElementById("listaSeguidores").innerHTML =
-                        "<li>Erro ao carregar seguidores.</li>";
+                    document.getElementById("listaSeguidores").innerHTML = "<li>Erro ao carregar seguidores.</li>";
                 });
         }
+
         function fecharModal() {
             document.getElementById("modalSeguidores").style.display = "none";
         }
@@ -239,19 +253,20 @@
 
 
         function carregarNumeroSeguidores() {
-            fetch(`/usuario/seguidores/count/${idPerfil}`)
-                .then(res => res.json())
-                .then(data => {
-                    const spanNum = document.getElementById("numSeguidores");
-                    if (spanNum) {
-                        spanNum.textContent = data.count || 0;
-                        spanNum.onclick = () => {
-                            carregarSeguidores();
-                            document.getElementById("modalSeguidores").style.display = "block";
-                        };
-                    }
-                })
-        }
+    fetch(`/usuario/seguidores/count/${idPerfil}`)
+        .then(res => res.json())
+        .then(data => {
+            const spanNum = document.getElementById("numSeguidores");
+            if (spanNum) {
+                spanNum.textContent = data.count || 0;
+                spanNum.onclick = () => {
+                    carregarSeguidores();
+                    document.getElementById("modalSeguidores").style.display = "block";
+                };
+            }
+        });
+}
+
 
         function fecharModal() {
             document.getElementById("modalSeguidores").style.display = "none";
@@ -261,7 +276,6 @@
             carregarNumeroSeguidores();
             carregarPerfil();
             atualizarBotaoSeguir();
-            carregarSeguidores();
         }
     </script>
 

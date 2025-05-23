@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Nova Publicação</title>
+    <link rel="stylesheet" href="../../css/publicacao.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Nova Publicação</h1>
+        <form id="formPublicacao" enctype="multipart/form-data">
+            <label for="titulo">Título:</label>
+            <input type="text" id="titulo" name="titulo" required>
+
+            <label for="conteudo">Descrição:</label>
+            <textarea id="conteudo" name="conteudo" rows="5" required></textarea>
+
+            <label for="imagem">Imagem:</label>
+            <input type="file" id="imagem" name="foto" accept="image/*" required>
+
+            <button type="submit">Publicar</button>
+        </form>
+    </div>
+
+    <script>
+        const form = document.getElementById('formPublicacao');
+
+        form.addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+            const idUsuario = sessionStorage.ID_USUARIO;
+
+            formData.append('fkUsuario', idUsuario);
+
+            try {
+                const response = await fetch('/publicacoes', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    alert('Publicação feita com sucesso!');
+                    form.reset();
+                } else {
+                    alert('Erro ao publicar.');
+                }
+            } catch (error) {
+                alert('Erro de conexão.');
+                console.error(error);
+            }
+        });
+    </script>
+</body>
+
+</html>

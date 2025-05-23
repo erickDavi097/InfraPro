@@ -12,8 +12,7 @@ function seguir(fkUsuario, fkSeguidor) {
 
 function deixarDeSeguir(fkUsuario, fkSeguidor) {
     const instrucaoSql = `
-        UPDATE seguidores
-        SET statusSeguidores = 'inativo'
+        UPDATE seguidores SET statusSeguidores = 'inativo'
         WHERE fkUsuario = ${fkUsuario} AND fkSeguidor = ${fkSeguidor};
     `;
     console.log("Executando SQL:", instrucaoSql);
@@ -22,14 +21,12 @@ function deixarDeSeguir(fkUsuario, fkSeguidor) {
 
 function verificarSeguindo(fkUsuario, fkSeguidor) {
     const instrucaoSql = `
-        SELECT statusSeguidores
-        FROM seguidores
+        SELECT statusSeguidores FROM seguidores
         WHERE fkUsuario = ${fkUsuario} AND fkSeguidor = ${fkSeguidor};
     `;
     console.log("Executando SQL:", instrucaoSql);
     return database.executar(instrucaoSql);
 }
-
 
 module.exports = {
     seguir,

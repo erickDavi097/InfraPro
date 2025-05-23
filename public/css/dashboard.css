@@ -1,8 +1,12 @@
+@font-face {
+  font-family: interRegular, sans-serif;
+  src: url(../fonts/Inter-Regular.otf);
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: Arial, sans-serif;
 }
 
 body, html {

@@ -1,5 +1,9 @@
+@font-face {
+  font-family: interRegular, sans-serif;
+  src: url(../fonts/Inter-Regular.otf);
+}
+
 body {
-  font-family: Arial, sans-serif;
   background: #f4f4f4;
   padding: 20px;
 }

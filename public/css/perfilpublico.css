@@ -1,10 +1,12 @@
-/* perfilpublico.css */
+@font-face {
+  font-family: interRegular, sans-serif;
+  src: url(../fonts/Inter-Regular.otf);
+}
 
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 body {
@@ -16,7 +18,6 @@ body {
   font-size: 16px;
 }
 
-/* Sidebar */
 .sidebar {
   background: linear-gradient(180deg, #ff6f00, #ff8f00);
   color: white;
@@ -58,7 +59,6 @@ body {
   color: #fff3e0;
 }
 
-/* Conteúdo principal */
 main {
   margin-left: 220px;
   padding: 30px 40px;
@@ -68,7 +68,6 @@ main {
   gap: 30px;
 }
 
-/* Área de perfil */
 .perfil-header {
   background: white;
   border-radius: 12px;
@@ -100,7 +99,6 @@ main {
   margin-top: 8px;
 }
 
-/* Botão Seguir */
 #btnSeguir {
   background-color: #ff6f00;
   border: none;
@@ -120,7 +118,6 @@ main {
   background-color: #ff8f00;
 }
 
-/* Portfólio e Publicações container */
 .cards-container {
   display: flex;
   flex-direction: column;
@@ -128,7 +125,6 @@ main {
   width: 100%;
 }
 
-/* Cards gerais */
 .card {
   background: white;
   border-radius: 12px;
@@ -158,7 +154,6 @@ main {
   font-size: 0.85rem;
 }
 
-/* Portifólio item */
 #portifolio > div {
   background-color: #fff3e0;
   color: #ff6f00;
@@ -169,7 +164,6 @@ main {
   box-shadow: 0 2px 6px rgb(255 111 0 / 0.2);
 }
 
-/* Modal Seguidores estilizado */
 #modalSeguidores {
   display: none;
   position: fixed;
@@ -263,7 +257,6 @@ main {
   overflow-y: auto;
 }
 
-/* Responsividade simples */
 @media (max-width: 900px) {
   body {
     flex-direction: column;

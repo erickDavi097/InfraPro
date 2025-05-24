@@ -4,39 +4,306 @@
 }
 
 body {
-  background-color: #f7f7f7;
+  transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+.container,
+.content,
+nav,
+.modal {
+  transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background-color: #f4f4f4;
+  color: #333;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 220px;
+  background-color: #2c3e50;
   padding: 20px;
+  display: flex;
+  flex-direction: column;
 }
 
-main {
-  max-width: 900px;
-  margin: auto;
-}
-
-h1 {
-  text-align: center;
+.sidebar h2 {
+  color: #fff;
   margin-bottom: 30px;
 }
 
-.publicacao {
-  background-color: white;
-  padding: 15px;
+.sidebar a {
+  color: #ecf0f1;
+  text-decoration: none;
+  margin: 10px 0;
+  transition: background 0.3s, color 0.3s;
+}
+
+.sidebar a:hover {
+  background-color: #34495e;
+  padding: 8px;
+  border-radius: 4px;
+}
+
+.content {
+  flex: 1;
+  padding: 40px;
+  background-color: #fff;
+}
+
+.profile-photo {
+  display: inline-block;
+  cursor: pointer;
   margin-bottom: 20px;
+}
+
+.profile-name {
+  margin-top: 10px;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.profile-name input {
+  display: block;
+  margin-top: 5px;
+  padding: 5px;
+  font-size: 16px;
+}
+
+.profile-description {
+  margin-top: 10px;
+  font-size: 16px;
+  color: #555;
+}
+
+.profile-location {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #777;
+}
+
+.followers-info {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #555;
+}
+
+.divisao {
+  margin-top: 40px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.divisao h1 {
+  font-size: 24px;
+}
+
+.divisao button {
+  background-color: #2980b9;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  transition: background 0.3s;
+}
+
+.divisao button:hover {
+  background-color: #3498db;
+}
+
+/* Publicações claro */
+#publicacoes-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.publicacao {
+  background-color: #ecf0f1;
+  padding: 15px;
   border-radius: 8px;
-  box-shadow: 0px 0px 5px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.publicacao:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .publicacao img {
-  max-width: 100%;
-  border-radius: 5px;
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 6px;
+  margin-bottom: 10px;
 }
 
 .publicacao h2 {
-  margin-top: 10px;
-  font-size: 20px;
+  font-size: 18px;
+  margin-bottom: 8px;
 }
 
 .publicacao p {
-  margin-top: 5px;
+  font-size: 14px;
+  color: #555;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background-color: #fff;
+  border-radius: 10px;
+  max-width: 600px;
+  width: 90%;
+  padding: 20px 30px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  position: relative;
+  animation: fadeInScale 0.3s ease forwards;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.close-modal {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-size: 28px;
+  font-weight: bold;
   color: #333;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.close-modal:hover {
+  color: #d33;
+}
+
+#modal-imagem {
+  width: 100%;
+  max-height: 300px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+#modal-titulo {
+  margin: 0 0 12px 0;
+  font-size: 1.8em;
+  color: #222;
+}
+
+#modal-conteudo {
+  font-size: 1.1em;
+  color: #444;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+
+/* -------- Modo escuro --------- */
+
+body.dark-mode {
+  background-color: #121212;
+  color: #ddd;
+}
+
+body.dark-mode .sidebar {
+  background-color: #1e1e1e;
+}
+
+body.dark-mode .sidebar h2 {
+  color: #ccc;
+}
+
+body.dark-mode .sidebar a {
+  color: #bbb;
+}
+
+body.dark-mode .sidebar a:hover {
+  background-color: #333;
+}
+
+body.dark-mode .content {
+  background-color: #222;
+  color: #ddd;
+}
+
+body.dark-mode .profile-description,
+body.dark-mode .followers-info,
+body.dark-mode .profile-location,
+body.dark-mode .publicacao p {
+  color: #aaa;
+}
+
+body.dark-mode .publicacao {
+  background-color: #2a2a2a;
+}
+
+body.dark-mode .divisao button {
+  background-color: #444;
+  color: #ddd;
+}
+
+body.dark-mode .divisao button:hover {
+  background-color: #666;
+}
+
+body.dark-mode .modal-content {
+  background-color: #2a2a2a;
+  color: #ddd;
+}
+
+body.dark-mode #modal-titulo {
+  color: #eee;
+}
+
+body.dark-mode #modal-conteudo {
+  color: #ccc;
+}
+
+body.dark-mode .close-modal {
+  color: #eee;
+}
+
+body.dark-mode .close-modal:hover {
+  color: #f55;
 }

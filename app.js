@@ -19,6 +19,9 @@ var enderecoRouter = require("./src/routes/enderecos");
 var usuarioRouter = require("./src/routes/usuarios");
 var seguidoresRouter = require("./src/routes/seguidores");
 var publicacaoRouter = require("./src/routes/publicacao");
+var curtidaRouter = require('./src/routes/curtida');
+var comentarioRouter = require('./src/routes/comentario');
+var contatoRouter = require("./src/routes/contato");
 
 
 app.use(express.json());
@@ -34,6 +37,9 @@ app.use("/endereco", enderecoRouter);
 app.use("/usuario", usuarioRouter);
 app.use("/seguidores", seguidoresRouter);
 app.use("/publicacoes", publicacaoRouter);
+app.use("/curtida", curtidaRouter);
+app.use("/comentario", comentarioRouter);
+app.use("/contato", contatoRouter);
 
 
 app.listen(PORTA_APP, function () {

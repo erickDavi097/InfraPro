@@ -2,21 +2,110 @@
 <html lang="pt-BR">
 
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>Publicações</title>
-    <link rel="stylesheet" href="../../css/publicacao.css">
+    <link rel="stylesheet" href="../../css/publicacao.css" />
 </head>
 
 <body onload="carregarPublicacoes()">
     <div class="container">
+        <button id="toggleDarkMode">Ativar Dark Mode</button>
         <h1>Publicações Recentes</h1>
         <div id="containerPublicacoes"></div>
-
-
     </div>
 
-    <script>
+    <div id="modalComentarios" class="modal" style="display: none;">
+        <div class="modal-conteudo">
+            <span id="fecharModal" class="fechar">&times;</span>
+            <h2>Comentários</h2>
+            <ul id="listaComentariosModal"></ul>
+            <div id="inputComentarioModal">
+                <input type="text" id="inputTextoComentarioModal" placeholder="Escreva um comentário..." />
+                <button id="btnEnviarComentarioModal">Enviar</button>
+            </div>
+        </div>
+    </div>
+<div id="modalCurtidas" class="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center;">
+    <div class="modal-conteudo" style="background:#fff; padding:20px; border-radius:8px; max-width:400px; max-height:80vh; overflow-y:auto;">
+        <span id="fecharModalCurtidas" class="fechar" style="cursor:pointer; float:right; font-size:20px;">&times;</span>
+        <h2>Curtidas</h2>
+        <ul id="listaCurtidas"></ul>
+    </div>
+</div>
 
+    <script>
+var modalCurtidas = document.getElementById('modalCurtidas');
+var fecharModalCurtidasBtn = document.getElementById('fecharModalCurtidas');
+var listaCurtidas = document.getElementById('listaCurtidas');
+
+fecharModalCurtidasBtn.addEventListener('click', function () {
+    modalCurtidas.style.display = 'none';
+    listaCurtidas.innerHTML = '';
+});
+
+window.addEventListener('click', function (event) {
+    if (event.target === modalCurtidas) {
+        modalCurtidas.style.display = 'none';
+        listaCurtidas.innerHTML = '';
+    }
+});
+
+function abrirModalCurtidas(idPublicacao) {
+    listaCurtidas.innerHTML = `<li>Carregando curtidas...</li>`;
+    modalCurtidas.style.display = 'flex';
+
+    fetch('/curtida/lista/' + idPublicacao)
+        .then(res => res.json())
+        .then(data => {
+            if (!data || data.length === 0) {
+                listaCurtidas.innerHTML = `<li>Nenhuma curtida ainda.</li>`;
+                return;
+            }
+
+            listaCurtidas.innerHTML = '';
+            data.forEach(user => {
+                const li = document.createElement('li');
+                li.textContent = user.nomeUsuario; // ajuste conforme resposta da API
+                listaCurtidas.appendChild(li);
+            });
+        })
+        .catch(err => {
+            listaCurtidas.innerHTML = `<li>Erro ao carregar curtidas.</li>`;
+            console.error(err);
+        });
+}
+
+        
+const btn = document.getElementById('toggleDarkMode');
+
+function setDarkMode(enabled) {
+  if (enabled) {
+    document.body.classList.add('dark-mode');
+    btn.textContent = 'Desativar Dark Mode';
+    localStorage.setItem('darkMode', 'enabled');
+  } else {
+    document.body.classList.remove('dark-mode');
+    btn.textContent = 'Ativar Dark Mode';
+    localStorage.setItem('darkMode', 'disabled');
+  }
+}
+
+// Checar preferência salva
+const savedMode = localStorage.getItem('darkMode');
+if (savedMode === 'enabled') {
+  setDarkMode(true);
+} else {
+  setDarkMode(false);
+}
+
+btn.addEventListener('click', () => {
+  const isDark = document.body.classList.contains('dark-mode');
+  setDarkMode(!isDark);
+});
+
+
+    </script>
+    <script>
         function tempoAtras(dataPublicacao) {
             const agora = new Date();
             const publicado = new Date(dataPublicacao);
@@ -28,91 +117,276 @@
             const dias = Math.floor(horas / 24);
 
             if (dias > 0) {
-                let plural = '';
                 if (dias > 1) {
-                    plural = 's';
+                    return `Publicado há ${dias} dias`;
                 } else {
-                    plural = '';
+                    return `Publicado há ${dias} dia`;
                 }
-                return `Publicado há ${dias} dia${plural}`;
-            } else if (horas > 0) {
-                let plural = '';
-                if (horas > 1) {
-                    plural = 's';
-                } else {
-                    plural = '';
-                }
-                return `Publicado há ${horas} hora${plural}`;
-            } else if (minutos > 0) {
-                let plural = '';
-                if (minutos > 1) {
-                    plural = 's';
-                } else {
-                    plural = '';
-                }
-                return `Publicado há ${minutos} minuto${plural}`;
             } else {
-                let plural = '';
-                if (segundos > 1) {
-                    plural = 's';
+                if (horas > 0) {
+                    if (horas > 1) {
+                        return `Publicado há ${horas} horas`;
+                    } else {
+                        return `Publicado há ${horas} hora`;
+                    }
                 } else {
-                    plural = '';
+                    if (minutos > 0) {
+                        if (minutos > 1) {
+                            return `Publicado há ${minutos} minutos`;
+                        } else {
+                            return `Publicado há ${minutos} minuto`;
+                        }
+                    } else {
+                        if (segundos > 1) {
+                            return `Publicado há ${segundos} segundos`;
+                        } else {
+                            return `Publicado há ${segundos} segundo`;
+                        }
+                    }
                 }
-                return `Publicado há ${segundos} segundo${plural}`;
             }
-
         }
 
         function carregarPublicacoes() {
             fetch('/publicacoes')
-                .then(response => {
+                .then(function (response) {
                     if (!response.ok) {
-                        throw new Error('Erro ao buscar publicações');
+                        console.error('Erro ao buscar publicações');
+                        return;
                     }
                     return response.json();
                 })
-                .then(publicacoes => {
-                    const container = document.getElementById('containerPublicacoes');
+                .then(function (publicacoes) {
+                    if (!publicacoes) return;
+                    var container = document.getElementById('containerPublicacoes');
                     container.innerHTML = '';
 
-                    for (let i = 0; i < publicacoes.length; i++) {
-                        const pub = publicacoes[i];
+                    for (var i = 0; i < publicacoes.length; i++) {
+                        var pub = publicacoes[i];
 
-                        const card = document.createElement('div');
+                        var card = document.createElement('div');
                         card.classList.add('card-publicacao');
 
-                        const tempo = tempoAtras(pub.dtCriacao);
+                        var tempo = tempoAtras(pub.dtCriacao);
 
                         card.innerHTML = `
-                    <img src="../../assets/${pub.imagem}" alt="Imagem da publicação">
-                    <h3>${pub.titulo}</h3>
-                    <p>${pub.conteudo}</p>
-                    
-                    <p><strong>Publicado por:</strong> 
-                    <a href="../../PerfilPublico.html?id=${pub.usuarioId}" style="text-decoration:none; color:inherit;">
-                        ${pub.usuarioNome}
-                    </a>
-                    </p>
+                            <img src="../../assets/${pub.imagem}" alt="Imagem da publicação">
+                            <h3>${pub.titulo}</h3>
+                            <p>${pub.conteudo}</p>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <a href="../../PerfilPublico.html?id=${pub.usuarioId}" style="text-decoration:none; color:inherit;">
+                                    <p style="margin: 0;">${pub.usuarioNome}</p>
+                                </a>
+                                <a href="../../PerfilPublico.html?id=${pub.usuarioId}">
+                                    <img src="../../uploads/${pub.foto}" alt="Foto do usuário" class="foto-usuario" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+                                </a>
+                            </div>
+                            <p><strong>Serviço:</strong> ${pub.servicoNome}</p>
+                            <p><strong>Valor base:</strong> R$ ${pub.valorBase}</p>
+                            <p><em>Publicado em: ${new Date(pub.dtCriacao).toLocaleDateString()}</em></p>
+                            <p><em>${tempo}</em></p>
+                            <div class="interacoes">
+                                <span class="icone-curtir" style="cursor:default;">❤️</span> 
+                                <span class="contador-curtidas" style="cursor:pointer;"></span> 
+                                <span class="icone-comentario" style="cursor:pointer;">💬</span>
+                            </div>
 
-                    <a href="../../PerfilPublico.html?id=${pub.usuarioId}">
-                        <img src="../../uploads/${pub.foto}" alt="Foto do usuário" class="foto-usuario">
-                    </a>
+                            <div class="comentarios" style="display:none;">
+                                <ul class="lista-comentarios"></ul>
+                                <div class="input-area">
+                                    <input type="text" class="input-comentario" placeholder="Escreva um comentário...">
+                                    <span class="icone-enviar" style="cursor:pointer;">➡️</span>
+                                </div>
+                            </div>
+                        `;
 
-                    <p><strong>Serviço:</strong> ${pub.servicoNome}</p>
-                    <p><strong>Valor base:</strong> R$ ${pub.valorBase}</p>
-                    
-                    <p><em>Publicado em: ${new Date(pub.dtCriacao).toLocaleDateString()}</em></p>
-                    <p><em>${tempo}</em></p>
-                `;
 
                         container.appendChild(card);
+
+                        (function (card, pub) {
+                            var idPublicacao = pub.id;
+                            var fkUsuario = sessionStorage.getItem('usuarioId');
+                            if (!fkUsuario) fkUsuario = 1;
+
+                            var iconeCurtir = card.querySelector('.icone-curtir');
+                            var contadorCurtidas = card.querySelector('.contador-curtidas');
+
+                            function atualizarCurtidas() {
+                                fetch('/curtida/publicacao/' + idPublicacao)
+                                    .then(function (res) { return res.json(); })
+                                    .then(function (data) {
+                                        contadorCurtidas.textContent = data.totalCurtidas;
+                                    })
+                                    .catch(function (err) {
+                                        console.error('Erro ao atualizar curtidas:', err);
+                                    });
+                            }
+
+                            iconeCurtir.addEventListener('click', function () {
+                                fetch('/curtida/verificar/' + fkUsuario + '/' + idPublicacao)
+                                    .then(function (res) { return res.json(); })
+                                    .then(function (jacurtiu) {
+                                        var url;
+                                        var method;
+                                        if (jacurtiu) {
+                                            url = '/curtida/descurtir';
+                                            method = 'DELETE';
+                                        } else {
+                                            url = '/curtida/curtir';
+                                            method = 'POST';
+                                        }
+                                        fetch(url, {
+                                            method: method,
+                                            headers: { 'Content-Type': 'application/json' },
+                                            body: JSON.stringify({ fkUsuario: fkUsuario, fkPublicacao: idPublicacao })
+                                        })
+                                            .then(function () {
+                                                atualizarCurtidas();
+                                            })
+                                            .catch(function (err) {
+                                                console.error('Erro ao (des)curtir:', err);
+                                            });
+                                    })
+                                    .catch(function (err) {
+                                        console.error('Erro ao verificar curtida:', err);
+                                    });
+                            });
+
+                            atualizarCurtidas();
+
+                            var iconeComentario = card.querySelector('.icone-comentario');
+
+                            iconeComentario.addEventListener('click', function () {
+                                abrirModalComentarios(idPublicacao);
+                            });
+                        })(card, pub);
                     }
                 })
-                .catch(erro => {
-                    console.error('Erro ao carregar publicações:', erro);
+                .catch(function (err) {
+                    console.error('Erro ao carregar publicações:', err);
                 });
         }
 
+        var modal = document.getElementById('modalComentarios');
+        var fecharModalBtn = document.getElementById('fecharModal');
+        var listaComentariosModal = document.getElementById('listaComentariosModal');
+        var inputTextoComentarioModal = document.getElementById('inputTextoComentarioModal');
+        var btnEnviarComentarioModal = document.getElementById('btnEnviarComentarioModal');
+
+        var publicacaoAtual = null;
+
+        fecharModalBtn.addEventListener('click', function () {
+            modal.style.display = 'none';
+            limparModal();
+        });
+
+        window.addEventListener('click', function (event) {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+                limparModal();
+            }
+        });
+
+        function abrirModalComentarios(idPublicacao) {
+            publicacaoAtual = idPublicacao;
+            listaComentariosModal.innerHTML = `<li>Carregando comentários...</li>`;
+            modal.style.display = 'flex';
+
+            carregarComentariosModal();
+        }
+
+        function carregarComentariosModal() {
+            fetch('/comentario/detalhes/' + publicacaoAtual)
+                .then(function (res) { return res.json(); })
+                .then(function (comentarios) {
+                    if (!comentarios || comentarios.length === 0) {
+                        listaComentariosModal.innerHTML = `<li>Nenhum comentário ainda.</li>`;
+                        return;
+                    }
+
+                    listaComentariosModal.innerHTML = '';
+
+                    for (var i = 0; i < comentarios.length; i++) {
+                        var com = comentarios[i];
+                        var li = document.createElement('li');
+
+                        var dataFormatada = new Date(com.dataHora).toLocaleString('pt-BR', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
+
+                        li.innerHTML = `
+                            <img src="../../uploads/${com.usuarioFoto}" alt="${com.usuarioNome}">
+                            <div><strong>${com.usuarioNome}</strong><br>
+                            <small>${dataFormatada}</small><br>
+                            ${com.texto}</div>
+                        `;
+
+                        listaComentariosModal.appendChild(li);
+                    }
+                })
+                .catch(function (err) {
+                    listaComentariosModal.innerHTML = `<li>Erro ao carregar comentários.</li>`;
+                    console.error(err);
+                });
+        }
+
+        function limparModal() {
+            inputTextoComentarioModal.value = '';
+            publicacaoAtual = null;
+        }
+
+        btnEnviarComentarioModal.addEventListener('click', function () {
+            var texto = inputTextoComentarioModal.value.trim();
+            var fkUsuario = sessionStorage.ID_USUARIO;
+            if (!fkUsuario) {
+                alert('Você precisa estar logado para comentar.');
+                return;
+            }
+
+            if (!publicacaoAtual) {
+                alert('Nenhuma publicação selecionada.');
+                return;
+            }
+
+            if (texto === '') {
+                alert('Digite um comentário antes de enviar.');
+                return;
+            }
+
+            fetch('/comentario', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    fkUsuario: fkUsuario,
+                    fkPublicacao: publicacaoAtual,
+                    texto: texto
+                })
+            })
+                .then(function (res) { return res.text(); })
+                .then(function (text) {
+                    var jsonValido = false;
+                    try {
+                        JSON.parse(text);
+                        jsonValido = true;
+                    } catch (e) {
+                        jsonValido = false;
+                    }
+
+                    if (jsonValido) {
+                        carregarComentariosModal();
+                        inputTextoComentarioModal.value = '';
+                    } else {
+                        alert('Resposta inválida do servidor');
+                    }
+                })
+                .catch(function (err) {
+                    console.error('Erro ao enviar comentário:', err);
+                });
+        });
     </script>
 </body>
 

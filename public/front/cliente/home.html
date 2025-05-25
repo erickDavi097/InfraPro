@@ -5,14 +5,6 @@
     <meta charset="UTF-8" />
     <title>Publicações</title>
     <link rel="stylesheet" href="../../css/publicacao.css" />
-    <style>
-        .ver-mais {
-            color: blue;
-            cursor: pointer;
-            display: inline-block;
-            margin-top: 5px;
-        }
-    </style>
 </head>
 
 <body onload="carregarPublicacoes()">
@@ -146,7 +138,7 @@
                                         <p style="margin: 0; font-weight: bold;">${pub.usuarioNome}</p>
                                     </a>
                                 </div>
-                                <button class="btn-seguir">Seguir</button>
+                                <button class="btn-seguir" data-id="${pub.usuarioId}">Seguir</button>
                             </div>
 
                             <div>
@@ -245,33 +237,6 @@
                             abrirModalComentarios(idPublicacao);
                         });
 
-                        const btnSeguir = card.querySelector('.btn-seguir');
-                        btnSeguir.addEventListener('click', function () {
-                            alert('Você clicou em seguir o usuário ' + pub.usuarioNome);
-                        });
-                    }
-                });
-        }
-
-        function abrirModalComentarios(idPublicacao) {
-            const modal = document.getElementById('modalComentarios');
-            const listaComentariosModal = document.getElementById('listaComentariosModal');
-            modal.style.display = 'flex';
-            listaComentariosModal.innerHTML = '<li>Carregando comentários...</li>';
-
-            fetch('/comentario/detalhes/' + idPublicacao)
-                .then(function (res) { return res.json(); })
-                .then(function (comentarios) {
-                    listaComentariosModal.innerHTML = '';
-                    if (comentarios.length === 0) {
-                        listaComentariosModal.innerHTML = '<li>Nenhum comentário ainda.</li>';
-                        return;
-                    }
-                    for (let i = 0; i < comentarios.length; i++) {
-                        const coment = comentarios[i];
-                        const li = document.createElement('li');
-                        li.textContent = coment.usuarioNome + ': ' + coment.conteudo;
-                        listaComentariosModal.appendChild(li);
                     }
                 });
         }
@@ -309,6 +274,203 @@
                     }
                 });
         }
+        var modal = document.getElementById('modalComentarios');
+        var fecharModalBtn = document.getElementById('fecharModal');
+        var listaComentariosModal = document.getElementById('listaComentariosModal');
+        var inputTextoComentarioModal = document.getElementById('inputTextoComentarioModal');
+        var btnEnviarComentarioModal = document.getElementById('btnEnviarComentarioModal');
+
+        var publicacaoAtual = null;
+
+        fecharModalBtn.addEventListener('click', function () {
+            modal.style.display = 'none';
+            limparModal();
+        });
+
+        window.addEventListener('click', function (event) {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+                limparModal();
+            }
+        });
+
+        function abrirModalComentarios(idPublicacao) {
+            publicacaoAtual = idPublicacao;
+            listaComentariosModal.innerHTML = `<li>Carregando comentários...</li>`;
+            modal.style.display = 'flex';
+
+            carregarComentariosModal();
+        }
+
+        function carregarComentariosModal() {
+            fetch('/comentario/detalhes/' + publicacaoAtual)
+                .then(function (res) { return res.json(); })
+                .then(function (comentarios) {
+                    if (!comentarios || comentarios.length === 0) {
+                        listaComentariosModal.innerHTML = `<li>Nenhum comentário ainda.</li>`;
+                        return;
+                    }
+
+                    listaComentariosModal.innerHTML = '';
+
+                    for (var i = 0; i < comentarios.length; i++) {
+                        var com = comentarios[i];
+                        var li = document.createElement('li');
+
+                        var dataFormatada = new Date(com.dataHora).toLocaleString('pt-BR', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
+
+                        li.innerHTML = `
+                            <img src="../../uploads/${com.usuarioFoto}" alt="${com.usuarioNome}">
+                            <div><strong>${com.usuarioNome}</strong><br>
+                            <small>${dataFormatada}</small><br>
+                            ${com.texto}</div>
+                        `;
+
+                        listaComentariosModal.appendChild(li);
+                    }
+                })
+                .catch(function (err) {
+                    listaComentariosModal.innerHTML = `<li>Erro ao carregar comentários.</li>`;
+                    console.error(err);
+                });
+        }
+
+        function limparModal() {
+            inputTextoComentarioModal.value = '';
+            publicacaoAtual = null;
+        }
+
+        btnEnviarComentarioModal.addEventListener('click', function () {
+            var texto = inputTextoComentarioModal.value.trim();
+            var fkUsuario = sessionStorage.ID_USUARIO;
+            if (!fkUsuario) {
+                alert('Você precisa estar logado para comentar.');
+                return;
+            }
+            if (texto === '') {
+                alert('Digite um comentário antes de enviar.');
+                return;
+            }
+
+            fetch('/comentario', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    fkUsuario: fkUsuario,
+                    fkPublicacao: publicacaoAtual,
+                    texto: texto
+                })
+            })
+                .then(function (res) { return res.text(); })
+                .then(function (text) {
+                    var jsonValido = false;
+                    try {
+                        JSON.parse(text);
+                        jsonValido = true;
+                    } catch (e) {
+                        jsonValido = false;
+                    }
+
+                    if (jsonValido) {
+                        carregarComentariosModal();
+                        inputTextoComentarioModal.value = '';
+                    } else {
+                        alert('Resposta inválida do servidor');
+                    }
+                })
+                .catch(function (err) {
+                    console.error('Erro ao enviar comentário:', err);
+                });
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const idLogado = sessionStorage.ID_USUARIO;
+
+            document.addEventListener('click', function (event) {
+                if (event.target.classList.contains('btn-seguir')) {
+                    const botao = event.target;
+                    const idPerfil = botao.getAttribute('data-id');
+                    console.log('Clique no botão:', botao.innerText);
+
+                    if (botao.innerText === 'Seguir') {
+                        console.log('Vai seguir o usuário ' + idPerfil);
+                        seguirUsuario(idPerfil, botao);
+                    } else if (botao.innerText === 'Seguindo') {
+                        console.log('Vai deixar de seguir o usuário ' + idPerfil);
+                        deixarDeSeguirUsuario(idPerfil, botao);
+                    }
+                }
+            });
+
+            function verificarStatus(idPerfil, botao) {
+                const idLogado = sessionStorage.ID_USUARIO;
+                console.log(`Verificando status: idPerfil=${idPerfil}, idLogado=${idLogado}`);
+
+                fetch(`/seguidores/verificar/${idPerfil}/${idLogado}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        console.log('Resposta da verificação:', data);
+                        if (data.ativo) {
+                            botao.innerText = 'Seguindo';
+                        } else {
+                            botao.innerText = 'Seguir';
+                        }
+                    })
+                    .catch(err => console.error('Erro ao verificar status:', err));
+            }
+
+            function seguirUsuario(idPerfil, botao) {
+                const idLogado = sessionStorage.ID_USUARIO;
+
+                botao.disabled = true;
+                botao.innerText = '...';
+
+                fetch('/seguidores/seguir', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ fkUsuario: idPerfil, fkSeguidor: idLogado })
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        botao.innerText = 'Seguindo';
+                    })
+                    .catch(err => {
+                        console.error('Erro ao seguir:', err);
+                        alert('Erro ao seguir usuário!');
+                    })
+                    .finally(() => {
+                        botao.disabled = false;
+                    });
+            }
+
+            function deixarDeSeguirUsuario(idPerfil, botao) {
+                const idLogado = sessionStorage.ID_USUARIO;
+                console.log(`Enviando requisição para deixar de seguir: idPerfil=${idPerfil}, idLogado=${idLogado}`);
+
+                fetch('/seguidores/desseguir', {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        fkUsuario: idPerfil,
+                        fkSeguidor: idLogado
+                    })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    console.log('Resposta deixar de seguir:', data);
+                    botao.innerText = 'Seguir';
+                })
+                .catch(err => console.error('Erro ao deixar de seguir:', err));
+            }
+        });
+
+
     </script>
 </body>
 

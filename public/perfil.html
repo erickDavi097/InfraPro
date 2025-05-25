@@ -10,8 +10,8 @@
 <body>
     <div class="container">
         <button id="toggle-dark-mode" style="position: fixed; top: 10px; right: 10px; padding: 8px 12px; border-radius: 4px; border: none; cursor: pointer; z-index: 1100;">
-  🌙 Modo Escuro
-</button>
+            🌙 Modo Escuro
+        </button>
 
         <nav class="sidebar" id="sidebar-nav"></nav>
 
@@ -43,7 +43,6 @@
                 Seguidores: <strong id="followers-count">120</strong>
             </div>
 
-            <!-- Seção de publicações só para profissionais -->
             <div id="publicacoes-section" style="display: none;">
                 <div class="divisao">
                     <h1>Minhas Publicações</h1>
@@ -89,7 +88,8 @@
                     const container = document.getElementById("publicacoes-container");
                     container.innerHTML = '';
 
-                    publicacoes.forEach(pub => {
+                    for (let i = 0; i < publicacoes.length; i++) {
+                        const pub = publicacoes[i];
                         const div = document.createElement("div");
                         div.classList.add("publicacao");
 
@@ -112,16 +112,12 @@
                         });
 
                         container.appendChild(div);
-                    });
-                })
-                .catch(err => console.error("Erro ao carregar publicações:", err));
+                    }
+                });
         } else {
             publicacoesSection.style.display = 'none';
         }
     }
-</script>
-
-    <script>
         const btnDarkMode = document.getElementById('toggle-dark-mode');
 
         function aplicarModoSalvo() {
@@ -169,12 +165,16 @@
                 ];
             }
 
-            nav.innerHTML = `
-                <a href="#"><h2>InfraPro</h2></a>
-                ${opcoes.map(opcao => `<a href="${opcao.href}">${opcao.texto}</a>`).join('')}
-            `;
+            let links = '';
+            for (let i = 0; i < opcoes.length; i++) {
+                const opcao = opcoes[i];
+                links += `<a href="${opcao.href}">${opcao.texto}</a>`;
+            }
+
+            nav.innerHTML = `<a href="#"><h2>InfraPro</h2></a>${links}`;
         }
     </script>
+
     <script>
         function abrirModal(pub) {
             document.getElementById('modal-imagem').src = `/assets/${pub.imagem}`;
@@ -237,35 +237,33 @@
                 return;
             }
 
-            try {
-                const response = await fetch(`/usuario/foto/${userId}`);
-                if (!response.ok) throw new Error('Erro ao buscar a foto');
-                const data = await response.json();
+            const response = await fetch(`/usuario/foto/${userId}`);
+            if (!response.ok) return;
+            const data = await response.json();
 
-                if (data.foto && data.foto.trim() !== '') {
-                    photoPreview.src = `${data.foto}`;
-                } else {
-                    photoPreview.src = '/public/assets/imgs/userCli.png';
-                }
-            } catch (error) {
-                console.error(error);
+            if (data.foto && data.foto.trim() !== '') {
+                photoPreview.src = `${data.foto}`;
+            } else {
                 photoPreview.src = '/public/assets/imgs/userCli.png';
             }
         }
 
-        async function atualizarSeguidores() {
+        function atualizarSeguidores() {
             const userId = sessionStorage.ID_USUARIO;
             if (!userId) return;
 
-            try {
-                const response = await fetch(`/usuario/seguidores/count/${userId}`);
-                if (!response.ok) throw new Error('Erro ao buscar seguidores');
-                const data = await response.json();
-                document.getElementById('followers-count').textContent = data.count || 0;
-            } catch (error) {
-                console.error(error);
-                document.getElementById('followers-count').textContent = 0;
-            }
+            fetch(`/usuario/seguidores/count/${userId}`)
+                .then(response => {
+                    if (!response.ok) throw new Error('Erro ao buscar seguidores');
+                    return response.json();
+                })
+                .then(data => {
+                    document.getElementById('followers-count').textContent = data.count || 0;
+                })
+                .catch(error => {
+                    console.error(error);
+                    document.getElementById('followers-count').textContent = 0;
+                });
         }
 
         const photoPreview = document.getElementById('photo-preview');
@@ -279,27 +277,22 @@
                 const formData = new FormData();
                 formData.append('foto', file);
 
-                try {
-                    const response = await fetch(`/usuario/uploadFoto/${userId}`, {
-                        method: 'POST',
-                        body: formData
-                    });
+                const response = await fetch(`/usuario/uploadFoto/${userId}`, {
+                    method: 'POST',
+                    body: formData
+                });
 
-                    if (response.ok) {
-                        const reader = new FileReader();
-                        reader.onload = (e) => {
-                            photoPreview.src = e.target.result;
-                            sessionStorage.FOTO_USUARIO = e.target.result;
-                        };
-                        reader.readAsDataURL(file);
+                if (response.ok) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        photoPreview.src = e.target.result;
+                        sessionStorage.FOTO_USUARIO = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
 
-                        alert('Foto atualizada com sucesso!');
-                    } else {
-                        alert('Erro ao atualizar a foto.');
-                    }
-                } catch (error) {
-                    console.error('Erro:', error);
-                    alert('Erro ao enviar a foto.');
+                    alert('Foto atualizada com sucesso!');
+                } else {
+                    alert('Erro ao atualizar a foto.');
                 }
             }
         });

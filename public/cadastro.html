@@ -303,12 +303,13 @@
     };
   }
 
+
   function validarEtapa1(prefixo) {
     const dados = pegarDadosDoFormulario(prefixo);
     dados.telefone = limparMascara(dados.telefone);
 
     if (!dados.nome || dados.nome.length <= 1) {
-      showToast("Nome muito curto.");
+      showToast("Nome inválido.");
       return false;
     }
 
@@ -325,7 +326,6 @@
       return;
     }
 
-
     if (dados.senha !== dados.confirmacaoSenha) {
       showToast("As senhas não coincidem.");
       return false;
@@ -333,6 +333,8 @@
     
     return true;
   }
+
+
 
   function cadastrar() {
   document.getElementById("div_aguardar").style.display = 'block';
@@ -436,6 +438,7 @@ function cadastrarUsuario(dados) {
 
     input.value = valor;
   }
+
 
   function limparMascara(valor) {
     return valor.replace(/\D/g, '');

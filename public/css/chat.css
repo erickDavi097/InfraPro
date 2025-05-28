@@ -3,7 +3,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Segoe UI';
 }
 
 body {
@@ -729,6 +729,13 @@ body {
 
 .dark-mode .mensagem.recebida {
   background-color: #555;
+}
+
+button{
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  
 }
 
 

@@ -151,16 +151,16 @@
                 opcoes = [
                     { texto: 'Home', href: './front/cliente/home.html' },
                     { texto: 'Dashboard', href: './front/profissional/dashboard.html' },
-                    { texto: 'Chat', href: './chat.html' },
-                    { texto: 'Configurações', href: './configuracoes.html' },
-                    { texto: 'Sair', href: './logout.html' }
+                    { texto: 'Chat', href: '/chat.html' },
+                    { texto: 'Configurações', href: '/configuracoes.html' },
+                    { texto: 'Sair', href: '/index.html' }
                 ];
             } else {
                 opcoes = [
                     { texto: 'Home', href: './front/cliente/home.html' },
-                    { texto: 'Chat', href: './chat.html' },
-                    { texto: 'Configurações', href: './configuracoes.html' },
-                    { texto: 'Sair', href: './logout.html' }
+                    { texto: 'Chat', href: '/chat.html' },
+                    { texto: 'Configurações', href: '/configuracoes.html' },
+                    { texto: 'Sair', href: '/index.html' }
                 ];
             }
 
@@ -170,7 +170,7 @@
                 links += `<a href="${opcao.href}">${opcao.texto}</a>`;
             }
 
-            nav.innerHTML = `<a href="#"><h2>InfraPro</h2></a>${links}`;
+            nav.innerHTML = `<a href="./front/cliente/home.html"><h2>InfraPro</h2></a>${links}`;
         }
     </script>
 

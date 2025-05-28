@@ -1,9 +1,7 @@
-@font-face {
-  font-family: interRegular, sans-serif;
-  src: url(../fonts/Inter-Regular.otf);
-}
+
 
 * {
+  font-family: 'Segoe UI';
   box-sizing: border-box;
 }
 

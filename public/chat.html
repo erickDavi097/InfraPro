@@ -405,16 +405,16 @@ let idUltimaMensagemEnviada = null;
                 opcoes = [
                     { texto: 'Home', href: './front/cliente/home.html' },
                     { texto: 'Dashboard', href: './front/profissional/dashboard.html' },
-                    { texto: 'Chat', href: './chat.html' },
+                    { texto: 'Perfil', href: '/perfil.html' },
                     { texto: 'Configurações', href: './configuracoes.html' },
-                    { texto: 'Sair', href: './logout.html' }
+                    { texto: 'Sair', href: '/index.html' }
                 ];
             } else {
                 opcoes = [
                     { texto: 'Home', href: './front/cliente/home.html' },
-                    { texto: 'Chat', href: './chat.html' },
+                    { texto: 'Perfil', href: '/perfil.html' },
                     { texto: 'Configurações', href: './configuracoes.html' },
-                    { texto: 'Sair', href: './logout.html' }
+                    { texto: 'Sair', href: '/index.html' }
                 ];
             }
 
@@ -456,15 +456,12 @@ let idUltimaMensagemEnviada = null;
                         if (link) {
                             link.href = `/perfilPublico.html?id=${usuario.id}`;
                         }
-
                     })
                     .catch(err => {
                         console.error('Erro ao buscar nome do destinatário:', err);
                     });
             }
         });
-
-
 
         montarNavbar();
         aplicarModoSalvo();

@@ -78,6 +78,49 @@ button[type="submit"] {
     transition: background-color 0.3s ease;
 }
 
+.container-nav {
+  margin-left: 10%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  width: auto;
+}
+
+nav.sidebar {
+  width: 15%;
+  background: #2c3e50;
+  color: #ecf0f1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+}
+
+nav.sidebar h2 {
+  margin: 0 0 40px 0;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+nav.sidebar a {
+  color: #ecf0f1;
+  text-decoration: none;
+  margin-bottom: 15px;
+  font-weight: 500;
+  padding: 10px;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+nav.sidebar a:hover {
+  background: #34495e;
+}
+
 button[type="submit"]:hover {
     background-color: #265ecf;
 }

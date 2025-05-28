@@ -27,6 +27,7 @@ function criarComentario(req, res) {
             res.status(500).json(erro.sqlMessage);
         });
 }
+
 function listarComentariosDetalhados(req, res) {
     var fkPublicacao = req.params.fkPublicacao;
 

@@ -22,6 +22,8 @@ var publicacaoRouter = require("./src/routes/publicacao");
 var curtidaRouter = require('./src/routes/curtida');
 var comentarioRouter = require('./src/routes/comentario');
 var contatoRouter = require("./src/routes/contato");
+var chatRouter = require("./src/routes/chat");
+var categoriaRouter = require("./src/routes/categoria")
 
 
 app.use(express.json());
@@ -40,6 +42,8 @@ app.use("/publicacoes", publicacaoRouter);
 app.use("/curtida", curtidaRouter);
 app.use("/comentario", comentarioRouter);
 app.use("/contato", contatoRouter);
+app.use("/chat", chatRouter);
+app.use('/categoria', categoriaRouter);
 
 
 app.listen(PORTA_APP, function () {

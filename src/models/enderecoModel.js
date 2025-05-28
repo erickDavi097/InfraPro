@@ -33,7 +33,6 @@ function buscarPorUsuarioId(idUsuario) {
   return database.executar(instrucaoSql);
 }
 
-
 module.exports = {
     cadastrar,
     buscarEnderecosPorUsuario,

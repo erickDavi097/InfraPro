@@ -14,6 +14,7 @@ function cadastrar(fkEndereco, nome, telefone, email, senha, tipo) {
     console.log("Executando a instrução SQL: \n" + instrucaoSql);
     return database.executar(instrucaoSql);
 }
+
 function listarTodos() {
     const instrucaoSql = `SELECT id, nome, email, tipo, ativo FROM usuario;`;
     return database.executar(instrucaoSql);
@@ -31,9 +32,26 @@ function trocarStatus(id) {
 }
 
 function buscarPorId(id) {
-    const instrucaoSql = `SELECT id, nome, email, foto, tipo FROM usuario WHERE id = ${id}`;
+    const instrucaoSql = `SELECT id, nome, email, senha, foto, tipo, biografia FROM usuario WHERE id = ${id}`;
     console.log("Executando SQL de edição:", instrucaoSql);
     return database.executar(instrucaoSql);
+}
+
+function atualizarBiografia(id, biografia) {
+    const instrucaoSql = `UPDATE usuario SET biografia = '${biografia}' WHERE id = ${id}`;
+    console.log("Executando SQL de edição:", instrucaoSql);
+    return database.executar(instrucaoSql, [biografia, id]);
+}
+
+function atualizarNome(id, nome) {
+    const instrucaoSql = `UPDATE usuario SET nome = '${nome}' WHERE id = ${id}`;
+    console.log("Executando SQL de edição:", instrucaoSql);
+    return database.executar(instrucaoSql, [nome, id]);
+}
+function atualizarSenha(id, senha) {
+    const instrucaoSql = `UPDATE usuario SET senha = '${senha}' WHERE id = ${id}`;
+    console.log("Executando SQL de edição:", instrucaoSql);
+    return database.executar(instrucaoSql, [senha, id]);
 }
 
 function contarSeguidores(idUsuario) {
@@ -68,10 +86,12 @@ function salvarFoto(usuario) {
     `;
   return database.executar(instrucaoSql);
 }
+
 function atualizarFoto(idUsuario, novaFoto) {
     const instrucaoSql = `UPDATE usuario SET foto = '${novaFoto}' WHERE id = ${idUsuario};`;
     return database.executar(instrucaoSql);
 }
+
 function buscarImagemPorId(idUsuario) {
     const instrucaoSql = `SELECT foto FROM usuario WHERE id = ${idUsuario};`;
     return database.executar(instrucaoSql);
@@ -89,5 +109,8 @@ module.exports = {
     listarSeguidores,
     salvarFoto,
     atualizarFoto,
-    buscarImagemPorId
+    buscarImagemPorId,
+    atualizarBiografia,
+    atualizarNome,
+    atualizarSenha
 };

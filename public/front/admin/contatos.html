@@ -71,12 +71,11 @@
             </tr>
         </thead>
         <tbody id="listaContatos">
-            <!-- Contatos vão aqui -->
         </tbody>
     </table>
 
 <script>
-    const apiBase = "http://localhost:3000/contato/contatos"; // Ajuste a URL base conforme seu app
+    const apiBase = "http://localhost:3000/contato/contatos";
 
     async function carregarContatos() {
         const status = document.getElementById('filtroStatus').value;

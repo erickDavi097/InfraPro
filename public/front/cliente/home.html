@@ -7,12 +7,20 @@
     <link rel="stylesheet" href="../../css/publicacao.css" />
 </head>
 
+
 <body onload="carregarPublicacoes()">
     <div class="container">
-        <button id="toggleDarkMode">Ativar Dark Mode</button>
+        <button id="toggle-dark-mode"
+            style="position: fixed; top: 10px; right: 10px; padding: 8px 12px; border-radius: 4px; border: none; cursor: pointer; z-index: 1100;">
+            🌙 Modo Escuro
+        </button>
+
+        <nav class="sidebar" id="sidebar-nav"></nav>
         <h1>Publicações Recentes</h1>
         <div id="containerPublicacoes"></div>
     </div>
+
+
 
     <div id="modalComentarios" class="modal" style="display: none;">
         <div class="modal-conteudo">
@@ -38,31 +46,66 @@
     </div>
 
     <script>
-        const btn = document.getElementById('toggleDarkMode');
+        const btnDarkMode = document.getElementById('toggle-dark-mode');
 
-        function setDarkMode(enabled) {
-            if (enabled) {
+        function aplicarModoSalvo() {
+            const modo = localStorage.getItem('modo-escuro');
+            if (modo === 'ativo') {
                 document.body.classList.add('dark-mode');
-                btn.textContent = 'Desativar Dark Mode';
-                localStorage.setItem('darkMode', 'enabled');
+                btnDarkMode.textContent = '☀️ Modo Claro';
             } else {
                 document.body.classList.remove('dark-mode');
-                btn.textContent = 'Ativar Dark Mode';
-                localStorage.setItem('darkMode', 'disabled');
+                btnDarkMode.textContent = '🌙 Modo Escuro';
             }
         }
 
-        const savedMode = localStorage.getItem('darkMode');
-        if (savedMode === 'enabled') {
-            setDarkMode(true);
-        } else {
-            setDarkMode(false);
+        btnDarkMode.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            if (document.body.classList.contains('dark-mode')) {
+                localStorage.setItem('modo-escuro', 'ativo');
+                btnDarkMode.textContent = '☀️ Modo Claro';
+            } else {
+                localStorage.setItem('modo-escuro', 'desativo');
+                btnDarkMode.textContent = '🌙 Modo Escuro';
+            }
+        });
+
+        function montarNavbar() {
+            const tipo = sessionStorage.TIPO_USUARIO || 'cliente';
+            const nav = document.getElementById('sidebar-nav');
+
+            let opcoes = [];
+
+            if (tipo === 'profissional') {
+                opcoes = [
+                    { texto: 'Home', href: './front/cliente/home.html' },
+                    { texto: 'Dashboard', href: './front/profissional/dashboard.html' },
+                    { texto: 'Chat', href: '/chat.html' },
+                    { texto: 'Configurações', href: '/configuracoes.html' },
+                    { texto: 'Sair', href: '/logout.html' }
+                ];
+            } else {
+                opcoes = [
+                    { texto: 'Home', href: './front/cliente/home.html' },
+                    { texto: 'Chat', href: '/chat.html' },
+                    { texto: 'Configurações', href: '/configuracoes.html' },
+                    { texto: 'Sair', href: '/logout.html' }
+                ];
+            }
+
+            let links = '';
+            for (let i = 0; i < opcoes.length; i++) {
+                const opcao = opcoes[i];
+                links += `<a href="${opcao.href}">${opcao.texto}</a>`;
+            }
+
+            nav.innerHTML = `<a href="#"><h2>InfraPro</h2></a>${links}`;
         }
 
-        btn.addEventListener('click', function () {
-            const isDark = document.body.classList.contains('dark-mode');
-            setDarkMode(!isDark);
-        });
+        aplicarModoSalvo();
+        montarNavbar();
+        </script>
+        <script>
 
         function formatarDataOuTempo(dataPublicacao) {
             const agora = new Date();
@@ -100,9 +143,33 @@
         }
 
         function carregarPublicacoes() {
+
+            function verificarStatus(idPerfil, botao) {
+                const idLogado = sessionStorage.ID_USUARIO;
+
+                fetch(`/seguidores/verificar/${idPerfil}/${idLogado}`)
+                    .then(res => {
+                        console.log('Status da resposta da fetch:', res.status);
+                        return res.json();
+                    })
+                    .then(data => {
+                        console.log('Resposta completa da verificação:', data);
+                        if (data.ativo) {
+                            console.log(`Usuário ${idLogado} já está seguindo ${idPerfil}`);
+                            botao.innerText = 'Seguindo';
+                        } else {
+                            console.log(`Usuário ${idLogado} NÃO está seguindo ${idPerfil}`);
+                            botao.innerText = 'Seguir';
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Erro no fetch de verificação:', err);
+                    });
+            }
+
             fetch('/publicacoes')
-                .then(function (res) { return res.json(); })
-                .then(function (publicacoes) {
+                .then(res => res.json())
+                .then(publicacoes => {
                     if (!publicacoes) return;
                     const container = document.getElementById('containerPublicacoes');
                     container.innerHTML = '';
@@ -130,7 +197,7 @@
                             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
                                 <div style="display: flex; align-items: center; gap: 8px;">
                                     <a href="../../PerfilPublico.html?id=${pub.usuarioId}">
-                                        <img src="../../uploads/${pub.foto}" alt="Foto do usuário" 
+                                        <img src="../../uploads/${pub.fotoUsuario}" alt="Foto do usuário" 
                                             style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
                                     </a>
                                     <a href="../../PerfilPublico.html?id=${pub.usuarioId}" 
@@ -157,8 +224,8 @@
                             <p class="descricao" style="margin-bottom: 8px;">${conteudoExibido}${verMaisHTML}</p>
                             
 
-                            <p><strong>Serviço:</strong> ${pub.servicoNome}</p>
-                            <p><strong>Valor base:</strong> R$ ${pub.valorBase}</p>
+                            <p><strong>Serviço:</strong> ${pub.categoria}</p>
+                            <p><strong>Valor base:</strong> R$ ${pub.preco}</p>
                             <p><em>${formatarDataOuTempo(pub.dtCriacao)}</em></p>
 
                             <div class="comentarios" style="display: none; margin-top: 10px;">
@@ -173,6 +240,9 @@
 
 
                         container.appendChild(card);
+
+                        const botaoSeguir = card.querySelector('.btn-seguir');
+                        verificarStatus(pub.usuarioId, botaoSeguir);
 
                         const descricao = card.querySelector('.descricao');
                         const verMais = card.querySelector('.ver-mais');
@@ -193,7 +263,7 @@
                             });
                         }
 
-                        const idPublicacao = pub.id;
+                        const idPublicacao = pub.idPublicacao;
                         const fkUsuario = sessionStorage.getItem('ID_USUARIO');
 
                         const iconeCurtir = card.querySelector('.icone-curtir');
@@ -391,16 +461,43 @@
 
         document.addEventListener('DOMContentLoaded', function () {
             const idLogado = sessionStorage.ID_USUARIO;
+            console.log('Usuário logado:', idLogado);
+
+            // Verifica status de todos os botões ao carregar a página
+            const botoesSeguir = document.querySelectorAll('.btn-seguir');
+            console.log(`Encontrados ${botoesSeguir.length} botões de seguir na página.`);
+
+            for (let i = 0; i < botoesSeguir.length; i++) {
+                const botao = botoesSeguir[i];
+
+                const idPerfil = parseInt(botao.getAttribute('data-id'), 10);
+
+                if (isNaN(idPerfil)) {
+                    console.error('ID do perfil inválido:', botao.getAttribute('data-id'));
+                    return;
+                }
+
+
+                console.log(`Iniciando verificação para o usuário ${idPerfil}`);
+                verificarStatus(idPerfil, botao);
+            }
 
             document.addEventListener('click', function (event) {
                 if (event.target.classList.contains('btn-seguir')) {
                     const botao = event.target;
-                    const idPerfil = botao.getAttribute('data-id');
+                    const idPerfil = parseInt(botao.getAttribute('data-id'), 10);
+
+                    if (isNaN(idPerfil)) {
+                        console.error('ID do perfil inválido:', botao.getAttribute('data-id'));
+                        return;
+                    }
+
                     console.log('Clique no botão:', botao.innerText);
 
                     if (botao.innerText === 'Seguir') {
                         console.log('Vai seguir o usuário ' + idPerfil);
                         seguirUsuario(idPerfil, botao);
+
                     } else if (botao.innerText === 'Seguindo') {
                         console.log('Vai deixar de seguir o usuário ' + idPerfil);
                         deixarDeSeguirUsuario(idPerfil, botao);
@@ -408,36 +505,36 @@
                 }
             });
 
-            function verificarStatus(idPerfil, botao) {
-                const idLogado = sessionStorage.ID_USUARIO;
-                console.log(`Verificando status: idPerfil=${idPerfil}, idLogado=${idLogado}`);
-
-                fetch(`/seguidores/verificar/${idPerfil}/${idLogado}`)
-                    .then(res => res.json())
-                    .then(data => {
-                        console.log('Resposta da verificação:', data);
-                        if (data.ativo) {
-                            botao.innerText = 'Seguindo';
-                        } else {
-                            botao.innerText = 'Seguir';
-                        }
-                    })
-                    .catch(err => console.error('Erro ao verificar status:', err));
-            }
 
             function seguirUsuario(idPerfil, botao) {
-                const idLogado = sessionStorage.ID_USUARIO;
+                const idLogado = parseInt(sessionStorage.ID_USUARIO, 10);
+
+                if (!idPerfil || isNaN(parseInt(idPerfil))) {
+                    console.error('ID do perfil inválido ao seguir:', idPerfil);
+                    return;
+                }
+
+                if (!idLogado || isNaN(idLogado)) {
+                    console.error('ID do usuário logado inválido:', idLogado);
+                    return;
+                }
 
                 botao.disabled = true;
                 botao.innerText = '...';
+
+                console.log(`Enviando requisição para seguir: fkUsuario=${idPerfil}, fkSeguidor=${idLogado}`);
 
                 fetch('/seguidores/seguir', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ fkUsuario: idPerfil, fkSeguidor: idLogado })
                 })
-                    .then(res => res.json())
+                    .then(res => {
+                        console.log('Status da resposta ao seguir:', res.status);
+                        return res.json();
+                    })
                     .then(data => {
+                        console.log('Resposta do seguir:', data);
                         botao.innerText = 'Seguindo';
                     })
                     .catch(err => {
@@ -450,7 +547,19 @@
             }
 
             function deixarDeSeguirUsuario(idPerfil, botao) {
-                const idLogado = sessionStorage.ID_USUARIO;
+
+                const idLogado = parseInt(sessionStorage.ID_USUARIO, 10);
+
+                if (!idPerfil || isNaN(parseInt(idPerfil))) {
+                    console.error('ID do perfil inválido ao seguir:', idPerfil);
+                    return;
+                }
+
+                if (!idLogado || isNaN(idLogado)) {
+                    console.error('ID do usuário logado inválido:', idLogado);
+                    return;
+                }
+
                 console.log(`Enviando requisição para deixar de seguir: idPerfil=${idPerfil}, idLogado=${idLogado}`);
 
                 fetch('/seguidores/desseguir', {
@@ -461,14 +570,20 @@
                         fkSeguidor: idLogado
                     })
                 })
-                .then(res => res.json())
-                .then(data => {
-                    console.log('Resposta deixar de seguir:', data);
-                    botao.innerText = 'Seguir';
-                })
-                .catch(err => console.error('Erro ao deixar de seguir:', err));
+                    .then(res => {
+                        console.log('Status da resposta ao deixar de seguir:', res.status);
+                        return res.json();
+                    })
+                    .then(data => {
+                        console.log('Resposta deixar de seguir:', data);
+                        botao.innerText = 'Seguir';
+                    })
+                    .catch(err => {
+                        console.error('Erro ao deixar de seguir:', err);
+                    });
             }
         });
+
 
 
     </script>

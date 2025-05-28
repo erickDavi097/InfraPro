@@ -1,13 +1,18 @@
 const express = require("express");
 const router = express.Router();
 const publicacaoController = require("../controllers/publicacaoController");
-const {uploadPublicacao} = require("../config/configUpload");
+const { uploadPublicacao } = require("../config/configUpload");
 
 router.post('/', uploadPublicacao.single('foto'), (req, res) => {
   publicacaoController.salvarFoto(req, res);
 });
 
-router.get("/:id", publicacaoController.listarPorUsuario);
+router.get("/:id", function(req, res) {
+  publicacaoController.listarPorUsuario(req, res);
+});
 
-router.get('/', publicacaoController.listarTodas);
+router.get('/', function(req, res){
+  publicacaoController.listarTodas(req, res);
+});
+
 module.exports = router;

@@ -353,32 +353,3 @@ a{
     flex-direction: row;
     justify-content: center;
 }
-.minha-historia {
-  padding: 40px 20px;
-  background-color: #f8f8f8;
-}
-
-.minha-historia .titulo p {
-  font-size: 2rem;
-  font-weight: bold;
-  margin-bottom: 30px;
-  text-align: center;
-}
-
-.linha-do-tempo {
-  display: flex;
-  gap: 40px;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.evento {
-  max-width: 200px;
-  text-align: center;
-}
-
-.evento img {
-  width: 100%;
-  border-radius: 8px;
-  margin-bottom: 10px;
-}

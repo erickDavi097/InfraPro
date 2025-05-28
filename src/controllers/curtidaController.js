@@ -54,6 +54,7 @@ function descurtir(req, res) {
             res.status(500).json(erro.sqlMessage);
         });
 }
+
 function listarUsuariosPorPublicacao(req, res) {
     var fkPublicacao = req.params.fkPublicacao;
 
@@ -66,7 +67,6 @@ function listarUsuariosPorPublicacao(req, res) {
             res.status(500).json(erro.sqlMessage);
         });
 }
-
 
 module.exports = {
     listarCurtidasPorPublicacao,

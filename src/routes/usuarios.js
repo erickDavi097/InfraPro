@@ -1,6 +1,6 @@
 var express = require("express");
 var router = express.Router();
-const { uploadPerfil } = require('../config/configUpload');
+const { uploadPerfil }  = require('../config/configUpload');
 var usuarioController = require("../controllers/usuarioController");
 
 router.post('/cadastro', uploadPerfil.single('foto'), (req, res) => {
@@ -28,6 +28,18 @@ router.get("/perfilpublicocompleto/:id", function (req, res) {
 
 router.patch("/suspender/:id", function (req, res) {
     usuarioController.suspenderUsuario(req, res);
+});
+
+router.put("/biografia/:id", function (req, res) {
+    usuarioController.atualizarBiografia(req, res);
+});
+
+router.put("/nome/:id", function (req, res) {
+    usuarioController.atualizarNome(req, res);
+});
+
+router.put("/senha/:id", function (req, res) {
+    usuarioController.atualizarSenha(req, res);
 });
 
 router.put("/:id", function (req, res) {

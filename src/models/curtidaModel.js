@@ -43,7 +43,6 @@ function listarUsuariosPorPublicacao(fkPublicacao) {
     return database.executar(instrucaoSql);
 }
 
-
 module.exports = {
     listarCurtidasPorPublicacao,
     listarUsuariosPorPublicacao,

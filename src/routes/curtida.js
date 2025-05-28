@@ -22,7 +22,4 @@ router.get("/publicacao/:fkPublicacao/usuarios", function(req, res) {
     curtidaController.listarUsuariosPorPublicacao(req, res);
 });
 
-
-
-
 module.exports = router;

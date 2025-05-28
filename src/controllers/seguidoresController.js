@@ -15,12 +15,21 @@ function deixarDeSeguir(req, res) {
 }
 
 function verificarSeguindo(req, res) {
-    const idPerfil = req.params.idPerfil;
-    const idLogado = req.params.idLogado;
+    const idPerfil = Number(req.params.idPerfil);
+    const idLogado = Number(req.params.idLogado);
+
+    if (!idPerfil || !idLogado) {
+        console.error("Parâmetros inválidos: ", { idPerfil, idLogado });
+        return res.status(400).json({ erro: "Parâmetros inválidos." });
+    }
+
+    console.log("Verificando se", idLogado, "segue", idPerfil);
 
     seguidoresModel.verificarSeguindo(idPerfil, idLogado)
         .then((resultado) => {
+            console.log("Resultado da consulta:", resultado);
             if (resultado.length > 0) {
+                console.log("Status retornado:", resultado[0].statusSeguidores);
                 res.json({ ativo: resultado[0].statusSeguidores === 'ativo' });
             } else {
                 res.json({ ativo: false });
@@ -31,7 +40,6 @@ function verificarSeguindo(req, res) {
             res.status(500).json({ erro: erro.sqlMessage || erro.message });
         });
 }
-
 
 module.exports = {
     seguir,

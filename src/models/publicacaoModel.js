@@ -21,8 +21,8 @@ function listarPorUsuario(idUsuario) {
 
 function salvar(publicacao) {
   const instrucaoSql = `
-    INSERT INTO publicacao (fkUsuario, fkServico, titulo, conteudo, imagem, dtCriacao)
-    VALUES (${publicacao.fkUsuario}, 1, '${publicacao.titulo}', '${publicacao.conteudo}', '${publicacao.imagem}', DEFAULT);
+    INSERT INTO publicacao (fkUsuario, fkCategoria, titulo, conteudo, imagem, preco, dtCriacao)
+    VALUES (${publicacao.fkUsuario}, ${publicacao.fkCategoria}, '${publicacao.titulo}', '${publicacao.conteudo}', '${publicacao.imagem}', '${publicacao.preco}',DEFAULT);
   `;
   return database.executar(instrucaoSql);
 }

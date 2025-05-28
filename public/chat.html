@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Chat Completo</title>
+    <link rel="stylesheet" href="./css/chat.css" />
+</head>
+
+<body>
+    <button id="toggle-dark-mode"
+        style="position: fixed; top: 10px; right: 10px; padding: 8px 12px; border-radius: 4px; border: none; cursor: pointer; z-index: 1100;">
+        🌙 Modo Escuro
+    </button>
+
+    <nav class="sidebar" id="sidebar-nav"></nav>
+
+    <div id="chatApp">
+        <div id="chatPrincipal">
+
+            <a id="linkDestinatario" href="#" style="text-decoration: none;">
+                <div style="display: flex; transform: translateX(-40%);">
+                    <img id="fotoDestinatario" src="/imagens/default.png" alt="Foto do destinatário"
+                        style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; margin-left: 10px;">
+                    <h1 id="tituloChat">NomeUsuario</h1>
+                </div>
+            </a>
+
+
+            <div id="carregando">Carregando...</div>
+
+
+            <div id="mensagensContainer"></div>
+
+            <div id="inputContainer">
+                <input type="text" id="mensagem" placeholder="Digite sua mensagem" autocomplete="off" />
+                <button onclick="enviarMensagem()">Enviar</button>
+            </div>
+        </div>
+
+        <div id="listaClientes">
+            <h3>Clientes que enviaram mensagem</h3>
+            <ul id="clientesContainer"></ul>
+        </div>
+    </div>
+    <div id="mensagem-sem-conversas" style="display:none; padding: 20px; text-align:center; color: #555;">
+        Não há conversas disponíveis para você no momento.
+        <br>
+        <a href="./front/cliente/home.html">Voltar para a Home</a>
+    </div>
+
+    <script>
+        const toggleButton = document.getElementById('toggleDarkMode');
+
+        toggleButton.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+        });
+    </script>
+
+    <script>
+let idUltimaMensagemEnviada = null;
+
+
+        let idUsuario = sessionStorage.getItem('ID_USUARIO');
+        let idDestinatario = sessionStorage.getItem('idDestinatario');
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('destinatario')) {
+            idDestinatario = urlParams.get('destinatario');
+            sessionStorage.setItem('idDestinatario', idDestinatario);
+        }
+        if (!idUsuario) {
+            alert("Usuário não definido!");
+            window.location.href = 'home.html';
+        }
+        let nomeUsuario = sessionStorage.getItem('NOME_USUARIO');
+        if (!nomeUsuario) nomeUsuario = "Você";
+
+        const container = document.getElementById('mensagensContainer');
+        const carregandoDiv = document.getElementById('carregando');
+        const limit = 20;
+        let offset = 0;
+        let carregando = false;
+        let mensagensCarregadas = new Set();
+
+        function mostrarCarregando() {
+            carregandoDiv.style.display = 'block';
+        }
+        function esconderCarregando() {
+            carregandoDiv.style.display = 'none';
+        }
+
+        function ordenarMensagens(mensagens) {
+            return mensagens.sort((a, b) => {
+                if (a.horario === b.horario) return a.id - b.id;
+                return new Date(a.horario) - new Date(b.horario);
+            });
+        }
+
+        function mostrarMensagens(mensagens, append = true, prepend = false) {
+            mensagens = ordenarMensagens(mensagens);
+
+            if (prepend) {
+                mensagens.reverse();
+            }
+
+            if (!append && !prepend) container.innerHTML = '';
+
+            mensagens.forEach(mensagem => {
+                if (mensagensCarregadas.has(mensagem.id)) return;
+                mensagensCarregadas.add(mensagem.id);
+
+                const divMsg = document.createElement('div');
+                divMsg.classList.add('mensagem');
+                if (mensagem.Remetente === nomeUsuario || mensagem.id === idUltimaMensagemEnviada) {
+                    divMsg.classList.add('enviada');
+                } else {
+                    divMsg.classList.add('recebida');
+                }
+
+                divMsg.innerHTML = `
+                <span class="remetente">${mensagem.Remetente}</span>
+                <span class="conteudo">${mensagem.conteudo}</span>
+                <span class="horario">${new Date(mensagem.horario).toLocaleString()}</span>
+            `;
+
+                if (mensagem.Remetente === nomeUsuario) {
+                    const menuDiv = document.createElement('div');
+                    menuDiv.classList.add('menu');
+
+                    const btnMenu = document.createElement('button');
+                    btnMenu.classList.add('menu-btn');
+                    btnMenu.textContent = '⋮';
+
+                    const opcoesDiv = document.createElement('div');
+                    opcoesDiv.classList.add('menu-opcoes');
+                    opcoesDiv.style.display = 'none';
+
+                    const btnEditar = document.createElement('button');
+                    btnEditar.textContent = 'Editar';
+
+                    const btnRemover = document.createElement('button');
+                    btnRemover.textContent = 'Remover';
+
+                    opcoesDiv.appendChild(btnEditar);
+                    opcoesDiv.appendChild(btnRemover);
+                    menuDiv.appendChild(btnMenu);
+                    menuDiv.appendChild(opcoesDiv);
+                    divMsg.appendChild(menuDiv);
+
+                    btnMenu.addEventListener('click', e => {
+                        e.stopPropagation();
+                        const aberto = opcoesDiv.style.display === 'block';
+                        document.querySelectorAll('.menu-opcoes').forEach(m => m.style.display = 'none');
+                        opcoesDiv.style.display = aberto ? 'none' : 'block';
+                    });
+
+                    document.addEventListener('click', () => {
+                        document.querySelectorAll('.menu-opcoes').forEach(m => m.style.display = 'none');
+                    });
+
+                    btnEditar.addEventListener('click', () => {
+                        const novoConteudo = prompt('Editar mensagem:', mensagem.conteudo);
+                        if (novoConteudo !== null && novoConteudo.trim() !== '') {
+                            fetch('/chat/editar', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ id: mensagem.id, conteudo: novoConteudo.trim() })
+                            }).then(res => {
+                                if (res.ok) {
+                                    divMsg.querySelector('.conteudo').textContent = novoConteudo.trim();
+                                    opcoesDiv.style.display = 'none';
+                                } else {
+                                    alert('Erro ao editar mensagem.');
+                                }
+                            });
+                        }
+                    });
+
+                    btnRemover.addEventListener('click', () => {
+                        if (confirm('Tem certeza que deseja remover essa mensagem?')) {
+                            fetch('/chat/remover', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ id: mensagem.id })
+                            }).then(res => {
+                                if (res.ok) {
+                                    divMsg.remove();
+                                    opcoesDiv.style.display = 'none';
+                                } else {
+                                    alert('Erro ao remover mensagem.');
+                                }
+                            });
+                        }
+                    });
+                }
+
+                if (prepend) {
+                    container.prepend(divMsg);
+                } else {
+                    container.append(divMsg);
+                }
+            });
+
+            if (!prepend && append) {
+                container.scrollTop = container.scrollHeight;
+            }
+        }
+
+        function carregarMensagensIniciais() {
+            offset = 0;
+            mensagensCarregadas.clear();
+            mostrarCarregando();
+            fetch(`/chat/${idUsuario}/${idDestinatario}?offset=${offset}&limit=${limit}`)
+                .then(res => {
+                    if (!res.ok) throw new Error('Erro na resposta do servidor: ' + res.status);
+                    return res.text();
+                })
+                .then(text => {
+                    if (!text) return [];
+                    return JSON.parse(text);
+                })
+                .then(data => {
+                    mostrarMensagens(data, false, false);
+                    offset += limit;
+                    container.scrollTop = container.scrollHeight;
+                    esconderCarregando();
+                })
+                .catch(err => {
+                    console.error('Erro ao carregar mensagens iniciais:', err);
+                    esconderCarregando();
+                });
+        }
+
+        function carregarMensagensPaginado() {
+            if (carregando) return;
+            carregando = true;
+            mostrarCarregando();
+
+            fetch(`/chat/${idUsuario}/${idDestinatario}?offset=${offset}&limit=${limit}`)
+                .then(res => {
+                    if (!res.ok) throw new Error('Erro na resposta do servidor: ' + res.status);
+                    return res.json();
+                })
+                .then(data => {
+                    if (data.length === 0) {
+                        container.removeEventListener('scroll', onScroll);
+                        esconderCarregando();
+                        carregando = false;
+                        return;
+                    }
+                    mostrarMensagens(data, true, true);
+                    offset += limit;
+                    esconderCarregando();
+                    carregando = false;
+                })
+                .catch(err => {
+                    console.error('Erro ao carregar mensagens:', err);
+                    esconderCarregando();
+                    carregando = false;
+                });
+        }
+
+        function onScroll() {
+            if (container.scrollTop < 100 && !carregando) {
+                carregarMensagensPaginado();
+            }
+        }
+
+        container.addEventListener('scroll', onScroll);
+
+        function enviarMensagem() {
+            const input = document.getElementById('mensagem');
+
+
+
+            input.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    enviarMensagem();
+                }
+            });
+
+            const texto = input.value.trim();
+            if (!texto) return;
+
+            fetch('/chat/enviar', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ fkRemetente: idUsuario, fkDestinatario: idDestinatario, conteudo: texto })
+            })
+                .then(async res => {
+                    if (!res.ok) {
+                        const erroTexto = await res.text();
+                        throw new Error(`Erro ao enviar mensagem: ${res.status} - ${erroTexto}`);
+                    }
+                    return res.json();
+                })
+                .then(novaMensagem => {
+                    idUltimaMensagemEnviada = novaMensagem.id;
+                    mostrarMensagens([novaMensagem], true, false);
+                    input.value = '';
+                })
+                .catch(err => {
+                    alert(err.message);
+                });
+
+        }
+
+        const listaClientes = document.getElementById('clientesContainer');
+        function carregarClientes() {
+            fetch(`/chat/clientes/${idUsuario}`)
+                .then(res => {
+                    if (!res.ok) throw new Error(`HTTP status ${res.status}`);
+                    return res.json();
+                })
+                .then(clientes => {
+                    console.log('Resposta do servidor:', clientes);
+                    listaClientes.innerHTML = '';
+                    clientes.forEach(cliente => {
+                        const li = document.createElement('li');
+                        li.classList.add('cliente-item');
+
+                        const img = document.createElement('img');
+                        console.log(cliente);
+                        img.src = cliente.foto ? `/uploads/${cliente.foto}` : '/imagens/default.png';
+                        img.alt = cliente.nome;
+                        img.classList.add('cliente-foto');
+
+                        const span = document.createElement('span');
+                        span.textContent = cliente.nome;
+
+                        li.appendChild(img);
+                        li.appendChild(span);
+
+                        li.dataset.id = cliente.id;
+                        li.addEventListener('click', () => {
+                            window.location.href = `/chat.html?destinatario=${cliente.id}`;
+                        });
+
+                        listaClientes.appendChild(li);
+                    });
+
+                })
+                .catch(err => {
+                    console.error('Erro ao carregar clientes:', err);
+                    listaClientes.innerHTML = '<li>Erro ao carregar clientes</li>';
+                })
+        }
+
+        function mostrarMensagemSemConversas() {
+            const containerMensagem = document.getElementById('mensagem-sem-conversas');
+            const containerChat = document.getElementById('chatApp');
+
+            containerChat.style.display = 'none';
+            containerMensagem.style.display = 'block';
+        }
+
+
+
+        function abrirChatCom(novoDestinatarioId) {
+            idDestinatario = novoDestinatarioId;
+            sessionStorage.setItem('idDestinatario', idDestinatario);
+            offset = 0;
+            mensagensCarregadas.clear();
+            container.innerHTML = '';
+            carregarMensagensIniciais();
+
+            atualizarNavbarUsuario(idDestinatario);
+        }
+
+    </script>
+
+    <script>
+        const btnDarkMode = document.getElementById('toggle-dark-mode');
+
+        function aplicarModoSalvo() {
+            const modo = localStorage.getItem('modo-escuro');
+            if (modo === 'ativo') {
+                document.body.classList.add('dark-mode');
+                btnDarkMode.textContent = '☀️ Modo Claro';
+            } else {
+                document.body.classList.remove('dark-mode');
+                btnDarkMode.textContent = '🌙 Modo Escuro';
+            }
+        }
+
+        btnDarkMode.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            if (document.body.classList.contains('dark-mode')) {
+                localStorage.setItem('modo-escuro', 'ativo');
+                btnDarkMode.textContent = '☀️ Modo Claro';
+            } else {
+                localStorage.setItem('modo-escuro', 'desativo');
+                btnDarkMode.textContent = '🌙 Modo Escuro';
+            }
+        });
+
+        function montarNavbar() {
+            const tipo = sessionStorage.getItem('TIPO_USUARIO') || 'cliente';
+            const nav = document.getElementById('sidebar-nav');
+
+            let opcoes = [];
+
+            if (tipo === 'profissional') {
+                opcoes = [
+                    { texto: 'Home', href: './front/cliente/home.html' },
+                    { texto: 'Dashboard', href: './front/profissional/dashboard.html' },
+                    { texto: 'Chat', href: './chat.html' },
+                    { texto: 'Configurações', href: './configuracoes.html' },
+                    { texto: 'Sair', href: './logout.html' }
+                ];
+            } else {
+                opcoes = [
+                    { texto: 'Home', href: './front/cliente/home.html' },
+                    { texto: 'Chat', href: './chat.html' },
+                    { texto: 'Configurações', href: './configuracoes.html' },
+                    { texto: 'Sair', href: './logout.html' }
+                ];
+            }
+
+            let links = '';
+            for (let i = 0; i < opcoes.length; i++) {
+                links += `<a href="${opcoes[i].href}">${opcoes[i].texto}</a>`;
+            }
+
+            nav.innerHTML = `<a href="#"><h2>InfraPro</h2></a>` + links;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const idUsuario = sessionStorage.getItem('ID_USUARIO');
+            if (idUsuario) {
+                atualizarNavbarUsuario(idUsuario);
+            } else {
+                console.warn('ID do usuário não encontrado no sessionStorage');
+            }
+        });
+        window.addEventListener('load', () => {
+            if (idDestinatario) {
+                fetch(`/usuario/${idDestinatario}`)
+                    .then(res => {
+                        if (!res.ok) throw new Error('Erro ao buscar usuário');
+                        return res.json();
+                    })
+                    .then(usuario => {
+                        const link = document.getElementById('linkDestinatario');
+                        const titulo = document.getElementById('tituloChat');
+                        const foto = document.getElementById('fotoDestinatario');
+
+                        if (titulo) {
+                            titulo.textContent = `${usuario.nome}`;
+                        }
+                        if (foto) {
+                            foto.src = usuario.foto ? `/uploads/${usuario.foto}` : '/imagens/default.png';
+                            foto.alt = usuario.nome;
+                        }
+                        if (link) {
+                            link.href = `/perfilPublico.html?id=${usuario.id}`;
+                        }
+
+                    })
+                    .catch(err => {
+                        console.error('Erro ao buscar nome do destinatário:', err);
+                    });
+            }
+        });
+
+
+
+        montarNavbar();
+        aplicarModoSalvo();
+        carregarClientes();
+        carregarMensagensIniciais();
+    </script>
+
+</body>
+
+</html>

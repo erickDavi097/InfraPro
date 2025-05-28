@@ -1,7 +1,7 @@
 var contatoModel = require("../models/contatoModel");
 
 function listarPorStatus(req, res) {
-    var status = req.params.status;  // 'pendente', 'respondido' ou 'fechado'
+    var status = req.params.status;
 
     contatoModel.listarPorStatus(status)
         .then(function (resultado) {

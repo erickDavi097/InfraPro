@@ -9,7 +9,8 @@
 
 <body>
     <div class="container">
-        <button id="toggle-dark-mode" style="position: fixed; top: 10px; right: 10px; padding: 8px 12px; border-radius: 4px; border: none; cursor: pointer; z-index: 1100;">
+        <button id="toggle-dark-mode"
+            style="position: fixed; top: 10px; right: 10px; padding: 8px 12px; border-radius: 4px; border: none; cursor: pointer; z-index: 1100;">
             🌙 Modo Escuro
         </button>
 
@@ -17,30 +18,26 @@
 
         <div class="content">
             <div>
-                <label for="upload-photo" class="profile-photo" title="Clique para alterar foto" tabindex="0" role="button" aria-label="Alterar foto do perfil">
-                    <img id="photo-preview" src="/public/assets/imgs/userCli.png" alt="Foto do usuário" style="border-radius: 50%; width: 140px; height: 140px; object-fit: cover;" />
+                <label for="upload-photo" class="profile-photo" title="Clique para alterar foto" tabindex="0"
+                    role="button" aria-label="Alterar foto do perfil">
+                    <img id="photo-preview" src="/public/assets/imgs/userCli.png" alt="Foto do usuário"
+                        style="border-radius: 50%; width: 140px; height: 140px; object-fit: cover;" />
                 </label>
             </div>
 
             <input type="file" id="upload-photo" style="display:none" accept="image/*" />
 
             <div class="profile-name">
-                <span id="name-display">João Silva</span>
+                <span id="name-display"></span>
             </div>
 
             <div class="profile-description">
-                Profissional de construção civil
+
             </div>
 
-            <div class="profile-location">
-                São Paulo - SP<br />
-                Bairro: Vila Mariana
-            </div>
-
-            <button onclick="abrirModalPerfil()">⚙️ Editar Perfil</button>
-
+            <div class="profile-location"></div>
             <div class="followers-info">
-                Seguidores: <strong id="followers-count">120</strong>
+                Seguidores: <strong id="followers-count"></strong>
             </div>
 
             <div id="publicacoes-section" style="display: none;">
@@ -68,56 +65,58 @@
     </div>
 
     <script>
-    window.onload = function () {
-        aplicarModoSalvo();
-        montarNavbar();
-        carregarPerfil();
-        carregarFotoPerfil();
-        atualizarSeguidores();
+        window.onload = function () {
+            aplicarModoSalvo();
+            montarNavbar();
+            carregarPerfil();
+            carregarFotoPerfil();
+            atualizarSeguidores();
 
-        const tipoUsuario = sessionStorage.TIPO_USUARIO || '';
+            const tipoUsuario = sessionStorage.TIPO_USUARIO || '';
 
-        const publicacoesSection = document.getElementById('publicacoes-section');
-        if (tipoUsuario.toLowerCase() === 'profissional') {
-            publicacoesSection.style.display = 'block';
+            const publicacoesSection = document.getElementById('publicacoes-section');
+            if (tipoUsuario.toLowerCase() === 'profissional') {
+                publicacoesSection.style.display = 'block';
 
-            const idUsuario = sessionStorage.ID_USUARIO;
-            fetch(`/publicacoes/${idUsuario}`)
-                .then(res => res.json())
-                .then(publicacoes => {
-                    const container = document.getElementById("publicacoes-container");
-                    container.innerHTML = '';
+                const idUsuario = sessionStorage.ID_USUARIO;
+                fetch(`/publicacoes/${idUsuario}`)
+                    .then(res => res.json())
+                    .then(publicacoes => {
+                        const container = document.getElementById("publicacoes-container");
+                        container.innerHTML = '';
 
-                    for (let i = 0; i < publicacoes.length; i++) {
-                        const pub = publicacoes[i];
-                        const div = document.createElement("div");
-                        div.classList.add("publicacao");
+                        for (let i = 0; i < publicacoes.length; i++) {
+                            const pub = publicacoes[i];
+                            const div = document.createElement("div");
+                            div.classList.add("publicacao");
 
-                        const imagem = document.createElement("img");
-                        imagem.src = `/assets/${pub.imagem}`;
-                        imagem.alt = pub.titulo;
+                            const imagem = document.createElement("img");
+                            imagem.src = `/assets/${pub.imagem}`;
+                            imagem.alt = pub.titulo;
 
-                        const titulo = document.createElement("h2");
-                        titulo.textContent = pub.titulo;
+                            const titulo = document.createElement("h2");
+                            titulo.textContent = pub.titulo;
 
-                        const conteudo = document.createElement("p");
-                        conteudo.textContent = pub.conteudo;
+                            const conteudo = document.createElement("p");
+                            conteudo.textContent = pub.conteudo;
 
-                        div.appendChild(imagem);
-                        div.appendChild(titulo);
-                        div.appendChild(conteudo);
+                            div.appendChild(imagem);
+                            div.appendChild(titulo);
+                            div.appendChild(conteudo);
 
-                        div.addEventListener('click', () => {
-                            abrirModal(pub);
-                        });
+                            div.addEventListener('click', () => {
+                                abrirModal(pub);
+                            });
 
-                        container.appendChild(div);
-                    }
-                });
-        } else {
-            publicacoesSection.style.display = 'none';
+                            container.appendChild(div);
+                        }
+                    });
+            } else {
+                publicacoesSection.style.display = 'none';
+            }
         }
-    }
+</script>
+<script>
         const btnDarkMode = document.getElementById('toggle-dark-mode');
 
         function aplicarModoSalvo() {
@@ -153,14 +152,14 @@
                     { texto: 'Home', href: './front/cliente/home.html' },
                     { texto: 'Dashboard', href: './front/profissional/dashboard.html' },
                     { texto: 'Chat', href: './chat.html' },
-                    { texto: 'Configurações', href: './config.html' },
+                    { texto: 'Configurações', href: './configuracoes.html' },
                     { texto: 'Sair', href: './logout.html' }
                 ];
             } else {
                 opcoes = [
                     { texto: 'Home', href: './front/cliente/home.html' },
                     { texto: 'Chat', href: './chat.html' },
-                    { texto: 'Configurações', href: './config.html' },
+                    { texto: 'Configurações', href: './configuracoes.html' },
                     { texto: 'Sair', href: './logout.html' }
                 ];
             }
@@ -193,6 +192,90 @@
             }
         });
 
+        async function carregarPerfil() {
+    const nomeUsuario = sessionStorage.NOME_USUARIO || 'Usuário';
+    const enderecosUsuario = JSON.parse(sessionStorage.getItem('ENDERECOS_USUARIO')) || [];
+
+    const nameDisplay = document.getElementById('name-display');
+    const locElem = document.querySelector('.profile-location');
+    const bioContainer = document.querySelector('.profile-description');
+
+    nameDisplay.textContent = nomeUsuario;
+
+    if (enderecosUsuario.length > 0) {
+        const endereco = enderecosUsuario[0];
+        locElem.innerHTML = `${endereco.cidade} - ${endereco.uf}<br />Bairro: ${endereco.bairro}`;
+    } else {
+        locElem.textContent = 'Localização não informada';
+    }
+
+    const userId = sessionStorage.ID_USUARIO;
+    if (!userId) {
+        bioContainer.innerHTML = '<p>Biografia não disponível.</p>';
+        return;
+    }
+
+    const res = await fetch(`/usuario/${userId}`);
+    if (!res.ok) {
+        bioContainer.innerHTML = '<p>Erro ao carregar biografia.</p>';
+        console.error('Erro ao buscar dados do usuário');
+        return;
+    }
+
+    const usuario = await res.json();
+    const bio = usuario.biografia || '';
+
+    if (bio.trim() === '') {
+        bioContainer.innerHTML = `
+            <p>Você ainda não adicionou uma biografia.</p>
+            <button id="btn-adicionar-bio">Adicionar Biografia</button>
+            <div id="bio-editor" style="display:none;">
+                <textarea id="input-bio" rows="4" cols="50" placeholder="Escreva sua biografia aqui..."></textarea><br/>
+                <button id="btn-salvar-bio">Salvar</button>
+                <button id="btn-cancelar-bio">Cancelar</button>
+            </div>
+        `;
+
+        document.getElementById('btn-adicionar-bio').addEventListener('click', () => {
+            document.getElementById('bio-editor').style.display = 'block';
+            document.getElementById('btn-adicionar-bio').style.display = 'none';
+        });
+
+        document.getElementById('btn-cancelar-bio').addEventListener('click', () => {
+            document.getElementById('bio-editor').style.display = 'none';
+            document.getElementById('btn-adicionar-bio').style.display = 'inline-block';
+        });
+
+        document.getElementById('btn-salvar-bio').addEventListener('click', async () => {
+            const novaBio = document.getElementById('input-bio').value.trim();
+            if (!novaBio) {
+                alert('A biografia não pode ficar vazia.');
+                return;
+            }
+
+            const resposta = await fetch(`/usuario/biografia/${userId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ biografia: novaBio })
+            });
+
+            if (resposta.ok) {
+                bioContainer.innerHTML = `<p>${novaBio}</p>`;
+                alert('Biografia atualizada com sucesso!');
+            } else {
+                alert('Erro ao salvar a biografia.');
+                console.error('Erro ao atualizar biografia');
+            }
+        });
+
+    } else {
+        bioContainer.innerHTML = `<p>${bio}</p>`;
+    }
+}
+
+
+
+
         function salvarEdicaoPerfil() {
             const userId = sessionStorage.ID_USUARIO;
             const novoNome = document.getElementById('input-nome').value;
@@ -211,23 +294,6 @@
                     alert("Erro ao atualizar perfil.");
                 }
             });
-        }
-
-        function carregarPerfil() {
-            const nomeUsuario = sessionStorage.NOME_USUARIO || 'Usuário';
-            const enderecosUsuario = JSON.parse(sessionStorage.getItem('ENDERECOS_USUARIO')) || [];
-
-            const nameDisplay = document.getElementById('name-display');
-            const locElem = document.querySelector('.profile-location');
-
-            nameDisplay.textContent = nomeUsuario;
-
-            if (enderecosUsuario.length > 0) {
-                const endereco = enderecosUsuario[0];
-                locElem.innerHTML = `${endereco.cidade} - ${endereco.uf}<br />Bairro: ${endereco.bairro}`;
-            } else {
-                locElem.textContent = 'Localização não informada';
-            }
         }
 
         async function carregarFotoPerfil() {

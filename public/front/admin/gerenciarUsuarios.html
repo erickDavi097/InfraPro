@@ -203,31 +203,13 @@
       const tipo = sessionStorage.TIPO_USUARIO || 'cliente';
       const nav = document.getElementById('sidebar-nav');
 
-      let opcoes = [];
-
-      if (tipo === 'profissional') {
-        opcoes = [
-          { texto: 'Perfil', href: '/perfil.html' },
-          { texto: 'Dashboard', href: '/front/admin/dashboard.html' },
-          { texto: 'Chat', href: '/chat.html' },
-          { texto: 'Configurações', href: '/configuracoes.html' },
-          { texto: 'Sair', href: '/index.html' }
-        ];
-      } else if (tipo === 'administrador'){
-        opcoes = [
+      let opcoes = [
           { texto: 'Perfil', href: '/perfil.html' },
           { texto: 'Dashboard', href: './dashboard.html' },
           { texto: 'Suporte', href: './suporte.html'},
           { texto: 'Sair', href: '/index.html' }
         ];
-      }else {
-        opcoes = [
-          { texto: 'Perfil', href: '/perfil.html' },
-          { texto: 'Chat', href: '/chat.html' },
-          { texto: 'Configurações', href: '/configuracoes.html' },
-          { texto: 'Sair', href: '/index.html' }
-        ];
-      }
+      
 
       let links = '';
       for (let i = 0; i < opcoes.length; i++) {

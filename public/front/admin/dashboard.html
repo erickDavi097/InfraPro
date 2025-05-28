@@ -27,26 +27,26 @@
     <div class="kpis">
       <!--K.P.I.S-->
       <div class="kpi">
-        <p>Primeira KPI</p>
-        <div class="agendamentos">
-          <p style="font-size: xx-large;">3</p>
+        <p>Usuários ativos</p>
+        <div class="ativos">
+          <p style="font-size: xx-large;">347</p>
         </div>
       </div>
       <div class="kpi">
-        <p>Segunda KPI</p>
-        <div class="seguidores">
-          <p style="font-size: xx-large;">5</p>
+        <p>Contratos firmados</p>
+        <div class="contratos">
+          <p style="font-size: xx-large;">229</p>
         </div>
       </div>
       <div class="kpi">
-        <p>Terceira KPI</p>
+        <p>Publicações realizadas</p>
         <div class="publicacoes">
-          <p style="font-size: xx-large;">8</p>
+          <p style="font-size: xx-large;">13.245</p>
         </div>
       </div>
       <div class="kpi">
         <p>Terceira KPI</p>
-        <div class="servicos">
+        <div class="">
           <p style="font-size: xx-large;">5</p>
         </div>
       </div>
@@ -55,21 +55,21 @@
 <div class="graficos">
     <section class="charts">
       <div class="chart-container">
-        <h3>Publicações no último mês</h3>
+        <h3> </h3>
         <canvas id="publicacoesChart"></canvas>
       </div>
       <div class="chart-container">
-        <h3>Publicações no último mês</h3>
+        <h3>Acompanhamento das categorias no mês</h3>
         <canvas id="publicacoesChart2"></canvas>
       </div>
     </section>
     <section class="pizza">
       <div class="chart-container2">
-        <h3>Publicações no último mês</h3>
+        <h3>Estados mais ativos</h3>
         <canvas id="publicacoesChart3"></canvas>
       </div>
       <div class="chart-container2">
-        <h3>Publicações no último mês</h3>
+        <h3>TOP 3 Usuários mais seguidos</h3>
         <canvas id="publicacoesChart4"></canvas>
       </div>
 
@@ -132,7 +132,7 @@
         links += `<a href="${opcao.href}">${opcao.texto}</a>`;
       }
 
-      nav.innerHTML = `<a href="#"><h2>InfraPro</h2></a>${links}`;
+      nav.innerHTML = `<a href="/front/cliente/home.html"><h2>InfraPro</h2></a>${links}`;
     }
 
     aplicarModoSalvo();

@@ -3,14 +3,7 @@
   src: url(../fonts/Inter-Regular.otf);
 }
 
-body {
-  transition: background-color 0.5s ease, color 0.5s ease;
-}
-
-.container,
-.content,
-nav,
-.modal {
+.container, .content, nav, .modal, body{
   transition: background-color 0.5s ease, color 0.5s ease;
 }
 

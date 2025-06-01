@@ -598,6 +598,8 @@ body {
   justify-content: center; /* Centraliza verticalmente */
   padding: 40px;
   transform: translateX(10%);
+  max-width: 1200px;
+  margin-right: 100px;
 }
 
 #chatPrincipal h1 {
@@ -675,6 +677,10 @@ body {
   align-items: center;
   margin-bottom: 10px;
   cursor: pointer;
+}
+
+.cliente-item:hover{
+  background-color: #2b2b2b;
 }
 
 .cliente-foto {

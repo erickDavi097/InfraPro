@@ -187,22 +187,6 @@ function buscarPorId(req, res) {
         .catch(err => res.status(500).json({ erro: err.sqlMessage }));
 }
 
-function contarSeguidores(req, res) {
-    const idUsuario = req.params.id;
-
-    usuarioModel.contarSeguidores(idUsuario)
-        .then((resultado) => {
-            if (resultado.length === 0) {
-                return res.json({ count: 0 });
-            }
-            return res.json({ count: resultado[0].count });
-        })
-        .catch((erro) => {
-            console.error("Erro ao contar seguidores:", erro);
-            res.status(500).json({ erro: erro.sqlMessage || erro.message });
-        });
-}
-
 function buscarPerfilPublico(req, res) {
     const id = req.params.id;
     usuarioModel.buscarPerfilPublico(id)
@@ -215,18 +199,6 @@ function buscarPerfilPublico(req, res) {
                 .catch(err => res.status(500).json({ erro: err.sqlMessage }));
         })
         .catch(err => res.status(500).json({ erro: err.sqlMessage }));
-}
-
-function listarSeguidoresController(req, res) {
-    const id = req.params.id;
-    usuarioModel.listarSeguidores(id)
-        .then(resultado => {
-            res.json(resultado);
-        })
-        .catch(erro => {
-            console.error(erro);
-            res.status(500).json({ mensagem: "Erro ao buscar seguidores" });
-        });
 }
 
 async function perfilPublicoCompleto(req, res) {
@@ -375,9 +347,7 @@ module.exports = {
     editar,
     suspenderUsuario,
     buscarPorId,
-    contarSeguidores,
     buscarPerfilPublico,
-    listarSeguidoresController,
     perfilPublicoCompleto,
     salvarFoto,
     atualizarFoto,

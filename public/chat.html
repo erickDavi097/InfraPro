@@ -58,7 +58,7 @@
     </script>
 
     <script>
-let idUltimaMensagemEnviada = null;
+        let idUltimaMensagemEnviada = null;
 
 
         let idUsuario = sessionStorage.getItem('ID_USUARIO');
@@ -268,17 +268,16 @@ let idUltimaMensagemEnviada = null;
 
         container.addEventListener('scroll', onScroll);
 
+        const input = document.getElementById('mensagem');
+        input.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                enviarMensagem();
+            }
+        });
+
         function enviarMensagem() {
             const input = document.getElementById('mensagem');
-
-
-
-            input.addEventListener('keydown', (event) => {
-                if (event.key === 'Enter') {
-                    event.preventDefault();
-                    enviarMensagem();
-                }
-            });
 
             const texto = input.value.trim();
             if (!texto) return;
@@ -299,6 +298,7 @@ let idUltimaMensagemEnviada = null;
                     idUltimaMensagemEnviada = novaMensagem.id;
                     mostrarMensagens([novaMensagem], true, false);
                     input.value = '';
+                    carregarClientes();
                 })
                 .catch(err => {
                     alert(err.message);

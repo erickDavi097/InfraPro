@@ -40,9 +40,41 @@ function verificarSeguindo(req, res) {
             res.status(500).json({ erro: erro.sqlMessage || erro.message });
         });
 }
+function listarSeguidores(req, res) {
+    const id = Number(req.params.id);
+    seguidoresModel.listarSeguidores(id) // <-- certo
+        .then((resultado) => res.json(resultado))
+        .catch((erro) => res.status(500).json({ erro: erro.sqlMessage || erro.message }));
+}
+
+function contarSeguidores(req, res) {
+    const id = Number(req.params.id);
+    seguidoresModel.contarSeguidores(id) // <-- certo
+        .then((resultado) => res.json({ count: resultado[0].count }))
+        .catch((erro) => res.status(500).json({ erro: erro.sqlMessage || erro.message }));
+}
+
+function listarEuSigo(req, res) {
+    const id = Number(req.params.id);
+    seguidoresModel.listarEuSigo(id)
+        .then((resultado) => res.json(resultado))
+        .catch((erro) => res.status(500).json({ erro: erro.sqlMessage || erro.message }));
+}
+
+function contarEuSigo(req, res) {
+    const id = Number(req.params.id);
+    seguidoresModel.contarEuSigo(id)
+        .then((resultado) => res.json({ count: resultado[0].count }))
+        .catch((erro) => res.status(500).json({ erro: erro.sqlMessage || erro.message }));
+}
+
 
 module.exports = {
     seguir,
     deixarDeSeguir,
-    verificarSeguindo
+    verificarSeguindo,
+    listarSeguidores,
+    contarSeguidores,
+    listarEuSigo,
+    contarEuSigo
 };

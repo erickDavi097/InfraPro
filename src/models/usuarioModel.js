@@ -54,15 +54,6 @@ function atualizarSenha(id, senha) {
     return database.executar(instrucaoSql, [senha, id]);
 }
 
-function contarSeguidores(idUsuario) {
-    const instrucaoSql = `
-        SELECT COUNT(u.id) AS count FROM seguidores s
-        JOIN usuario u ON s.fkSeguidor = u.id
-        WHERE s.fkUsuario = ${idUsuario} AND s.statusSeguidores = 'ativo';
-    `;
-    console.log("Executando a instrução SQL: \n" + instrucaoSql);
-    return database.executar(instrucaoSql);
-}
 function buscarPerfilPublico(id) {
     const instrucaoSql = `
         SELECT u.id, u.nome, u.email, u.biografia, u.foto, e.cidade, e.bairro, e.uf FROM usuario u
@@ -71,14 +62,7 @@ function buscarPerfilPublico(id) {
     `;
     return database.executar(instrucaoSql);
 }
-function listarSeguidores(idUsuario){
-    const instrucaoSql = `
-        SELECT u.id, u.nome, u.foto FROM seguidores s
-        JOIN usuario u ON s.fkSeguidor = u.id
-        WHERE s.fkUsuario = ${idUsuario} AND s.statusSeguidores = 'ativo'
-    `;
-    return database.executar(instrucaoSql);
-}
+
 function salvarFoto(usuario) {
     const instrucaoSql = `
         INSERT INTO usuario (fkEndereco, nome, email, senha, tipo, foto)
@@ -104,9 +88,7 @@ module.exports = {
     editar,
     trocarStatus,
     buscarPorId,
-    contarSeguidores,
     buscarPerfilPublico,
-    listarSeguidores,
     salvarFoto,
     atualizarFoto,
     buscarImagemPorId,

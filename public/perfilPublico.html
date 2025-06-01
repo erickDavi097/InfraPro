@@ -2,10 +2,10 @@
 <html lang="pt-br">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="./assets/icon/logo.png" type="image/x-icon">
-    <link rel="stylesheet" href="./css/perfilpublico.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="shortcut icon" href="./assets/icon/logo.png" type="image/x-icon" />
+    <link rel="stylesheet" href="./css/perfilpublico.css" />
     <title>Perfil Público</title>
 </head>
 
@@ -24,16 +24,30 @@
 
     <main>
         <section class="perfil-header">
-            <img id="fotoUsuario" alt="Foto do Usuário"
-                style="width: 150px; height: 150px; object-fit: cover; border-radius: 50%;">
+            <img
+                id="fotoUsuario"
+                alt="Foto do Usuário"
+                style="width: 150px; height: 150px; object-fit: cover; border-radius: 50%"
+            />
             <h1 id="nomeUsuario"></h1>
-            <p>Seguidores: <span id="numSeguidores" style="cursor:pointer; color:blue; text-decoration:underline;">0</span></p>
+            <p>
+                Seguidores:
+                <span
+                    id="numSeguidores"
+                    style="cursor:pointer; color:blue; text-decoration:underline"
+                    >0</span
+                >
+            </p>
             <p id="emailUsuario"></p>
             <p id="biografiaUsuario"></p>
             <p id="areaAtuacao"></p>
             <button id="btnSeguir"></button>
-        </section>
 
+            <!-- Botão para abrir chat -->
+            <button id="btnAbrirChat" style="margin-top: 10px; padding: 8px 16px; cursor:pointer; font-weight: bold;">
+                Abrir Chat
+            </button>
+        </section>
 
         <section class="cards-container">
             <div id="portifolio"></div>
@@ -42,47 +56,53 @@
     </main>
 
     <div id="modalSeguidores" style="display:none;">
-
         <div
-            style="background: white; max-width: 400px; margin: 100px auto; padding: 20px; border-radius: 8px; position: relative;">
+            style="
+                background: white;
+                max-width: 400px;
+                margin: 100px auto;
+                padding: 20px;
+                border-radius: 8px;
+                position: relative;
+            "
+        >
             <h2>Seguidores</h2>
-            <ul id="listaSeguidores">
-            </ul>
-            <button onclick="fecharModal()" style="margin-top: 15px; padding: 8px 12px;">Fechar</button>
+            <ul id="listaSeguidores"></ul>
+            <button onclick="fecharModal()" style="margin-top: 15px; padding: 8px 12px">
+                Fechar
+            </button>
         </div>
-
     </div>
 
-
-
     <script>
-
         const urlParams = new URLSearchParams(window.location.search);
         const idPerfil = urlParams.get("id");
         const idLogado = sessionStorage.ID_USUARIO;
 
         function carregarPerfil() {
             fetch(`/usuario/perfilPublicoCompleto/${idPerfil}`)
-                .then(res => {
+                .then((res) => {
                     if (!res.ok) throw new Error(`Resposta não OK: ${res.status}`);
                     return res.json();
                 })
-                .then(data => {
+                .then((data) => {
                     const usuario = data.usuario;
-                    console.log("Foto do usuário:", usuario.foto);
                     const endereco = data.endereco;
                     const portifolio = data.portifolio;
                     const publicacoes = data.publicacoes;
 
                     document.getElementById("nomeUsuario").textContent = usuario.nome;
                     document.getElementById("emailUsuario").textContent = usuario.email;
-                    document.getElementById("biografiaUsuario").textContent = usuario.biografia || "Usuário sem biografia.";
+                    document.getElementById("biografiaUsuario").textContent =
+                        usuario.biografia || "Usuário sem biografia.";
                     if (usuario.foto) {
                         document.getElementById("fotoUsuario").src = usuario.foto;
                     }
 
                     if (endereco) {
-                        document.getElementById("areaAtuacao").textContent = `${endereco.cidade || ""}, ${endereco.bairro || ""}, ${endereco.uf || ""}`;
+                        document.getElementById("areaAtuacao").textContent = `${endereco.cidade || ""}, ${
+                            endereco.bairro || ""
+                        }, ${endereco.uf || ""}`;
                     } else {
                         document.getElementById("areaAtuacao").textContent = "Endereço não disponível";
                     }
@@ -90,17 +110,18 @@
                     mostrarPortifolio(portifolio);
                     mostrarPublicacoes(publicacoes);
                 })
-                .catch(err => {
+                .catch((err) => {
                     alert("Não foi possível carregar o perfil: " + err.message);
                 });
         }
+
         function mostrarPortifolio(portifolio) {
             const div = document.getElementById("portifolio");
             if (!portifolio || portifolio.length === 0) {
                 div.innerHTML = "<p>Portfólio vazio</p>";
                 return;
             }
-            div.innerHTML = portifolio.map(item => `<div>${item.nome}</div>`).join("");
+            div.innerHTML = portifolio.map((item) => `<div>${item.nome}</div>`).join("");
         }
 
         function mostrarPublicacoes(publicacoes) {
@@ -110,24 +131,26 @@
                 return;
             }
 
-            div.innerHTML = publicacoes.map(pub => {
-                const dataPub = new Date(pub.dtCriacao);
-                let dataFormatada;
+            div.innerHTML = publicacoes
+                .map((pub) => {
+                    const dataPub = new Date(pub.dtCriacao);
+                    let dataFormatada;
 
-                if (isNaN(dataPub)) {
-                    dataFormatada = "Data inválida";
-                } else {
-                    dataFormatada = dataPub.toLocaleDateString();
-                }
+                    if (isNaN(dataPub)) {
+                        dataFormatada = "Data inválida";
+                    } else {
+                        dataFormatada = dataPub.toLocaleDateString();
+                    }
 
-                return `
-                    <div class="card">
-                    <h3>${pub.titulo}</h3>
-                    <p>${pub.conteudo}</p>
-                    <small>Publicado em: ${dataFormatada}</small>
-                    </div>
-                `;
-            }).join("");
+                    return `
+                        <div class="card">
+                        <h3>${pub.titulo}</h3>
+                        <p>${pub.conteudo}</p>
+                        <small>Publicado em: ${dataFormatada}</small>
+                        </div>
+                    `;
+                })
+                .join("");
         }
 
         function atualizarBotaoSeguir() {
@@ -160,8 +183,7 @@
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ fkUsuario: idPerfil, fkSeguidor: idLogado }),
-            })
-                .then(() => atualizarBotaoSeguir());
+            }).then(() => atualizarBotaoSeguir());
         }
 
         function desseguir() {
@@ -169,12 +191,11 @@
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ fkUsuario: idPerfil, fkSeguidor: idLogado }),
-            })
-                .then(() => atualizarBotaoSeguir());
+            }).then(() => atualizarBotaoSeguir());
         }
 
         function carregarSeguidores() {
-            fetch(`/usuario/listarSeguidores/${idPerfil}`)
+            fetch(`/seguidores/listarSeguidores/${idPerfil}`)
                 .then((res) => {
                     if (!res.ok) throw new Error(`Resposta não OK: ${res.status}`);
                     return res.json();
@@ -207,8 +228,8 @@
                                 const btn = document.createElement("button");
 
                                 fetch(`/seguidores/verificar/${seguidor.id}/${idLogado}`)
-                                    .then(res => res.json())
-                                    .then(info => {
+                                    .then((res) => res.json())
+                                    .then((info) => {
                                         if (info.ativo) {
                                             btn.textContent = "Deixar de seguir";
                                             btn.onclick = () => {
@@ -250,31 +271,46 @@
         }
 
         function carregarNumeroSeguidores() {
-    fetch(`/usuario/seguidores/count/${idPerfil}`)
-        .then(res => res.json())
-        .then(data => {
-            const spanNum = document.getElementById("numSeguidores");
-            if (spanNum) {
-                spanNum.textContent = data.count || 0;
-                spanNum.onclick = () => {
-                    carregarSeguidores();
-                    document.getElementById("modalSeguidores").style.display = "block";
-                };
-            }
-        });
-}
+            fetch(`/seguidores/seguidores/count/${idPerfil}`)
+                .then((res) => res.json())
+                .then((data) => {
+                    const spanNum = document.getElementById("numSeguidores");
+                    if (spanNum) {
+                        spanNum.textContent = data.count || 0;
+                        spanNum.onclick = () => {
+                            carregarSeguidores();
+                            document.getElementById("modalSeguidores").style.display = "block";
+                        };
+                    }
+                });
+        }
 
         function fecharModal() {
             document.getElementById("modalSeguidores").style.display = "none";
+        }
+
+        // Botão abrir chat: adiciona evento para redirecionar usando o idPerfil
+        function configurarBotaoChat() {
+            const btnChat = document.getElementById("btnAbrirChat");
+
+            // Se o perfil aberto for o do próprio usuário logado, esconde o botão (não faz sentido abrir chat com você mesmo)
+            if (idPerfil === idLogado) {
+                btnChat.style.display = "none";
+                return;
+            }
+
+            btnChat.onclick = () => {
+                window.location.href = `http://localhost:3333/chat.html?destinatario=${idPerfil}`;
+            };
         }
 
         window.onload = function () {
             carregarNumeroSeguidores();
             carregarPerfil();
             atualizarBotaoSeguir();
-        }
+            configurarBotaoChat();
+        };
     </script>
-
 </body>
 
 </html>

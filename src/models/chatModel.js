@@ -35,10 +35,10 @@ function removerMensagem(id) {
 function listarChats(profissionalId) {
 
     const instrucaoSql = `
-        SELECT u.id, u.nome, u.foto FROM mensagem m
-        JOIN usuario u ON m.fkRemetente = u.id
-        WHERE m.fkDestinatario = ${profissionalId}
-        GROUP BY u.id, u.nome, u.foto;
+        SELECT DISTINCT u.id, u.nome, u.foto FROM usuario u
+            JOIN mensagem m ON (u.id = m.fkRemetente OR u.id = m.fkDestinatario)
+            WHERE (m.fkRemetente = ${profissionalId} OR m.fkDestinatario = ${profissionalId})
+                AND u.id != ${profissionalId};
     `;
     return database.executar(instrucaoSql)
 }

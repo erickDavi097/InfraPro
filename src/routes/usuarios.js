@@ -11,13 +11,6 @@ router.get("/listar", function (req, res) {
     usuarioController.listarUsuarios(req, res);
 });
 
-router.get("/seguidores/count/:id", function (req, res) {
-    usuarioController.contarSeguidores(req, res);
-});
-router.get("/listarSeguidores/:id", function(req, res) {
-    usuarioController.listarSeguidoresController(req, res);
-});
-
 router.get("/perfilpublico/:id", function (req, res) {
     usuarioController.buscarPerfilPublico(req, res);
 });

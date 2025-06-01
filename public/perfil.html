@@ -1,6 +1,3 @@
-<!DOCTYPE html>
-<html>
-
 <head>
     <title>Perfil do Usuário</title>
     <link rel="stylesheet" href="css/publicacoes.css">
@@ -17,12 +14,23 @@
         <nav class="sidebar" id="sidebar-nav"></nav>
 
         <div class="content">
-            <div>
+            <div class="profile-header">
                 <label for="upload-photo" class="profile-photo" title="Clique para alterar foto" tabindex="0"
-                    role="button" aria-label="Alterar foto do perfil">
-                    <img id="photo-preview" src="/public/assets/imgs/userCli.png" alt="Foto do usuário"
-                        style="border-radius: 50%; width: 140px; height: 140px; object-fit: cover;" />
+                    role="button" aria-label="Alterar foto do perfil"
+                    style="border-radius: 50%; width: 140px; height: 140px; object-fit: cover;">
+                    <img id="photo-preview" src="/public/assets/imgs/userCli.png" alt="Foto do usuário" />
                 </label>
+
+                <div class="profile-stats">
+                    <div class="stat-card" id="followers-btn" style="cursor:pointer">
+                        <span>Seguidores</span>
+                        <span id="numSeguidores">0</span>
+                    </div>
+                    <div class="stat-card" id="following-btn" style="cursor:pointer">
+                        <span>Seguindo</span>
+                        <strong id="following-count">0</strong>
+                    </div>
+                </div>
             </div>
 
             <input type="file" id="upload-photo" style="display:none" accept="image/*" />
@@ -31,14 +39,9 @@
                 <span id="name-display"></span>
             </div>
 
-            <div class="profile-description">
-
-            </div>
+            <div class="profile-description"></div>
 
             <div class="profile-location"></div>
-            <div class="followers-info">
-                Seguidores: <strong id="followers-count"></strong>
-            </div>
 
             <div id="publicacoes-section" style="display: none;">
                 <div class="divisao">
@@ -64,59 +67,207 @@
         </div>
     </div>
 
+    <div class="modal" id="modal-seguidores" style="display:none;">
+        <div class="modal-content">
+            <span id="modal-close-btn" class="close-modal">&times;</span>
+            <h2 class="modal-title"></h2>
+            <div class="lista-usuarios"></div>
+        </div>
+    </div>
+
     <script>
-        window.onload = function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const idPerfil = urlParams.get('id') || sessionStorage.ID_USUARIO;
+
+        window.onload = () => {
             aplicarModoSalvo();
             montarNavbar();
-            carregarPerfil();
-            carregarFotoPerfil();
-            atualizarSeguidores();
+            carregarPerfil(idPerfil);
+            carregarFotoPerfil(idPerfil);
+            carregarNumeroSeguidores(idPerfil);
+            carregarNumeroSeguindo(idPerfil);
 
-            const tipoUsuario = sessionStorage.TIPO_USUARIO || '';
-
+            const tipoUsuario = (sessionStorage.TIPO_USUARIO || '').toLowerCase();
             const publicacoesSection = document.getElementById('publicacoes-section');
-            if (tipoUsuario.toLowerCase() === 'profissional') {
+
+            if (tipoUsuario === 'profissional' && idPerfil === sessionStorage.ID_USUARIO) {
                 publicacoesSection.style.display = 'block';
-
-                const idUsuario = sessionStorage.ID_USUARIO;
-                fetch(`/publicacoes/${idUsuario}`)
-                    .then(res => res.json())
-                    .then(publicacoes => {
-                        const container = document.getElementById("publicacoes-container");
-                        container.innerHTML = '';
-
-                        for (let i = 0; i < publicacoes.length; i++) {
-                            const pub = publicacoes[i];
-                            const div = document.createElement("div");
-                            div.classList.add("publicacao");
-
-                            const imagem = document.createElement("img");
-                            imagem.src = `/assets/${pub.imagem}`;
-                            imagem.alt = pub.titulo;
-
-                            const titulo = document.createElement("h2");
-                            titulo.textContent = pub.titulo;
-
-                            const conteudo = document.createElement("p");
-                            conteudo.textContent = pub.conteudo;
-
-                            div.appendChild(imagem);
-                            div.appendChild(titulo);
-                            div.appendChild(conteudo);
-
-                            div.addEventListener('click', () => {
-                                abrirModal(pub);
-                            });
-
-                            container.appendChild(div);
-                        }
-                    });
+                carregarPublicacoes(idPerfil);
             } else {
                 publicacoesSection.style.display = 'none';
             }
+
+            if (idPerfil !== sessionStorage.ID_USUARIO) {
+                document.getElementById('upload-photo').style.display = 'none';
+                document.querySelector('label.profile-photo').style.pointerEvents = 'none';
+                document.querySelector('.divisao a').style.display = 'none';
+            }
         }
-</script>
-<script>
+
+        function carregarPerfil(userId) {
+            fetch(`/usuario/${userId}`)
+                .then(res => res.json())
+                .then(user => {
+                    document.getElementById('name-display').textContent = user.nome;
+                    document.querySelector('.profile-description').textContent = user.descricao || '';
+                    document.querySelector('.profile-location').textContent = `${user.cidade || ''} - ${user.uf || ''}`;
+                })
+                .catch(err => console.error('Erro ao carregar perfil:', err));
+        }
+
+        function carregarFotoPerfil(userId) {
+            fetch(`/usuario/${userId}`)
+                .then(res => res.json())
+                .then(user => {
+                    const photoPreview = document.getElementById('photo-preview');
+                    if (user.foto?.trim()) {
+                        photoPreview.src = `/uploads/${user.foto}`;
+                    } else {
+                        photoPreview.src = '/public/assets/imgs/userCli.png';
+                    }
+                })
+                .catch(err => console.error('Erro ao carregar foto de perfil:', err));
+        }
+
+        function carregarPublicacoes(userId) {
+            fetch(`/publicacoes/${userId}`)
+                .then(res => res.json())
+                .then(publicacoes => {
+                    const container = document.getElementById("publicacoes-container");
+                    container.innerHTML = '';
+
+                    publicacoes.forEach(pub => {
+                        const div = document.createElement("div");
+                        div.classList.add("publicacao");
+
+                        const imagem = document.createElement("img");
+                        imagem.src = `/assets/${pub.imagem}`;
+                        imagem.alt = pub.titulo;
+
+                        const titulo = document.createElement("h2");
+                        titulo.textContent = pub.titulo;
+
+                        const conteudo = document.createElement("p");
+                        conteudo.textContent = pub.conteudo;
+
+                        div.append(imagem, titulo, conteudo);
+
+                        div.addEventListener('click', () => abrirModal(pub));
+
+                        container.appendChild(div);
+                    });
+                })
+                .catch(err => console.error('Erro ao carregar publicações:', err));
+        }
+
+        document.getElementById('followers-btn').addEventListener('click', () => abrirModalSeguidoresPorTipo('Seguidores'));
+        document.getElementById('following-btn').addEventListener('click', () => abrirModalSeguidoresPorTipo('Seguindo'));
+
+        function abrirModalSeguidoresPorTipo(tipo) {
+            const endpoint = tipo === 'Seguidores'
+                ? `/seguidores/listarEuSigo/${idPerfil}`
+                : `/seguidores/listarSeguidores/${idPerfil}`;
+
+            fetch(endpoint)
+                .then(res => {
+                    if (!res.ok) throw new Error(`Erro ao buscar ${tipo.toLowerCase()}`);
+                    return res.json();
+                })
+                .then(listaUsuarios => abrirModalSeguidores(tipo, listaUsuarios))
+                .catch(err => {
+                    console.error(err);
+                    alert(`Erro ao carregar ${tipo.toLowerCase()}`);
+                });
+        }
+
+        function abrirModalSeguidores(titulo, listaUsuarios) {
+            const modal = document.getElementById('modal-seguidores');
+            modal.querySelector('.modal-title').textContent = titulo;
+
+            const container = modal.querySelector('.lista-usuarios');
+            container.innerHTML = '';
+
+            listaUsuarios.forEach(usuario => {
+                const div = document.createElement('div');
+                div.classList.add('usuario-item');
+
+                const img = document.createElement('img');
+                img.src = usuario.foto?.trim() ? `/uploads/${usuario.foto}` : '/assets/imgs/userCli.png';
+                img.alt = usuario.nome;
+
+                const span = document.createElement('span');
+                span.textContent = usuario.nome;
+
+                div.append(img, span);
+                container.appendChild(div);
+            });
+
+            modal.style.display = 'flex';
+        }
+
+        document.getElementById('modal-close-btn').addEventListener('click', () => {
+            document.getElementById('modal-seguidores').style.display = 'none';
+        });
+
+        document.getElementById('modal-seguidores').addEventListener('click', e => {
+            if (e.target === e.currentTarget) e.currentTarget.style.display = 'none';
+        });
+
+        function carregarNumeroSeguidores(userId) {
+            fetch(`/seguidores/seguidores/count/${userId}`)
+                .then(res => res.json())
+                .then(data => {
+                    const spanNum = document.getElementById("numSeguidores");
+                    if (spanNum) spanNum.textContent = data.count || 0;
+                })
+                .catch(err => console.error('Erro ao carregar número de seguidores:', err));
+        }
+
+        function carregarNumeroSeguindo(userId) {
+            fetch(`/seguidores/seguindo/count/${userId}`)
+                .then(res => res.json())
+                .then(data => {
+                    const spanNum = document.getElementById("following-count");
+                    if (spanNum) spanNum.textContent = data.count || 0;
+                })
+                .catch(err => console.error('Erro ao carregar número de seguindo:', err));
+        }
+
+        const photoPreview = document.getElementById('photo-preview');
+        const uploadInput = document.getElementById('upload-photo');
+
+        uploadInput.addEventListener('change', async () => {
+            const file = uploadInput.files[0];
+            const userId = sessionStorage.ID_USUARIO;
+
+            if (file && userId) {
+                const formData = new FormData();
+                formData.append('foto', file);
+
+                const response = await fetch(`/usuario/uploadFoto/${userId}`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    const reader = new FileReader();
+                    reader.onload = e => {
+                        photoPreview.src = e.target.result;
+                        sessionStorage.FOTO_USUARIO = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                    alert('Foto atualizada com sucesso!');
+                } else {
+                    alert('Erro ao atualizar a foto.');
+                }
+            }
+        });
+    </script>
+
+
+
+
+    <script>
         const btnDarkMode = document.getElementById('toggle-dark-mode');
 
         function aplicarModoSalvo() {
@@ -155,7 +306,7 @@
                     { texto: 'Configurações', href: '/configuracoes.html' },
                     { texto: 'Sair', href: '/index.html' }
                 ];
-            } else if(tipo === 'administrador'){
+            } else if (tipo === 'administrador') {
                 opcoes = [
                     { texto: 'Home', href: './front/cliente/home.html' },
                     { texto: 'Dashboard', href: './front/admin/dashboard.html' },
@@ -200,88 +351,85 @@
         });
 
         async function carregarPerfil() {
-    const nomeUsuario = sessionStorage.NOME_USUARIO || 'Usuário';
-    const enderecosUsuario = JSON.parse(sessionStorage.getItem('ENDERECOS_USUARIO')) || [];
+            const nomeUsuario = sessionStorage.NOME_USUARIO || 'Usuário';
+            const enderecosUsuario = JSON.parse(sessionStorage.getItem('ENDERECOS_USUARIO')) || [];
 
-    const nameDisplay = document.getElementById('name-display');
-    const locElem = document.querySelector('.profile-location');
-    const bioContainer = document.querySelector('.profile-description');
+            const nameDisplay = document.getElementById('name-display');
+            const locElem = document.querySelector('.profile-location');
+            const bioContainer = document.querySelector('.profile-description');
 
-    nameDisplay.textContent = nomeUsuario;
+            nameDisplay.textContent = nomeUsuario;
 
-    if (enderecosUsuario.length > 0) {
-        const endereco = enderecosUsuario[0];
-        locElem.innerHTML = `${endereco.cidade} - ${endereco.uf}<br />Bairro: ${endereco.bairro}`;
-    } else {
-        locElem.textContent = 'Localização não informada';
-    }
+            if (enderecosUsuario.length > 0) {
+                const endereco = enderecosUsuario[0];
+                locElem.innerHTML = `${endereco.cidade} - ${endereco.uf}<br />Bairro: ${endereco.bairro}`;
+            } else {
+                locElem.textContent = 'Localização não informada';
+            }
 
-    const userId = sessionStorage.ID_USUARIO;
-    if (!userId) {
-        bioContainer.innerHTML = '<p>Biografia não disponível.</p>';
-        return;
-    }
-
-    const res = await fetch(`/usuario/${userId}`);
-    if (!res.ok) {
-        bioContainer.innerHTML = '<p>Erro ao carregar biografia.</p>';
-        console.error('Erro ao buscar dados do usuário');
-        return;
-    }
-
-    const usuario = await res.json();
-    const bio = usuario.biografia || '';
-
-    if (bio.trim() === '') {
-        bioContainer.innerHTML = `
-            <p>Você ainda não adicionou uma biografia.</p>
-            <button id="btn-adicionar-bio">Adicionar Biografia</button>
-            <div id="bio-editor" style="display:none;">
-                <textarea id="input-bio" rows="4" cols="50" placeholder="Escreva sua biografia aqui..."></textarea><br/>
-                <button id="btn-salvar-bio">Salvar</button>
-                <button id="btn-cancelar-bio">Cancelar</button>
-            </div>
-        `;
-
-        document.getElementById('btn-adicionar-bio').addEventListener('click', () => {
-            document.getElementById('bio-editor').style.display = 'block';
-            document.getElementById('btn-adicionar-bio').style.display = 'none';
-        });
-
-        document.getElementById('btn-cancelar-bio').addEventListener('click', () => {
-            document.getElementById('bio-editor').style.display = 'none';
-            document.getElementById('btn-adicionar-bio').style.display = 'inline-block';
-        });
-
-        document.getElementById('btn-salvar-bio').addEventListener('click', async () => {
-            const novaBio = document.getElementById('input-bio').value.trim();
-            if (!novaBio) {
-                alert('A biografia não pode ficar vazia.');
+            const userId = sessionStorage.ID_USUARIO;
+            if (!userId) {
+                bioContainer.innerHTML = '<p>Biografia não disponível.</p>';
                 return;
             }
 
-            const resposta = await fetch(`/usuario/biografia/${userId}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ biografia: novaBio })
-            });
-
-            if (resposta.ok) {
-                bioContainer.innerHTML = `<p>${novaBio}</p>`;
-                alert('Biografia atualizada com sucesso!');
-            } else {
-                alert('Erro ao salvar a biografia.');
-                console.error('Erro ao atualizar biografia');
+            const res = await fetch(`/usuario/${userId}`);
+            if (!res.ok) {
+                bioContainer.innerHTML = '<p>Erro ao carregar biografia.</p>';
+                console.error('Erro ao buscar dados do usuário');
+                return;
             }
-        });
 
-    } else {
-        bioContainer.innerHTML = `<p>${bio}</p>`;
-    }
-}
+            const usuario = await res.json();
+            const bio = usuario.biografia || '';
 
+            if (bio.trim() === '') {
+                bioContainer.innerHTML = `
+                    <p>Você ainda não adicionou uma biografia.</p>
+                    <button id="btn-adicionar-bio">Adicionar Biografia</button>
+                    <div id="bio-editor" style="display:none;">
+                        <textarea id="input-bio" rows="4" cols="50" placeholder="Escreva sua biografia aqui..."></textarea><br/>
+                        <button id="btn-salvar-bio">Salvar</button>
+                        <button id="btn-cancelar-bio">Cancelar</button>
+                    </div>
+                `;
 
+                document.getElementById('btn-adicionar-bio').addEventListener('click', () => {
+                    document.getElementById('bio-editor').style.display = 'block';
+                    document.getElementById('btn-adicionar-bio').style.display = 'none';
+                });
 
+                document.getElementById('btn-cancelar-bio').addEventListener('click', () => {
+                    document.getElementById('bio-editor').style.display = 'none';
+                    document.getElementById('btn-adicionar-bio').style.display = 'inline-block';
+                });
+
+                document.getElementById('btn-salvar-bio').addEventListener('click', async () => {
+                    const novaBio = document.getElementById('input-bio').value.trim();
+                    if (!novaBio) {
+                        alert('A biografia não pode ficar vazia.');
+                        return;
+                    }
+
+                    const resposta = await fetch(`/usuario/biografia/${userId}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ biografia: novaBio })
+                    });
+
+                    if (resposta.ok) {
+                        bioContainer.innerHTML = `<p>${novaBio}</p>`;
+                        alert('Biografia atualizada com sucesso!');
+                    } else {
+                        alert('Erro ao salvar a biografia.');
+                        console.error('Erro ao atualizar biografia');
+                    }
+                });
+
+            } else {
+                bioContainer.innerHTML = `<p>${bio}</p>`;
+            }
+        }
 
         function salvarEdicaoPerfil() {
             const userId = sessionStorage.ID_USUARIO;
@@ -302,7 +450,6 @@
                 }
             });
         }
-
         async function carregarFotoPerfil() {
             const userId = sessionStorage.ID_USUARIO;
             if (!userId) {
@@ -321,54 +468,6 @@
             }
         }
 
-        function atualizarSeguidores() {
-            const userId = sessionStorage.ID_USUARIO;
-            if (!userId) return;
-
-            fetch(`/usuario/seguidores/count/${userId}`)
-                .then(response => {
-                    if (!response.ok) throw new Error('Erro ao buscar seguidores');
-                    return response.json();
-                })
-                .then(data => {
-                    document.getElementById('followers-count').textContent = data.count || 0;
-                })
-                .catch(error => {
-                    console.error(error);
-                    document.getElementById('followers-count').textContent = 0;
-                });
-        }
-
-        const photoPreview = document.getElementById('photo-preview');
-        const uploadInput = document.getElementById('upload-photo');
-
-        uploadInput.addEventListener('change', async () => {
-            const file = uploadInput.files[0];
-            const userId = sessionStorage.ID_USUARIO;
-
-            if (file && userId) {
-                const formData = new FormData();
-                formData.append('foto', file);
-
-                const response = await fetch(`/usuario/uploadFoto/${userId}`, {
-                    method: 'POST',
-                    body: formData
-                });
-
-                if (response.ok) {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        photoPreview.src = e.target.result;
-                        sessionStorage.FOTO_USUARIO = e.target.result;
-                    };
-                    reader.readAsDataURL(file);
-
-                    alert('Foto atualizada com sucesso!');
-                } else {
-                    alert('Erro ao atualizar a foto.');
-                }
-            }
-        });
     </script>
 </body>
 

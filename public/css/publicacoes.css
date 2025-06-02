@@ -139,7 +139,7 @@ body {
 .profile-header {
     display: flex;
     align-items: center;
-    gap: 20px; /* Espaço entre foto e contadores */
+    gap: 20px;
     margin-bottom: 20px;
 }
 
@@ -181,8 +181,6 @@ body {
 
 }
 
-
-/* Publicações claro */
 #publicacoes-container {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -294,9 +292,6 @@ body {
   line-height: 1.5;
   white-space: pre-wrap;
 }
-
-
-/* -------- Modo escuro --------- */
 
 body.dark-mode {
   background-color: #121212;

@@ -129,32 +129,6 @@ a {
   object-fit: cover;
 }
 
-@media (max-width: 768px) {
-  .navbar {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .navegacao {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .cadastro {
-    flex-direction: column;
-  }
-
-  .cadastro .user {
-    height: 20vh;
-  }
-
-  .cadastro .rodar {
-    transform: rotate(0deg);
-  }
-}
-
-/* LOGIN */
-
 .login .container {
   justify-content: center;
   align-items: center;
@@ -327,3 +301,26 @@ button:active {
   100% { opacity: 0; }
 }
 
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .navegacao {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .cadastro {
+    flex-direction: column;
+  }
+
+  .cadastro .user {
+    height: 20vh;
+  }
+
+  .cadastro .rodar {
+    transform: rotate(0deg);
+  }
+}

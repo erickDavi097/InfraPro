@@ -1,4 +1,3 @@
-/* RESET BASICO */
 * {
   margin: 0;
   padding: 0;
@@ -36,14 +35,12 @@ card-publicacao-header .usuario-info {
   margin-bottom: 15px;
 }
 
-/* CONTAINER PRINCIPAL */
 .container {
   max-width: 700px;
   margin: 0 auto 40px;
   padding: 0 15px;
 }
 
-/* TITULO */
 h1 {
   margin-bottom: 30px;
   font-weight: 700;
@@ -52,7 +49,6 @@ h1 {
   text-align: center;
 }
 
-/* BOTAO DARK MODE */
 #toggleDarkMode {
   display: block;
   margin: 0 auto 40px;
@@ -72,7 +68,6 @@ h1 {
   background-color: #0056b3;
 }
 
-/* CARTAO DE PUBLICACAO */
 .card-publicacao {
   position: relative;
   margin-bottom: 2rem;
@@ -81,14 +76,13 @@ h1 {
   overflow: hidden;
   background-color: var(--card-bg, #fff);
   transition: background-color 0.3s ease;
-  padding: 15px; /* padding geral no card */
+  padding: 15px;
 }
 
 .card-publicacao:hover {
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
 }
 
-/* IMAGEM PUBLICACAO */
 .card-publicacao img {
   width: 100%;
   display: block;
@@ -118,14 +112,12 @@ h1 {
   margin-top: 5px;
 }
 
-/* TITULO DA PUBLICACAO */
 .card-publicacao h3 {
   font-size: 1.7rem;
   margin-bottom: 12px;
   color: #222;
 }
 
-/* CONTEUDO */
 .card-publicacao p {
   font-size: 1rem;
   line-height: 1.5;
@@ -133,7 +125,6 @@ h1 {
   color: #444;
 }
 
-/* SECAO USUARIO + FOTO */
 .card-publicacao>div {
   display: flex;
   align-items: center;
@@ -167,13 +158,11 @@ h1 {
   border-color: #0056b3;
 }
 
-/* DETALHES */
 .card-publicacao p strong {
   color: #222;
   font-weight: 600;
 }
 
-/* TEMPO E DATA */
 .card-publicacao p em {
   font-size: 0.9rem;
   color: #666;
@@ -181,7 +170,6 @@ h1 {
   margin-top: 4px;
 }
 
-/* INTERAÇÕES: CURTIR E COMENTAR */
 .interacoes {
   display: flex;
   align-items: center;
@@ -210,7 +198,6 @@ h1 {
   user-select: text;
 }
 
-/* MODAL GENERICO */
 .modal {
   position: fixed;
   top: 0;
@@ -226,7 +213,6 @@ h1 {
   overflow-y: auto;
 }
 
-/* CONTEUDO DO MODAL */
 .modal-conteudo {
   background-color: #fff;
   padding: 25px 30px;
@@ -245,7 +231,6 @@ h1 {
   color: #222;
 }
 
-/* BOTAO FECHAR */
 .fechar {
   position: absolute;
   top: 15px;
@@ -262,7 +247,6 @@ h1 {
   color: #000;
 }
 
-/* LISTA DE COMENTARIOS E CURTIDAS */
 #listaComentariosModal,
 #listaCurtidas {
   list-style: none;
@@ -295,7 +279,6 @@ h1 {
   color: #444;
 }
 
-/* INPUT E BOTAO DE ENVIAR NO MODAL DE COMENTÁRIOS */
 #inputComentarioModal {
   margin-top: 15px;
   display: flex;
@@ -331,7 +314,6 @@ h1 {
   background-color: #0056b3;
 }
 
-/* DARK MODE */
 body.dark-mode {
   background-color: #121212;
   color: #ddd;

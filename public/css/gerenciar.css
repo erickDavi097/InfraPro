@@ -139,7 +139,7 @@ th, td {
 }
 
 th {
-    background-color: #007bff;
+    background-color: #556b90;
     color: white;
 }
 
@@ -150,3 +150,65 @@ tr:nth-child(even) {
 tr:hover {
     background-color: #e3f0ff;
 }
+#paginacao {
+    margin-top: 20px;
+    text-align: center;
+}
+
+#paginacao button {
+    background-color: #253562; 
+    color: #fff;
+    border: none;
+    margin: 0 4px;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s;
+}
+
+#paginacao button:hover {
+    background-color: #556b90; 
+    transform: scale(1.05);
+}
+
+#paginacao button:disabled {
+    background-color: #475569;
+    color: #cbd5e1;
+    cursor: not-allowed;
+    transform: none;
+}
+table button {
+    padding: 6px 12px;
+    margin: 2px;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s;
+}
+
+
+table button[data-id] {
+    background-color: #2563EB; 
+    color: white;
+}
+
+table button[data-id]:hover {
+    background-color: #3B82F6;
+    transform: scale(1.05);
+}
+
+
+table button:not([data-id]) {
+    background-color: #556b90;
+    color: white;
+}
+
+table button:not([data-id]):hover {
+    background-color: #475569;
+    transform: scale(1.05);
+}
+
+

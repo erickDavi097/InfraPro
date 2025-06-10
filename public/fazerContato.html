@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Contato com Admin</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 700px;
+            margin: 20px auto;
+            padding: 0 10px;
+            background: #121212;
+            color: #ddd;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        form {
+            margin-bottom: 20px;
+            background-color: #1e1e1e;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        input,
+        textarea,
+        select,
+        button {
+            width: 100%;
+            padding: 8px;
+            margin: 6px 0;
+            box-sizing: border-box;
+            font-size: 14px;
+            background-color: #333;
+            border: none;
+            border-radius: 4px;
+            color: #eee;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            background-color: #1e1e1e;
+            color: #ddd;
+        }
+
+        th,
+        td {
+            border: 1px solid #444;
+            padding: 6px 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #333;
+        }
+
+        button {
+            cursor: pointer;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        /* Modal dark mode */
+        #modalResposta {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.85);
+            color: #eee;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+            z-index: 1000;
+        }
+
+        #modalResposta .content {
+            background: #222;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-sizing: border-box;
+        }
+
+        #modalResposta button {
+            background-color: #444;
+            margin-top: 15px;
+            width: auto;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>Contato com Admin</h2>
+
+    <form id="formContato">
+        <input type="text" id="assunto" placeholder="Assunto" required />
+        <textarea id="mensagem" placeholder="Mensagem" rows="4" required></textarea>
+        <button type="submit">Enviar</button>
+        <div id="feedback" style="margin-top:10px;"></div>
+    </form>
+
+    <label for="statusFiltro">Filtrar por status:</label>
+    <select id="statusFiltro">
+        <option value="">Todos</option>
+        <option value="pendente">Pendente</option>
+        <option value="respondido">Respondido</option>
+    </select>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Assunto</th>
+                <th>Mensagem</th>
+                <th>Data</th>
+                <th>Status</th>
+                <th>Resposta</th>
+            </tr>
+        </thead>
+        <tbody id="listaContatos">
+        </tbody>
+    </table>
+
+    <div id="modalResposta">
+        <div class="content">
+            <h3>Resposta do Admin</h3>
+            <p id="textoResposta" style="white-space: pre-wrap;"></p>
+            <button id="btnFecharModal">Fechar</button>
+        </div>
+    </div>
+
+    <script>
+        const fkUsuario = sessionStorage.ID_USUARIO || null;
+        const listaContatos = document.getElementById('listaContatos');
+        const formContato = document.getElementById('formContato');
+        const statusFiltro = document.getElementById('statusFiltro');
+        const modalResposta = document.getElementById('modalResposta');
+        const textoResposta = document.getElementById('textoResposta');
+        const btnFecharModal = document.getElementById('btnFecharModal');
+        const feedback = document.getElementById('feedback');
+
+        if (!fkUsuario) {
+            listaContatos.innerHTML = '<tr><td colspan="5" style="text-align:center;">Usuário não identificado. Faça login para ver seus contatos.</td></tr>';
+            formContato.style.display = 'none';
+        } else {
+            function formatarData(dtString) {
+                const dt = new Date(dtString);
+                return dt.toLocaleString('pt-BR');
+            }
+
+            function carregarContatos() {
+                let url = `/contato?fkUsuario=${fkUsuario}`;
+                if (statusFiltro.value) {
+                    url = `/contato/${statusFiltro.value}?fkUsuario=${fkUsuario}`;
+                }
+
+                fetch(url)
+                    .then(res => res.json())
+                    .then(data => {
+                        console.log('Dados recebidos:', data);
+                        listaContatos.innerHTML = '';
+                        if (!data.length) {
+                            listaContatos.innerHTML = '<tr><td colspan="5" style="text-align:center;">Nenhum contato encontrado.</td></tr>';
+                            return;
+                        }
+                        for (let i = 0; i < data.length; i++) {
+                            const c = data[i];
+                            console.log('Contato:', c);
+                            console.log('statusContato:', c.statusContato);
+                            console.log('resposta:', c.resposta);
+
+                            const status = (c.statusContato || '').toLowerCase();
+                            const temResposta = c.resposta && c.resposta.trim().length > 0;
+                            console.log('status to lower:', status);
+                            console.log('temResposta:', temResposta);
+
+                            const btnResposta = (status === 'respondido')
+                                ? `<button data-id="${c.id}" class="btnResposta">Ver Resposta</button>`
+                                : '-';
+
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = `
+                                <td>${c.assunto}</td>
+                                <td>${c.mensagem}</td>
+                                <td>${formatarData(c.dtEnvio)}</td>
+                                <td>${c.statusContato}</td>
+                                <td>${btnResposta}</td>
+                            `;
+                            listaContatos.appendChild(tr);
+                        }
+
+                        const btns = document.querySelectorAll('.btnResposta');
+                        for (let j = 0; j < btns.length; j++) {
+                            btns[j].onclick = () => abrirResposta(btns[j].getAttribute('data-id'));
+                        }
+                    })
+                    .catch(err => {
+                        listaContatos.innerHTML = '<tr><td colspan="5" style="text-align:center; color:#f44336;">Erro ao carregar contatos.</td></tr>';
+                        console.error(err);
+                    });
+            }
+
+
+
+            formContato.addEventListener('submit', e => {
+                e.preventDefault();
+                feedback.textContent = '';
+                const assunto = document.getElementById('assunto').value.trim();
+                const mensagem = document.getElementById('mensagem').value.trim();
+
+                if (!assunto || !mensagem) {
+                    feedback.textContent = 'Preencha todos os campos.';
+                    feedback.style.color = '#f44336';
+                    return;
+                }
+
+                fetch('/contato/enviar', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ fkUsuario, assunto, mensagem, statusContato: 'pendente' })
+                })
+                    .then(res => {
+                        if (!res.ok) throw new Error('Erro ao enviar mensagem');
+                        document.getElementById('assunto').value = '';
+                        document.getElementById('mensagem').value = '';
+                        feedback.textContent = 'Mensagem enviada com sucesso!';
+                        feedback.style.color = '#4caf50';
+                        carregarContatos();
+                    })
+                    .catch(err => {
+                        feedback.textContent = 'Erro ao enviar mensagem. Tente novamente.';
+                        feedback.style.color = '#f44336';
+                        console.error(err);
+                    });
+            });
+
+            statusFiltro.addEventListener('change', carregarContatos);
+
+            function abrirResposta(idContato) {
+                fetch(`/contato/resposta/${idContato}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (!data.length || !data[0].resposta) {
+                            alert('Ainda não houve resposta do admin.');
+                            return;
+                        }
+                        textoResposta.textContent = data[0].resposta;
+                        modalResposta.style.display = 'flex';
+                    })
+
+                    .catch(err => {
+                        alert('Erro ao carregar resposta.');
+                        console.error(err);
+                    });
+            }
+
+            btnFecharModal.onclick = () => {
+                modalResposta.style.display = 'none';
+                textoResposta.textContent = '';
+            };
+
+            carregarContatos();
+        }
+    </script>
+
+</body>
+
+</html>

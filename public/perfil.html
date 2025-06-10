@@ -71,7 +71,7 @@
         <div class="modal-content">
             <span id="modal-close-btn" class="close-modal">&times;</span>
             <h2 class="modal-title"></h2>
-            <div class="lista-usuarios"></div>
+            <div class="lista-usuarios" style="max-height: 400px; overflow-y: auto;"></div>
         </div>
     </div>
 
@@ -136,7 +136,9 @@
                     const container = document.getElementById("publicacoes-container");
                     container.innerHTML = '';
 
-                    publicacoes.forEach(pub => {
+                    for (let i = 0; i < publicacoes.length; i++) {
+                        const pub = publicacoes[i];
+
                         const div = document.createElement("div");
                         div.classList.add("publicacao");
 
@@ -155,10 +157,11 @@
                         div.addEventListener('click', () => abrirModal(pub));
 
                         container.appendChild(div);
-                    });
+                    }
                 })
                 .catch(err => console.error('Erro ao carregar publicações:', err));
         }
+
 
         document.getElementById('followers-btn').addEventListener('click', () => abrirModalSeguidoresPorTipo('Seguidores'));
         document.getElementById('following-btn').addEventListener('click', () => abrirModalSeguidoresPorTipo('Seguindo'));
@@ -187,7 +190,9 @@
             const container = modal.querySelector('.lista-usuarios');
             container.innerHTML = '';
 
-            listaUsuarios.forEach(usuario => {
+            for (let i = 0; i < listaUsuarios.length; i++) {
+                const usuario = listaUsuarios[i];
+
                 const div = document.createElement('div');
                 div.classList.add('usuario-item');
 
@@ -200,10 +205,11 @@
 
                 div.append(img, span);
                 container.appendChild(div);
-            });
+            }
 
             modal.style.display = 'flex';
         }
+
 
         document.getElementById('modal-close-btn').addEventListener('click', () => {
             document.getElementById('modal-seguidores').style.display = 'none';

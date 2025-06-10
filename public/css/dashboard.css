@@ -54,9 +54,9 @@ nav.sidebar a:hover {
   justify-content: space-evenly;
 }
 .kpi{
-  width: 18rem;
+  width: 20rem;
   height: 15vh;
-  background-color: #666;
+  background-color: #bbb4b4;
   border-radius: 15px;
 }
 
@@ -69,7 +69,7 @@ nav.sidebar a:hover {
 body.dark-mode .kpi,
 body.dark-mode .kpi p{
   background-color: #d3d0d0;
-  color: #2c3e50;
+  color: rgb(0, 0, 0);
   border-radius: 15px;
 
 }
@@ -110,13 +110,14 @@ header h1 {
 
 .chart-container {
   width: 50rem;
-  height: 22vh;
+  height: 29vh;
   padding-bottom: 2%;
   margin-bottom: 15%;
 }
+
 .chart-container2 {
   width: 20rem;
-  height: 22vh;
+  height: 25vh;
   padding-bottom: 2%;
   margin-bottom: 15%;
 }
@@ -124,7 +125,9 @@ h3 {
   margin-bottom: 20px;
   color: #2c3e50;
 }
-
+#graficoCategorias{
+  transform: translateY(-80px);
+}
 .dark-mode {
   background-color: #222;
   color: #eee;
@@ -156,4 +159,26 @@ body.dark-mode #toggleDarkMode:hover {
   transition: background-color 0.25s ease;
   box-shadow: 0 4px 10px rgba(0, 123, 255, 0.4);
   user-select: none;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #caadad;
+  text-align: left;
+  padding: 3px;
+  font-size: 16px;
+}
+
+tr:nth-child(even) {
+  background-color: #e7ddd3;
+  color: rgb(0, 0, 0)
+}
+
+tr:nth-child(odd) {
+  background-color: #d6852f;
+  color: white
 }

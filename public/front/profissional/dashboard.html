@@ -27,57 +27,136 @@
     <div class="kpis">
       <!--K.P.I.S-->
       <div class="kpi">
-        <p>Primeira KPI</p>
+        <p>Quantidade de publicações</p>
         <div class="agendamentos">
-          <p style="font-size: xx-large;">3</p>
+          <p style="font-size: xx-large;"><span id="span_publicacoes">0</span></p>
         </div>
       </div>
       <div class="kpi">
-        <p>Segunda KPI</p>
+        <p>Média do preço de seus trabalhos</p>
         <div class="seguidores">
-          <p style="font-size: xx-large;">5</p>
+          <p style="font-size: xx-large;"><span id="span_media_preco">0</span></p>
         </div>
       </div>
       <div class="kpi">
-        <p>Terceira KPI</p>
+        <p>Curtidas recebidas</p>
         <div class="publicacoes">
-          <p style="font-size: xx-large;">8</p>
+          <p style="font-size: xx-large;"><span id="totalCurtidas">0</span></p>
         </div>
       </div>
-      <div class="kpi">
-        <p>Terceira KPI</p>
-        <div class="servicos">
-          <p style="font-size: xx-large;">5</p>
-        </div>
-      </div>
+
 
     </div>
-<div class="graficos">
-    <section class="charts">
-      <div class="chart-container">
-        <h3>Publicações no último mês</h3>
-        <canvas id="publicacoesChart"></canvas>
-      </div>
-      <div class="chart-container">
-        <h3>Publicações no último mês</h3>
-        <canvas id="publicacoesChart2"></canvas>
-      </div>
-    </section>
-    <section class="pizza">
-      <div class="chart-container2">
-        <h3>Publicações no último mês</h3>
-        <canvas id="publicacoesChart3"></canvas>
-      </div>
-      <div class="chart-container2">
-        <h3>Publicações no último mês</h3>
-        <canvas id="publicacoesChart4"></canvas>
-      </div>
+    <div class="graficos">
+      <section class="charts">
+        <div class="chart-container">
+          <h3>Seguidores Ganhos por Mês</h3>
+          <canvas id="seguidoresChart"></canvas>
+        </div>
 
-    </section>
+        <div class="chart-container">
+          <h3 style="transform: translateY(-40px);">Publicações por Categoria</h3>
+          <canvas id="graficoCategorias"></canvas>
+        </div>
+      </section>
+      <section class="pizza">
+        <div class="chart-container2">
+          <h3>Seguidores por Estado (%)</h3>
+          <canvas id="seguidoresEstadoChart"></canvas>
+        </div>
+
+        <div class="chart-container2">
+          <h3>Publicacoes em alta - Top3</h3>
+          <table id="tabela-engajamento">
+            <thead>
+              <tr>
+                <th>Título</th>
+                <th>Curtidas</th>
+                <th>Comentários</th>
+              </tr>
+            </thead>
+            <tbody id="corpo-tabela-engajamento">
+            </tbody>
+          </table>
+
+        </div>
+
+      </section>
     </div>
 
   </div>
 
+  <script>
+    const id = sessionStorage.ID_USUARIO;
+
+    function obterPublicacoes() {
+      let span = document.getElementById('span_publicacoes');
+
+      fetch(`/dashboard/publicacoes/contagem/${id}`)
+        .then(res => res.json())
+        .then(data => {
+          span.textContent = data.total;
+        })
+        .catch(err => {
+          console.error("Erro ao buscar contagem de publicações:", err);
+        });
+    }
+    function obterMediaPreco() {
+      let span = document.getElementById('span_media_preco');
+
+      fetch(`/dashboard/publicacoes/media-preco/${id}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.media !== null) {
+            span.textContent = `R$ ${Number(data.media).toFixed(2)}`;
+          } else {
+            span.textContent = 'R$ 0,00';
+          }
+        })
+        .catch(err => {
+          console.error("Erro ao buscar média de preços:", err);
+        });
+    }
+    function obterCurtidasRecebidas(idUsuario) {
+      fetch(`/dashboard/curtidas/recebidas/${idUsuario}`)
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById("totalCurtidas").textContent = data.totalCurtidas;
+        })
+        .catch(err => console.error("Erro ao buscar curtidas recebidas:", err));
+    }
+
+    function carregarEngajamento(idUsuario) {
+      fetch(`/dashboard/publicacoes/mais-engajadas/${idUsuario}`)
+        .then(res => res.json())
+        .then(dados => {
+          const corpo = document.getElementById("corpo-tabela-engajamento");
+          corpo.innerHTML = "";
+
+          for (let i = 0; i < dados.length; i++) {
+            const pub = dados[i];
+            const linha = document.createElement("tr");
+
+            linha.innerHTML = `
+          <td>${pub.titulo.length > 20 ? pub.titulo.slice(0, 20) + "..." : pub.titulo}</td>
+          <td>${pub.totalCurtidas}</td>
+          <td>${pub.totalComentarios}</td>
+        `;
+
+            corpo.appendChild(linha);
+          }
+        })
+        .catch(erro => {
+          console.error("Erro ao buscar engajamento:", erro);
+        });
+    }
+
+
+    carregarEngajamento(id);
+    obterCurtidasRecebidas(id)
+    obterMediaPreco();
+    obterPublicacoes();
+  </script>
   <script>
     const btnDarkMode = document.getElementById('toggle-dark-mode');
 
@@ -108,12 +187,12 @@
       const nav = document.getElementById('sidebar-nav');
 
       let opcoes = [
-          { texto: 'Perfil', href: '/perfil.html' },
-          { texto: 'Chat', href: '/chat.html' },
-          { texto: 'Configurações', href: '/configuracoes.html' },
-          { texto: 'Sair', href: '/index.html' }
-        ];
-      
+        { texto: 'Perfil', href: '/perfil.html' },
+        { texto: 'Chat', href: '/chat.html' },
+        { texto: 'Configurações', href: '/configuracoes.html' },
+        { texto: 'Sair', href: '/index.html' }
+      ];
+
 
       let links = '';
       for (let i = 0; i < opcoes.length; i++) {
@@ -129,170 +208,146 @@
   </script>
 
   <script>
-    const ctx = document.getElementById('publicacoesChart').getContext('2d');
 
-    const xValues = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000];
-    const publicacoesChart = new Chart(ctx, {
-      type: "line",
-      data: {
-        labels: xValues,
-        datasets: [{
-          data: [860, 1140, 1060, 1060, 1070, 1110, 1330, 2210, 7830, 2478],
-          borderColor: "orange",
-          fill: false
-        }, {
-          data: [1600, 1700, 1700, 1900, 2000, 2700, 4000, 5000, 6000, 7000],
-          borderColor: "darkblue",
-          fill: false
-        }]
-      },
-      options: {
-        maintainAspectRatio: false,
-        scales: {
-          y: {
-            beginAtZero: true,
-            stepSize: 1
+    function carregarSeguidoresPorMes(idUsuario) {
+      fetch(`/dashboard/seguidores-por-mes/${idUsuario}`)
+        .then(res => res.json())
+        .then(data => {
+          const labels = [];
+          const seguidores = [];
+
+          for (let i = 0; i < data.length; i++) {
+            labels.push(data[i].mes);
+            seguidores.push(data[i].seguidoresGanhos);
           }
-        },
-        plugins: {
-          legend: {
-            display: true,
-            position: 'top',
-            labels: {
-              font: {
-                size: 14
+
+          const ctx = document.getElementById('seguidoresChart').getContext('2d');
+
+          new Chart(ctx, {
+            type: 'line',
+            data: {
+              labels,
+              datasets: [{
+                label: 'Seguidores Ganhos',
+                data: seguidores,
+                borderColor: 'rgba(54, 162, 235, 1)',
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                fill: true,
+                tension: 0.3
+              }]
+            },
+            options: {
+              scales: {
+                y: { beginAtZero: true }
+              },
+              maintainAspectRatio: false
+            }
+          });
+        })
+        .catch(err => console.error('Erro ao carregar seguidores:', err));
+    }
+
+    carregarSeguidoresPorMes(id);
+
+    function carregarGraficoCategorias(idUsuario) {
+      fetch(`/dashboard/publicacoes-por-categoria/${idUsuario}`)
+        .then(res => res.json())
+        .then(dados => {
+          const categorias = [];
+          const quantidades = [];
+
+          for (let i = 0; i < dados.length; i++) {
+            categorias.push(dados[i].categoria);
+            quantidades.push(dados[i].totalPublicacoes);
+          }
+
+          const ctx = document.getElementById('graficoCategorias').getContext('2d');
+          new Chart(ctx, {
+            type: 'bar',
+            data: {
+              labels: categorias,
+              datasets: [{
+                label: 'Publicações por Categoria',
+                data: quantidades,
+                backgroundColor: '#4e79a7'
+              }]
+            },
+            options: {
+              maintainAspectRatio: false,
+              responsive: true,
+              scales: {
+                y: {
+                  beginAtZero: true,
+
+                }
               }
             }
-          }
-        }
-      }
-    });
+          });
+        })
+        .catch(erro => console.error('Erro ao carregar gráfico:', erro));
+    }
 
-    const ctx2 = document.getElementById('publicacoesChart2').getContext('2d');
+    carregarGraficoCategorias(id);
 
-    const publicacoesChart2 = new Chart(ctx2, {
-      type: 'bar',
-      data: {
-        labels: [
-          'Semana 1',
-          'Semana 2',
-          'Semana 3',
-          'Semana 4'
-        ],
-        datasets: [{
-          label: 'Publicações',
-          data: [3, 7, 5, 8],
-          backgroundColor: 'darkblue',
-          borderColor: 'rgba(46, 204, 113, 1)',
-          borderWidth: 1,
-          borderRadius: 4
-        }]
-      },
-      options: {
-        maintainAspectRatio: false,
-        scales: {
-          y: {
-            beginAtZero: true,
-            stepSize: 1
+    function carregarSeguidoresPorEstado(idUsuario) {
+      fetch(`/dashboard/seguidores-por-estado/${idUsuario}`)
+        .then(res => res.json())
+        .then(data => {
+          const estados = [];
+          const totais = [];
+          let totalGeral = 0;
+
+          for (let i = 0; i < data.length; i++) {
+            estados.push(data[i].estado);
+            totais.push(data[i].totalSeguidores);
+            totalGeral += data[i].totalSeguidores;
           }
-        },
-        plugins: {
-          legend: {
-            display: true,
-            position: 'top',
-            labels: {
-              font: {
-                size: 14
+
+          const ctx = document.getElementById('seguidoresEstadoChart').getContext('2d');
+
+          new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+              labels: estados,
+              datasets: [{
+                label: 'Seguidores por Estado (%)',
+                data: totais,
+                backgroundColor: [
+                  '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
+                  '#FF9F40', '#E7E9ED', '#8A2BE2', '#00CED1', '#FFD700'
+                ],
+                borderColor: '#fff',
+                borderWidth: 2
+              }]
+            },
+            options: {
+              responsive: true,
+              plugins: {
+                legend: {
+                  position: 'right',
+                  labels: {
+                    font: {
+                      size: 14
+                    }
+                  }
+                },
+                tooltip: {
+                  callbacks: {
+                    label: function (context) {
+                      let valor = context.parsed;
+                      let percentual = ((valor / totalGeral) * 100).toFixed(1);
+                      return `${context.label}: ${percentual}% (${valor})`;
+                    }
+                  }
+                }
               }
             }
-          }
-        }
-      }
-    });
+          });
+        })
+        .catch(err => console.error('Erro ao carregar seguidores por estado:', err));
+    }
+    carregarSeguidoresPorEstado(id);
 
-    const ctx3 = document.getElementById('publicacoesChart3').getContext('2d');
-
-    const publicacoesChart3 = new Chart(ctx3, {
-      type: 'doughnut',
-      data: {
-        labels: [
-          'Semana 1',
-          'Semana 2',
-          'Semana 3',
-          'Semana 4'
-        ],
-        datasets: [{
-          label: 'Publicações',
-          data: [3, 7, 5, 8],
-          backgroundColor: 'darkblue',
-          borderColor: 'rgba(46, 204, 113, 1)',
-          borderWidth: 1,
-          borderRadius: 4
-        }]
-      },
-      options: {
-        maintainAspectRatio: false,
-        scales: {
-          y: {
-            beginAtZero: true,
-            stepSize: 1
-          }
-        },
-        plugins: {
-          legend: {
-            display: true,
-            position: 'top',
-            labels: {
-              font: {
-                size: 14
-              }
-            }
-          }
-        }
-      }
-    });
-
-    const ctx4 = document.getElementById('publicacoesChart4').getContext('2d');
-
-    const publicacoesChart4 = new Chart(ctx4, {
-      type: 'bar',
-      data: {
-        labels: [
-          'Semana 1',
-          'Semana 2',
-          'Semana 3',
-          'Semana 4'
-        ],
-        datasets: [{
-          label: 'Publicações',
-          data: [3, 7, 5, 8],
-          backgroundColor: 'darkblue',
-          borderColor: 'rgba(46, 204, 113, 1)',
-          borderWidth: 1,
-          borderRadius: 4
-        }]
-      },
-      options: {
-        maintainAspectRatio: false,
-        scales: {
-          y: {
-            beginAtZero: true,
-            stepSize: 1
-          }
-        },
-        plugins: {
-          legend: {
-            display: true,
-            position: 'top',
-            labels: {
-              font: {
-                size: 14
-              }
-            }
-          }
-        }
-      }
-    });
 
   </script>
 </body>

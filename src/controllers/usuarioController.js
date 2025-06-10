@@ -1,6 +1,5 @@
 var usuarioModel = require("../models/usuarioModel");
 var enderecoModel = require("../models/enderecoModel");
-const portfolioModel = require('../models/portfolioModel');
 const publicacaoModel = require('../models/publicacaoModel');
 
 
@@ -211,7 +210,6 @@ async function perfilPublicoCompleto(req, res) {
         }
 
         const endereco = await enderecoModel.buscarPorUsuarioId(id);
-        const portfolio = await portfolioModel.buscarPorUsuarioId(id);
         const publicacoes = await publicacaoModel.buscarPublicacoesPorUsuarioId(id);
 
         if (usuario[0].foto) {
@@ -221,7 +219,6 @@ async function perfilPublicoCompleto(req, res) {
         res.json({
             usuario: usuario[0],
             endereco: endereco[0] || null,
-            portfolio: portfolio || [],
             publicacoes: publicacoes || [],
         });
     } catch (erro) {

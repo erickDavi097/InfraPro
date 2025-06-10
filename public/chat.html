@@ -105,12 +105,18 @@
 
             if (!append && !prepend) container.innerHTML = '';
 
-            mensagens.forEach(mensagem => {
-                if (mensagensCarregadas.has(mensagem.id)) return;
+            for (let i = 0; i < mensagens.length; i++) {
+                const mensagem = mensagens[i];
+
+                if (mensagensCarregadas.has(mensagem.id)) {
+                    continue;
+                }
+
                 mensagensCarregadas.add(mensagem.id);
 
                 const divMsg = document.createElement('div');
                 divMsg.classList.add('mensagem');
+
                 if (mensagem.Remetente === nomeUsuario || mensagem.id === idUltimaMensagemEnviada) {
                     divMsg.classList.add('enviada');
                 } else {
@@ -118,10 +124,10 @@
                 }
 
                 divMsg.innerHTML = `
-                <span class="remetente">${mensagem.Remetente}</span>
-                <span class="conteudo">${mensagem.conteudo}</span>
-                <span class="horario">${new Date(mensagem.horario).toLocaleString()}</span>
-            `;
+            <span class="remetente">${mensagem.Remetente}</span>
+            <span class="conteudo">${mensagem.conteudo}</span>
+            <span class="horario">${new Date(mensagem.horario).toLocaleString()}</span>
+        `;
 
                 if (mensagem.Remetente === nomeUsuario) {
                     const menuDiv = document.createElement('div');
@@ -150,12 +156,20 @@
                     btnMenu.addEventListener('click', e => {
                         e.stopPropagation();
                         const aberto = opcoesDiv.style.display === 'block';
-                        document.querySelectorAll('.menu-opcoes').forEach(m => m.style.display = 'none');
+
+                        const menus = document.querySelectorAll('.menu-opcoes');
+                        for (let j = 0; j < menus.length; j++) {
+                            menus[j].style.display = 'none';
+                        }
+
                         opcoesDiv.style.display = aberto ? 'none' : 'block';
                     });
 
                     document.addEventListener('click', () => {
-                        document.querySelectorAll('.menu-opcoes').forEach(m => m.style.display = 'none');
+                        const menus = document.querySelectorAll('.menu-opcoes');
+                        for (let j = 0; j < menus.length; j++) {
+                            menus[j].style.display = 'none';
+                        }
                     });
 
                     btnEditar.addEventListener('click', () => {
@@ -199,12 +213,13 @@
                 } else {
                     container.append(divMsg);
                 }
-            });
+            }
 
             if (!prepend && append) {
                 container.scrollTop = container.scrollHeight;
             }
         }
+
 
         function carregarMensagensIniciais() {
             offset = 0;
@@ -316,7 +331,9 @@
                 .then(clientes => {
                     console.log('Resposta do servidor:', clientes);
                     listaClientes.innerHTML = '';
-                    clientes.forEach(cliente => {
+
+                    for (let i = 0; i < clientes.length; i++) {
+                        const cliente = clientes[i];
                         const li = document.createElement('li');
                         li.classList.add('cliente-item');
 
@@ -338,14 +355,14 @@
                         });
 
                         listaClientes.appendChild(li);
-                    });
-
+                    }
                 })
                 .catch(err => {
                     console.error('Erro ao carregar clientes:', err);
                     listaClientes.innerHTML = '<li>Erro ao carregar clientes</li>';
-                })
+                });
         }
+
 
         function mostrarMensagemSemConversas() {
             const containerMensagem = document.getElementById('mensagem-sem-conversas');
@@ -364,8 +381,6 @@
             mensagensCarregadas.clear();
             container.innerHTML = '';
             carregarMensagensIniciais();
-
-            atualizarNavbarUsuario(idDestinatario);
         }
 
     </script>
@@ -428,11 +443,7 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             const idUsuario = sessionStorage.getItem('ID_USUARIO');
-            if (idUsuario) {
-                atualizarNavbarUsuario(idUsuario);
-            } else {
-                console.warn('ID do usuário não encontrado no sessionStorage');
-            }
+            
         });
         window.addEventListener('load', () => {
             if (idDestinatario) {

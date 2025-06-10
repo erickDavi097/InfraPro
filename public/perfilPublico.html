@@ -50,7 +50,6 @@
         </section>
 
         <section class="cards-container">
-            <div id="portifolio"></div>
             <div id="publicacoes"></div>
         </section>
     </main>
@@ -88,7 +87,6 @@
                 .then((data) => {
                     const usuario = data.usuario;
                     const endereco = data.endereco;
-                    const portifolio = data.portifolio;
                     const publicacoes = data.publicacoes;
 
                     document.getElementById("nomeUsuario").textContent = usuario.nome;
@@ -107,7 +105,6 @@
                         document.getElementById("areaAtuacao").textContent = "Endereço não disponível";
                     }
 
-                    mostrarPortifolio(portifolio);
                     mostrarPublicacoes(publicacoes);
                 })
                 .catch((err) => {
@@ -115,14 +112,7 @@
                 });
         }
 
-        function mostrarPortifolio(portifolio) {
-            const div = document.getElementById("portifolio");
-            if (!portifolio || portifolio.length === 0) {
-                div.innerHTML = "<p>Portfólio vazio</p>";
-                return;
-            }
-            div.innerHTML = portifolio.map((item) => `<div>${item.nome}</div>`).join("");
-        }
+        
 
         function mostrarPublicacoes(publicacoes) {
             const div = document.getElementById("publicacoes");

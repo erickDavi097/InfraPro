@@ -2,153 +2,163 @@
 <html lang="pt-BR">
 
 <head>
-    <meta charset="UTF-8" />
-    <title>Nova Publicação</title>
-    <link rel="stylesheet" href="../../css/fazerPublicacao.css" />
+  <meta charset="UTF-8" />
+  <title>Nova Publicação</title>
+  <link rel="stylesheet" href="../../css/fazerPublicacao.css" />
 </head>
 
 <body>
-    
-    <button id="toggle-dark-mode">
-      style="position: fixed; top: 10px; right: 10px; padding: 8px 12px; border-radius: 4px; border: none; cursor: pointer; z-index: 1100;">
-      🌙 Modo Escuro
-    </button>
 
-    <nav class="sidebar" id="sidebar-nav"></nav>
+  <button id="toggle-dark-mode"
+    style="position: fixed; top: 10px; right: 10px; padding: 8px 12px; border-radius: 4px; border: none; cursor: pointer; z-index: 1100;">
+    🌙 Modo Escuro
+  </button>
 
-
-    <div class="container">
-        <h1>Nova Publicação</h1>
-        <form id="formPublicacao" enctype="multipart/form-data">
-            <label for="titulo">Título:</label>
-            <input type="text" id="titulo" name="titulo" required />
-
-            <label for="conteudo">Descrição:</label>
-            <textarea id="conteudo" name="conteudo" rows="5" required></textarea>
-
-            <label for="fkCategoria">Categoria:</label>
-            <select id="fkCategoria" name="fkCategoria" required>
-                <option value="">Carregando categorias...</option>
-            </select>
+  <nav class="sidebar" id="sidebar-nav"></nav>
 
 
-            <label for="preco">Preço:</label>
-            <input type="number" step="0.01" min="0" id="preco" name="preco" required />
+  <div class="container">
+    <h1>Nova Publicação</h1>
+    <form id="formPublicacao" enctype="multipart/form-data">
+      <label for="titulo">Título:</label>
+      <input type="text" id="titulo" name="titulo" required />
 
-            <label for="imagem">Imagem:</label>
-            <input type="file" id="imagem" name="foto" accept="image/*" required />
+      <label for="conteudo">Descrição:</label>
+      <textarea id="conteudo" name="conteudo" rows="5" required></textarea>
 
-            <button type="submit">Publicar</button>
-        </form>
-    </div>
+      <label for="fkCategoria">Categoria:</label>
+      <select id="fkCategoria" name="fkCategoria" required>
+        <option value="">Carregando categorias...</option>
+      </select>
 
-    <script>
-        const form = document.getElementById('formPublicacao');
 
-        form.addEventListener('submit', function (e) {
-            e.preventDefault();
+      <label for="preco">Preço:</label>
+      <input type="number" step="0.01" min="0" id="preco" name="preco" required />
 
-            const formData = new FormData(form);
-            const idUsuario = sessionStorage.ID_USUARIO;
+      <label for="imagem">Imagem:</label>
+      <input type="file" id="imagem" name="foto" accept="image/*" required />
 
-            formData.append('fkUsuario', idUsuario);
+      <button type="submit">Publicar</button>
+    </form>
+  </div>
+  <div id="toast-container"></div>
 
-            fetch('/publicacoes', {
-                method: 'POST',
-                body: formData
-            })
-                .then(response => {
-                    if (response.ok) {
-                        alert('Publicação feita com sucesso!');
-                        form.reset();
-                    } else {
-                        alert('Erro ao publicar.');
-                    }
-                })
-                .catch(error => {
-                    alert('Erro de conexão.');
-                    console.error(error);
-                });
+  <script>
+    const form = document.getElementById('formPublicacao');
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+      const idUsuario = sessionStorage.ID_USUARIO;
+
+      formData.append('fkUsuario', idUsuario);
+
+      fetch('/publicacoes', {
+        method: 'POST',
+        body: formData
+      })
+        .then(response => {
+          if (response.ok) {
+            showToast('Publicação feita com sucesso!');
+            form.reset();
+          } else {
+            alert('Erro ao publicar.');
+          }
+        })
+        .catch(error => {
+          alert('Erro de conexão.');
+          console.error(error);
         });
-        const selectCategoria = document.getElementById('fkCategoria');
+    });
+    const selectCategoria = document.getElementById('fkCategoria');
 
-        fetch('/categoria')
-            .then(res => res.json())
-            .then(categorias => {
-                // limpa as opções atuais
-                selectCategoria.innerHTML = '<option value="">Selecione uma categoria</option>';
+    fetch('/categoria')
+      .then(res => res.json())
+      .then(categorias => {
+        selectCategoria.innerHTML = '<option value="">Selecione uma categoria</option>';
 
-                categorias.forEach(cat => {
-                    const option = document.createElement('option');
-                    option.value = cat.id;
-                    option.textContent = cat.nome;
-                    selectCategoria.appendChild(option);
-                });
-            })
-            .catch(() => {
-                selectCategoria.innerHTML = '<option value="">Erro ao carregar categorias</option>';
-            });
-
-
-    </script>
-    <script>
-        const dark = document.getElementById('toggle-dark-mode');
-
-        function aplicarModoSalvo() {
-            const modo = localStorage.getItem('modo-escuro');
-            if (modo === 'ativo') {
-                document.body.classList.add('dark-mode');
-                dark.textContent = '☀️ Modo Claro';
-            } else {
-                document.body.classList.remove('dark-mode');
-                btnDarkMode.textContent = '🌙 Modo Escuro';
-            }
+        for (let i = 0; i < categorias.length; i++) {
+          const cat = categorias[i];
+          const option = document.createElement('option');
+          option.value = cat.id;
+          option.textContent = cat.nome;
+          selectCategoria.appendChild(option);
         }
+      })
+      .catch(() => {
+        selectCategoria.innerHTML = '<option value="">Erro ao carregar categorias</option>';
+      });
 
-        btnDarkMode.addEventListener('click', () => {
-            document.body.classList.toggle('dark-mode');
-            if (document.body.classList.contains('dark-mode')) {
-                localStorage.setItem('modo-escuro', 'ativo');
-                btnDarkMode.textContent = '☀️ Modo Claro';
-            } else {
-                localStorage.setItem('modo-escuro', 'desativo');
-                btnDarkMode.textContent = '🌙 Modo Escuro';
-            }
-        });
 
-        function montarNavbar() {
-            const tipo = sessionStorage.TIPO_USUARIO || 'cliente';
-            const nav = document.getElementById('sidebar-nav');
 
-            let opcoes = [];
+  </script>
+  <script>
+    function showToast(message, type = 'error') {
+      const toast = document.createElement('div');
+      toast.classList.add('toast', type);
+      toast.textContent = message;
+      document.getElementById('toast-container').appendChild(toast);
+      setTimeout(() => toast.remove(), 4000);
+    }
 
-            if (tipo === 'profissional') {
-                opcoes = [
-                    { texto: 'Home', href: './front/cliente/home.html' },
-                    { texto: 'Dashboard', href: './front/profissional/dashboard.html' },
-                    { texto: 'Chat', href: '/chat.html' },
-                    { texto: 'Configurações', href: '/configuracoes.html' },
-                    { texto: 'Sair', href: '/index.html' }
-                ];
-            } else {
-                opcoes = [
-                    { texto: 'Home', href: './front/cliente/home.html' },
-                    { texto: 'Chat', href: '/chat.html' },
-                    { texto: 'Configurações', href: '/configuracoes.html' },
-                    { texto: 'Sair', href: '/index.html' }
-                ];
-            }
+    const dark = document.getElementById('toggle-dark-mode');
 
-            let links = '';
-            for (let i = 0; i < opcoes.length; i++) {
-                const opcao = opcoes[i];
-                links += `<a href="${opcao.href}">${opcao.texto}</a>`;
-            }
+    function aplicarModoSalvo() {
+      const modo = localStorage.getItem('modo-escuro');
+      if (modo === 'ativo') {
+        document.body.classList.add('dark-mode');
+        dark.textContent = '☀️ Modo Claro';
+      } else {
+        document.body.classList.remove('dark-mode');
+        btnDarkMode.textContent = '🌙 Modo Escuro';
+      }
+    }
 
-            nav.innerHTML = `<a href="./front/cliente/home.html"><h2>InfraPro</h2></a>${links}`;
-        }
-    </script>
-    <script>
+    btnDarkMode.addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
+      if (document.body.classList.contains('dark-mode')) {
+        localStorage.setItem('modo-escuro', 'ativo');
+        btnDarkMode.textContent = '☀️ Modo Claro';
+      } else {
+        localStorage.setItem('modo-escuro', 'desativo');
+        btnDarkMode.textContent = '🌙 Modo Escuro';
+      }
+    });
+
+    function montarNavbar() {
+      const tipo = sessionStorage.TIPO_USUARIO || 'cliente';
+      const nav = document.getElementById('sidebar-nav');
+
+      let opcoes = [];
+
+      if (tipo === 'profissional') {
+        opcoes = [
+          { texto: 'Home', href: './front/cliente/home.html' },
+          { texto: 'Dashboard', href: './front/profissional/dashboard.html' },
+          { texto: 'Chat', href: '/chat.html' },
+          { texto: 'Configurações', href: '/configuracoes.html' },
+          { texto: 'Sair', href: '/index.html' }
+        ];
+      } else {
+        opcoes = [
+          { texto: 'Home', href: './front/cliente/home.html' },
+          { texto: 'Chat', href: '/chat.html' },
+          { texto: 'Configurações', href: '/configuracoes.html' },
+          { texto: 'Sair', href: '/index.html' }
+        ];
+      }
+
+      let links = '';
+      for (let i = 0; i < opcoes.length; i++) {
+        const opcao = opcoes[i];
+        links += `<a href="${opcao.href}">${opcao.texto}</a>`;
+      }
+
+      nav.innerHTML = `<a href="./front/cliente/home.html"><h2>InfraPro</h2></a>${links}`;
+    }
+  </script>
+  <script>
     const btnDarkMode = document.getElementById('toggle-dark-mode');
 
     function aplicarModoSalvo() {

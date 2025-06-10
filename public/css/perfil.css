@@ -135,6 +135,8 @@ nav.sidebar a:hover {
   user-select: none;
 }
 
+
+
 @media (max-width: 900px) {
   nav.sidebar {
     position: relative;

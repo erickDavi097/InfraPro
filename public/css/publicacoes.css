@@ -293,6 +293,31 @@ body {
   white-space: pre-wrap;
 }
 
+#btn-adicionar-bio {
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  background-color: #716f6f33; 
+  color: rgb(39, 39, 39);;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+#btn-adicionar-bio:hover {
+  background-color: #3333;
+}
+
+body.dark-mode #btn-adicionar-bio {
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  background-color: #75707033; 
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
 body.dark-mode {
   background-color: #121212;
   color: #ddd;

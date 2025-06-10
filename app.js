@@ -23,7 +23,8 @@ var curtidaRouter = require('./src/routes/curtida');
 var comentarioRouter = require('./src/routes/comentario');
 var contatoRouter = require("./src/routes/contato");
 var chatRouter = require("./src/routes/chat");
-var categoriaRouter = require("./src/routes/categoria")
+var categoriaRouter = require("./src/routes/categoria");
+var dashboardRouter = require("./src/routes/dashboard");
 
 
 app.use(express.json());
@@ -44,6 +45,7 @@ app.use("/comentario", comentarioRouter);
 app.use("/contato", contatoRouter);
 app.use("/chat", chatRouter);
 app.use('/categoria', categoriaRouter);
+app.use("/dashboard", dashboardRouter);
 
 
 app.listen(PORTA_APP, function () {

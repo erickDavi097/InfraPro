@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8" />
     <title>Administração de Contatos - InfraPro</title>
@@ -9,29 +10,38 @@
             margin: 20px;
             max-width: 900px;
         }
+
         h1 {
             margin-bottom: 10px;
         }
-        select, button {
+
+        select,
+        button {
             padding: 5px;
             margin: 10px 0;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 15px;
         }
-        th, td {
+
+        th,
+        td {
             border: 1px solid #ccc;
             padding: 8px;
             text-align: left;
         }
+
         th {
             background-color: #eee;
         }
+
         tr:nth-child(even) {
             background-color: #fafafa;
         }
+
         .btn-status {
             cursor: pointer;
             background-color: #0288d1;
@@ -41,15 +51,17 @@
             border-radius: 4px;
             margin-right: 5px;
         }
+
         .btn-status:disabled {
             background-color: #aaa;
             cursor: default;
         }
     </style>
 </head>
+
 <body>
     <h1>Administração de Contatos - InfraPro</h1>
-    
+
     <label for="filtroStatus">Filtrar por status:</label>
     <select id="filtroStatus">
         <option value="pendente" selected>Pendente</option>
@@ -74,78 +86,79 @@
         </tbody>
     </table>
 
-<script>
-    const apiBase = "http://localhost:3000/contato/contatos";
+    <script>
 
-    async function carregarContatos() {
-        const status = document.getElementById('filtroStatus').value;
+        async function carregarContatos() {
+            const status = document.getElementById('filtroStatus').value;
 
-        try {
-            const res = await fetch(`${apiBase}/${status}`);
-            if (!res.ok) throw new Error("Erro ao carregar contatos");
-            const contatos = await res.json();
-            preencherTabela(contatos);
-        } catch (err) {
-            alert(err.message);
-        }
-    }
-
-    function preencherTabela(contatos) {
-        const tbody = document.getElementById('listaContatos');
-        tbody.innerHTML = '';
-
-        if (contatos.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">Nenhum contato encontrado</td></tr>';
-            return;
+            try {
+                const res = await fetch(`/contato/contatos/${status}`);
+                if (!res.ok) throw new Error("Erro ao carregar contatos");
+                const contatos = await res.json();
+                preencherTabela(contatos);
+            } catch (err) {
+                alert(err.message);
+            }
         }
 
-        contatos.forEach(contato => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${contato.id}</td>
-                <td>${contato.nomeUsuario || 'N/D'}</td>
-                <td>${contato.assunto || ''}</td>
-                <td>${contato.mensagem || ''}</td>
-                <td>${new Date(contato.dtEnvio).toLocaleString()}</td>
-                <td>${contato.statusContato}</td>
-                <td>${gerarBotoes(contato)}</td>
-            `;
-            tbody.appendChild(tr);
-        });
-    }
+        function preencherTabela(contatos) {
+            const tbody = document.getElementById('listaContatos');
+            tbody.innerHTML = '';
 
-    function gerarBotoes(contato) {
-        const status = contato.statusContato;
-        if (status === 'pendente') {
-            return `<button class="btn-status" onclick="atualizarStatus(${contato.id}, 'respondido')">Marcar como Respondido</button>`;
+            if (contatos.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">Nenhum contato encontrado</td></tr>';
+                return;
+            }
+
+            for (let i = 0; i < contatos.length; i++) {
+                const contato = contatos[i];
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${contato.id}</td>
+                    <td>${contato.nomeUsuario || 'N/D'}</td>
+                    <td>${contato.assunto || ''}</td>
+                    <td>${contato.mensagem || ''}</td>
+                    <td>${new Date(contato.dtEnvio).toLocaleString()}</td>
+                    <td>${contato.statusContato}</td>
+                    <td>${gerarBotoes(contato)}</td>
+                `;
+                tbody.appendChild(tr);
+            }
         }
-        if (status === 'respondido') {
-            return `<button class="btn-status" onclick="atualizarStatus(${contato.id}, 'fechado')">Marcar como Fechado</button>`;
+
+        function gerarBotoes(contato) {
+            const status = contato.statusContato;
+            if (status === 'pendente') {
+                return `<button class="btn-status" onclick="atualizarStatus(${contato.id}, 'respondido')">Marcar como Respondido</button>`;
+            }
+            if (status === 'respondido') {
+                return `<button class="btn-status" onclick="atualizarStatus(${contato.id}, 'fechado')">Marcar como Fechado</button>`;
+            }
+            return `<button class="btn-status" disabled>Fechado</button>`;
         }
-        return `<button class="btn-status" disabled>Fechado</button>`;
-    }
 
-    async function atualizarStatus(id, novoStatus) {
-        if (!confirm(`Confirma mudar o status para "${novoStatus}"?`)) return;
+        async function atualizarStatus(id, novoStatus) {
+            if (!confirm(`Confirma mudar o status para "${novoStatus}"?`)) return;
 
-        try {
-            const res = await fetch(`${apiBase}/${novoStatus}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ idContato: id })
-            });
+            try {
+                const res = await fetch(`${apiBase}/${novoStatus}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ idContato: id })
+                });
 
-            if (!res.ok) throw new Error("Erro ao atualizar status");
-            alert(`Status atualizado para "${novoStatus}" com sucesso.`);
-            carregarContatos();
-        } catch (err) {
-            alert(err.message);
+                if (!res.ok) throw new Error("Erro ao atualizar status");
+                alert(`Status atualizado para "${novoStatus}" com sucesso.`);
+                carregarContatos();
+            } catch (err) {
+                alert(err.message);
+            }
         }
-    }
 
-    // Carrega contatos pendentes ao abrir a página
-    carregarContatos();
-</script>
+        // Carrega contatos pendentes ao abrir a página
+        carregarContatos();
+    </script>
 
 </body>
+
 </html>

@@ -10,6 +10,10 @@ router.get('/clientes/:profissionalId', function(req, res) {
 router.get('/:usuario1/:usuario2', function (req, res) {
     chatController.obterMensagens(req, res);
 });
+
+router.get('/ultimaMensagem/:usuario1/:usuario2', function (req, res) {
+    chatController.ultimaMensagem(req, res);
+});
     
 router.post('/enviar', function(req, res) {
     chatController.criarMensagem(req,res);

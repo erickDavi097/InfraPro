@@ -11,6 +11,7 @@ body {
   min-height: 100vh;
   transition: background-color 0.3s ease, color 0.3s ease;
   padding: 20px 10px;
+  overflow-y: hidden;
 }
 
 .card-publicacao-header .usuario-info {
@@ -625,6 +626,10 @@ body {
   align-self: flex-start;
 }
 
+.horario{
+  font-size: 10px;
+}
+
 #inputContainer {
   display: flex;
   width: 100%;
@@ -719,6 +724,7 @@ body {
 .dark-mode .mensagem.recebida {
   background-color: #555;
 }
+
 
 button {
   background: transparent;

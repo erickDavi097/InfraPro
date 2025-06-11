@@ -428,8 +428,6 @@ nav.sidebar a:hover {
 }
 
 
-
-/* RESPONSIVO */
 @media (max-width: 600px) {
   .card-publicacao-header {
     flex-direction: column;

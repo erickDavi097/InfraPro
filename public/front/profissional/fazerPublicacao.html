@@ -11,7 +11,7 @@
 
   <button id="toggle-dark-mode"
     style="position: fixed; top: 10px; right: 10px; padding: 8px 12px; border-radius: 4px; border: none; cursor: pointer; z-index: 1100;">
-    🌙 Modo Escuro
+    Modo Escuro
   </button>
 
   <nav class="sidebar" id="sidebar-nav"></nav>
@@ -108,10 +108,10 @@
       const modo = localStorage.getItem('modo-escuro');
       if (modo === 'ativo') {
         document.body.classList.add('dark-mode');
-        dark.textContent = '☀️ Modo Claro';
+        dark.textContent = 'Modo Claro';
       } else {
         document.body.classList.remove('dark-mode');
-        btnDarkMode.textContent = '🌙 Modo Escuro';
+        btnDarkMode.textContent = 'Modo Escuro';
       }
     }
 
@@ -119,10 +119,10 @@
       document.body.classList.toggle('dark-mode');
       if (document.body.classList.contains('dark-mode')) {
         localStorage.setItem('modo-escuro', 'ativo');
-        btnDarkMode.textContent = '☀️ Modo Claro';
+        btnDarkMode.textContent = 'Modo Claro';
       } else {
         localStorage.setItem('modo-escuro', 'desativo');
-        btnDarkMode.textContent = '🌙 Modo Escuro';
+        btnDarkMode.textContent = 'Modo Escuro';
       }
     });
 
@@ -195,14 +195,14 @@
           { texto: 'Dashboard', href: '/front/profissional/dashboard.html' },
           { texto: 'Chat', href: '/chat.html' },
           { texto: 'Configurações', href: '/configuracoes.html' },
-          { texto: 'Sair', href: '/logout.html' }
+          { texto: 'Sair', href: '/index.html' }
         ];
       } else {
         opcoes = [
           { texto: 'Perfil', href: '/perfil.html' },
           { texto: 'Chat', href: '/chat.html' },
           { texto: 'Configurações', href: '/configuracoes.html' },
-          { texto: 'Sair', href: '/logout.html' }
+          { texto: 'Sair', href: '/index.html' }
         ];
       }
 

@@ -1,41 +1,27 @@
 var enderecoModel = require("../models/enderecoModel");
 
 function cadastrar(req, res) {
-
     console.log("Requisição recebida com corpo:", req.body);
 
-    var cep = req.body.cepServer;
-    var uf = req.body.ufServer;
-    var cidade = req.body.cidadeServer;
-    var bairro = req.body.bairroServer;
+    var uf = req.body.uf;
+    var cidade = req.body.cidade;
 
-    if (cep == undefined) {
-        res.status(400).send("Seu cep está undefined!");
-    } else if (uf == undefined) {
+    if (uf == undefined) {
         res.status(400).send("Seu uf está undefined!");
     } else if (cidade == undefined) {
         res.status(400).send("Sua cidade está undefined!");
-    } else if (bairro == undefined) {
-        res.status(400).send("Seu bairro está undefined!");
     } else {
-
-        enderecoModel.cadastrar(cep, uf, cidade, bairro)
-            .then(
-                function (resultado) {
-                    res.json(resultado);
-                }
-            ).catch(
-                function (erro) {
-                    console.log(erro);
-                    console.log(
-                        "\nHouve um erro ao realizar o cadastro! Erro: ",
-                        erro.sqlMessage
-                    );
-                    res.status(500).json(erro.sqlMessage);
-                }
-            );
+        enderecoModel.cadastrar(uf, cidade)
+            .then(resultado => {
+                res.status(200).json({ fkEndereco: resultado.insertId });
+            })
+            .catch(erro => {
+                console.log("\nHouve um erro ao realizar o cadastro! Erro: ", erro.sqlMessage);
+                res.status(500).json(erro.sqlMessage);
+            });
     }
 }
+
 module.exports = {
     cadastrar
 }

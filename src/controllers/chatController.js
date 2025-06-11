@@ -20,7 +20,26 @@ function obterMensagens(req, res) {
             res.status(500).json({ error: erro.sqlMessage || erro });
         });
 }
+function ultimaMensagem(req, res) {
+    var usuario1 = req.params.usuario1;
+    var usuario2 = req.params.usuario2;
 
+    var offset = parseInt(req.query.offset) || 0;
+
+    chatModel.ultimaMensagem(usuario1, usuario2, offset)
+        .then(resultado => {
+            if (resultado.length > 0) {
+                res.status(200).json(resultado);
+            } else {
+                res.status(204).send("Nenhuma mensagem nova encontrada");
+            }
+        })
+        .catch(erro => {
+            console.log("Erro ao obter mensagens:", erro.sqlMessage || erro);
+            res.status(500).json({ error: erro.sqlMessage || erro });
+        });
+}
+ 
 
 function criarMensagem(req, res) {
     const fkRemetente = req.body.fkRemetente;
@@ -108,6 +127,7 @@ function listarClientes(req, res) {
 
 module.exports = {
     obterMensagens,
+    ultimaMensagem,
     criarMensagem,
     editarMensagem,
     removerMensagem,

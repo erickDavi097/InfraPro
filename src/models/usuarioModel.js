@@ -2,15 +2,15 @@ var database = require("../database/config")
 
 function autenticar(email, senha) {
     console.log("ACESSEI O USUARIO MODEL \n \n\t\t >> Se aqui der erro de 'Error: connect ECONNREFUSED',\n \t\t >> verifique suas credenciais de acesso ao banco\n \t\t >> e se o servidor de seu BD está rodando corretamente. \n\n function entrar(): ", email, senha)
-    const instrucaoSql = `SELECT id, fkEndereco, nome, telefone, email, tipo, senha FROM usuario WHERE email = '${email}' AND senha = '${senha}';`;
+    const instrucaoSql = `SELECT id, fkEndereco, nome, email, tipo, senha FROM usuario WHERE email = '${email}' AND senha = '${senha}';`;
     console.log("Executando a instrução SQL: \n" + instrucaoSql);
     return database.executar(instrucaoSql);
 }
 
-function cadastrar(fkEndereco, nome, telefone, email, senha, tipo) {
+function cadastrar(fkEndereco, nome, email, senha, tipo) {
     console.log("ACESSEI O USUARIO MODEL \n \n\t\t >> Se aqui der erro de 'Error: connect ECONNREFUSED',\n \t\t >> verifique suas credenciais de acesso ao banco\n \t\t >> e se o servidor de seu BD está rodando corretamente. \n\n function cadastrar():", nome, email, senha);
     
-    const instrucaoSql = `INSERT INTO usuario (fkEndereco, nome, telefone, email, senha, tipo) VALUES ('${fkEndereco}', '${nome}','${telefone}', '${email}', '${senha}', '${tipo}');`;
+    const instrucaoSql = `INSERT INTO usuario (nome, email, senha, fkEndereco, tipo) VALUES ('${fkEndereco}', '${nome}', '${email}', '${senha}', '${tipo}');`;
     console.log("Executando a instrução SQL: \n" + instrucaoSql);
     return database.executar(instrucaoSql);
 }
@@ -56,7 +56,7 @@ function atualizarSenha(id, senha) {
 
 function buscarPerfilPublico(id) {
     const instrucaoSql = `
-        SELECT u.id, u.nome, u.email, u.biografia, u.foto, e.cidade, e.bairro, e.uf FROM usuario u
+        SELECT u.id, u.nome, u.email, u.biografia, u.foto, e.cidade, e.uf FROM usuario u
         LEFT JOIN endereco e ON u.fkEndereco = e.id
         WHERE u.id = ${id};
     `;

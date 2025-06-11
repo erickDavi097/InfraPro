@@ -7,14 +7,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>InfraPro</title>
   <script src="./js/sessao.js"></script>
-  <link rel="stylesheet" href="./css/cadastro.css">
+  <link rel="stylesheet" href="./css/cadastro.css" />
   <link rel="icon" href="./assets/icon/logo.png" />
 </head>
 
 <body id="pagina">
   <div class="container">
     <div class="navbar">
-      <a href="index.html"><img src="./assets/imgs/logo.png" alt=""></a>
+      <a href="index.html"><img src="./assets/imgs/logo.png" alt="" /></a>
       <div class="navegacao">
         <a href="./index.html">
           <p>Sobre</p>
@@ -34,7 +34,7 @@
       <div class="area">
         <div class="topo-etapa">
           <a href="#" onclick="voltarEtapa()" id="btnVoltar">
-            <img src="./assets/imgs/seta.png" alt="" class="rodar">
+            <img src="./assets/imgs/seta.png" alt="" class="rodar" />
           </a>
           <div class="titulo-etapa" id="tituloEtapa">Escolha como deseja continuar</div>
         </div>
@@ -42,53 +42,66 @@
           <div class="etapa" id="inicio">
             <div class="selecao">
               <div class="usuario">
-                <img src="./assets/imgs/userCli.png" class="user" onclick="tipoSelecionado = 'cliente'; irPara(1)" />
+                <img
+                  src="./assets/imgs/userCli.png"
+                  class="user"
+                  onclick="tipoSelecionado = 'cliente'; irPara(1)"
+                />
                 <div class="title" id="cliente-escolha">Cliente</div>
               </div>
               <div class="usuario">
-                <img src="./assets/imgs/userProf.png" class="user" onclick="tipoSelecionado = 'profissional'; irPara(3)" />
+                <img
+                  src="./assets/imgs/userProf.png"
+                  class="user"
+                  onclick="tipoSelecionado = 'profissional'; irPara(1)"
+                />
                 <div class="title" id="profissional-escolha">Profissional</div>
               </div>
             </div>
             <div class="entrar">
-              <p>Já tem uma conta? <a href="./login.html">Entrar</a></p>
+              <p>
+                Já tem uma conta?
+                <a href="./login.html">Entrar</a>
+              </p>
             </div>
           </div>
 
-          <div class="etapa" id="cliente">
-            <div class="container">
-              <div class="card card-cadastro">
-                <div class="formulario">
-                  <div class="campo">
-                    <input id="input_nome_cliente" class="sem-especiais" type="text" placeholder="Nome" required />
-                  </div>
-                  <div class="campo">
-                    <input id="input_telefone_cliente" class="sem-especiais" type="text" placeholder="Telefone" required />
-                  </div>
-                  <div class="campo">
-                    <input id="input_email_cliente" type="text" placeholder="Email" required />
-                  </div>
-                  <div class="campo">
-                    <input id="input_senha_cliente" class="campo-senha" type="password" placeholder="Senha" required />
-                  </div>
-                  <div class="campo">
-                    <input id="input_confirmacao_senha_cliente" type="password" placeholder="Confirmar Senha" required />
-                  </div>
-                  <p>Etapa 1 de 2</p>
-                  <button onclick="if (validarEtapa1('cliente')) irPara(2)" class="btn">Continuar</button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="etapa" id="cliente2">
+          <!-- Formulário Unificado -->
+          <div class="etapa" id="form_unificado" style="display: none;">
             <div class="formulario">
+              <div class="campo">
+                <input
+                  id="input_nome"
+                  class="sem-especiais"
+                  type="text"
+                  placeholder="Nome"
+                  required
+                />
+              </div>
+              <div class="campo">
+                <input id="input_email" type="text" placeholder="Email" required />
+              </div>
+              <div class="campo">
+                <input
+                  id="input_senha"
+                  class="campo-senha"
+                  type="password"
+                  placeholder="Senha"
+                  required
+                />
+              </div>
+              <div class="campo">
+                <input
+                  id="input_confirmacao_senha"
+                  type="password"
+                  placeholder="Confirmar Senha"
+                  required
+                />
+              </div>
               <div class="linha-campos">
+                <div class="campo metade"></div>
                 <div class="campo metade">
-                  <input id="input_cep_cliente" class="sem-especiais" type="text" placeholder="CEP" required />
-                </div>
-                <div class="campo metade">
-                  <select id="select_uf_cliente" required>
+                  <select id="select_uf" required>
                     <option value="" disabled selected>UF</option>
                     <option value="AC">AC - Acre</option>
                     <option value="AL">AL - Alagoas</option>
@@ -121,345 +134,204 @@
                 </div>
               </div>
               <div class="campo">
-                <input id="input_bairro_cliente" class="sem-especiais" type="text" placeholder="Bairro" required />
+                <input
+                  id="input_cidade"
+                  class="sem-especiais"
+                  type="text"
+                  placeholder="Cidade"
+                  required
+                />
               </div>
-              <div class="campo">
-                <input id="input_cidade_cliente" class="sem-especiais" type="text" placeholder="Cidade" required />
-              </div>
-              
+
               <div id="div_aguardar" class="loading-div" style="display: none;">
                 <img src="./assets/imgs/carregamento.gif" id="loading-gif" />
               </div>
-              <p>Etapa 2 de 2</p>
-              <button type="button" class="btn" onclick="cadastrar()">Finalizar</button>
-            </div>
-          </div>
 
-          <div class="etapa" id="profissional">
-            <div class="container">
-              <div class="card card-cadastro">
-                <div class="formulario">
-                  <div class="campo">
-                    <input id="input_nome_profissional" class="sem-especiais" type="text" placeholder="Nome" required />
-                  </div>    
-                  <div class="campo">
-                    <input id="input_telefone_profissional" class="sem-especiais" type="text" placeholder="Telefone" required />
-                  </div>
-                  <div class="campo">
-                    <input id="input_email_profissional" type="text" placeholder="Email" required />
-                  </div>
-                  <div class="campo">
-                    <input id="input_senha_profissional"  class="campo-senha" type="password" placeholder="Senha" required />
-                  </div>
-                  <div class="campo">
-                    <input id="input_confirmacao_senha_profissional" type="password" placeholder="Confirmar Senha" required />
-                  </div>
-                  <p>Etapa 1 de 2</p>
-                  <button onclick="if (validarEtapa1('profissional')) irPara(4)" class="btn">Continuar</button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="etapa" id="profissional2">
-            <div class="container">
-              <div class="card card-cadastro">
-                <div class="formulario">
-                  <div class="linha-campos">
-                    <div class="campo metade">
-                      <input id="input_cep_profissional" class="sem-especiais" type="text" placeholder="CEP" required />
-                    </div>
-                    <div class="campo metade">
-                      <select id="select_uf_profissional" required>
-                        <option value="" disabled selected>UF</option>
-                        <option value="AC">AC - Acre</option>
-                        <option value="AL">AL - Alagoas</option>
-                        <option value="AP">AP - Amapá</option>
-                        <option value="AM">AM - Amazonas</option>
-                        <option value="BA">BA - Bahia</option>
-                        <option value="CE">CE - Ceará</option>
-                        <option value="DF">DF - Distrito Federal</option>
-                        <option value="ES">ES - Espírito Santo</option>
-                        <option value="GO">GO - Goiás</option>
-                        <option value="MA">MA - Maranhão</option>
-                        <option value="MT">MT - Mato Grosso</option>
-                        <option value="MS">MS - Mato Grosso do Sul</option>
-                        <option value="MG">MG - Minas Gerais</option>
-                        <option value="PA">PA - Pará</option>
-                        <option value="PB">PB - Paraíba</option>
-                        <option value="PR">PR - Paraná</option>
-                        <option value="PE">PE - Pernambuco</option>
-                        <option value="PI">PI - Piauí</option>
-                        <option value="RJ">RJ - Rio de Janeiro</option>
-                        <option value="RN">RN - Rio Grande do Norte</option>
-                        <option value="RS">RS - Rio Grande do Sul</option>
-                        <option value="RO">RO - Rondônia</option>
-                        <option value="RR">RR - Roraima</option>
-                        <option value="SC">SC - Santa Catarina</option>
-                        <option value="SP">SP - São Paulo</option>
-                        <option value="SE">SE - Sergipe</option>
-                        <option value="TO">TO - Tocantins</option>
-                      </select>
-                    </div>
-                  </div>
-                    <div class="campo">
-                      <input id="input_bairro_profissional" class="sem-especiais" type="text" placeholder="Bairro" required />
-                    </div>
-                    <div class="campo">
-                      <input id="input_cidade_profissional" class="sem-especiais" type="text" placeholder="Cidade" required />
-                    </div>
-                  
-                  <div id="div_aguardar" class="loading-div" style="display: none;">
-                    <img src="./assets/imgs/carregamento.gif" id="loading-gif" />
-                  </div>
-                  <p>Etapa 2 de 2</p>
-                  <button type="button" class="btn" onclick="cadastrar()">Finalizar</button>
-                </div>
-              </div>
+              <button type="button" onclick="cadastrar()" class="btn">Finalizar</button>
             </div>
           </div>
         </div>
       </div>
       <div class="banner">
-        <img src="./assets/imgs/homem_furadeira.jpg" alt="">
+        <img src="./assets/imgs/homem_furadeira.jpg" alt="" />
       </div>
     </div>
   </div>
 
   <div id="toast-container"></div>
+
   <script>
-  const etapas = [
-    document.getElementById('inicio'),
-    document.getElementById('cliente'),
-    document.getElementById('cliente2'),
-    document.getElementById('profissional'),
-    document.getElementById('profissional2')
-  ];
+    let tipoSelecionado = null;
 
-  const historico = [];
+    const etapas = [
+      document.getElementById("inicio"),
+      document.getElementById("form_unificado"),
+    ];
 
-  function mostrarEtapa(index) {
-    for (let i = 0; i < etapas.length; i++) {
-        etapas[i].style.display = 'none';
-    }
-    etapas[index].style.display = 'block';
-    historico.push(index);
-    const id = etapas[index].id;
+    const historico = [];
 
-    if (id === "inicio") {
-        document.getElementById("tituloEtapa").textContent = "Escolha como deseja continuar";
-    } else {
+    function mostrarEtapa(index) {
+      for (let i = 0; i < etapas.length; i++) {
+        etapas[i].style.display = "none";
+      }
+      etapas[index].style.display = "block";
+      historico.push(index);
+      const id = etapas[index].id;
+
+      if (id === "inicio") {
+        document.getElementById("tituloEtapa").textContent =
+          "Escolha como deseja continuar";
+      } else if (id === "form_unificado") {
         document.getElementById("tituloEtapa").textContent = "Informações básicas";
-    }
-  }
-
-
-  function irPara(index) {
-    mostrarEtapa(index);
-  }
-
-  function voltarEtapa() {
-    historico.pop();
-    const anterior = historico.pop();
-    if (anterior !== undefined) {
-      mostrarEtapa(anterior);
-    } else {
-      window.location.href = "index.html";
-    }
-  }
-
-  function showToast(message, type = 'error') {
-    const toast = document.createElement('div');
-    toast.classList.add('toast', type);
-    toast.textContent = message;
-    document.getElementById('toast-container').appendChild(toast);
-    setTimeout(() => toast.remove(), 4000);
-  }
-
-  function finalizarAguardar() {
-    document.getElementById("div_aguardar").style.display = 'none';
-  }
-
-  // CAMPOS QUE N PODEM TER CARACTERE ESPECIAL
-  const inputs = document.querySelectorAll('.sem-especiais');
-  for (let i = 0; i < inputs.length; i++) {
-    inputs[i].addEventListener('input', function () {
-      this.value = this.value.replace(/[^a-zA-ZÀ-ÿ0-9\s]/g, '');
-    });
-  }
-
-
-  function pegarDadosDoFormulario(prefixo) {
-    return {
-      nome: document.getElementById(`input_nome_${prefixo}`).value,
-      telefone: document.getElementById(`input_telefone_${prefixo}`).value,
-      email: document.getElementById(`input_email_${prefixo}`).value,
-      senha: document.getElementById(`input_senha_${prefixo}`).value,
-      confirmacaoSenha: document.getElementById(`input_confirmacao_senha_${prefixo}`).value,
-      cep: document.getElementById(`input_cep_${prefixo}`).value,
-      uf: document.getElementById(`select_uf_${prefixo}`).value,
-      bairro: document.getElementById(`input_bairro_${prefixo}`).value,
-      cidade: document.getElementById(`input_cidade_${prefixo}`).value,
-    };
-  }
-
-
-  function validarEtapa1(prefixo) {
-    const dados = pegarDadosDoFormulario(prefixo);
-    dados.telefone = limparMascara(dados.telefone);
-
-    if (!dados.nome || dados.nome.length <= 1) {
-      showToast("Nome inválido.");
-      return false;
+      }
     }
 
-    if (!dados.telefone || dados.telefone.length < 11) {
-      showToast("Telefone muito curto.");
-      return false;
+    function irPara(index) {
+      mostrarEtapa(index);
     }
 
-    const emailValido = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-
-    if (!emailValido.test(dados.email)) {
-      showToast("Email inválido.");
-      finalizarAguardar();
-      return;
-    }
-
-    if (dados.senha !== dados.confirmacaoSenha) {
-      showToast("As senhas não coincidem.");
-      return false;
-    }
-    
-    return true;
-  }
-
-
-
-  function cadastrar() {
-  document.getElementById("div_aguardar").style.display = 'block';
-
-  const dados = pegarDadosDoFormulario(tipoSelecionado);
-
-  dados.telefone = limparMascara(dados.telefone);
-  dados.cep = limparMascara(dados.cep);
-
-  console.log(dados);
-
-  fetch("http://localhost:3333/endereco/cadastrar", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      cepServer: dados.cep,
-      ufServer: dados.uf,
-      cidadeServer: dados.cidade,
-      bairroServer: dados.bairro
-    }),
-  })
-    .then(res => res.json())
-    .then(data => {
-      console.log("Resposta do endereço:", data);
-      const idEndereco = parseInt(data.insertId, 10);
-
-      if (!isNaN(idEndereco)) {
-        console.log("ID do endereço obtido:", idEndereco);
-        dados.idEndereco = idEndereco;
-        cadastrarUsuario(dados);
+    function voltarEtapa() {
+      historico.pop();
+      const anterior = historico.pop();
+      if (anterior !== undefined) {
+        mostrarEtapa(anterior);
       } else {
-        console.log("ID do endereço inválido.");
-        showToast("Erro no cadastro de endereço.");
-        finalizarAguardar();
+        window.location.href = "index.html";
       }
+    }
+
+    function showToast(message, type = "error") {
+      const toast = document.createElement("div");
+      toast.classList.add("toast", type);
+      toast.textContent = message;
+      document.getElementById("toast-container").appendChild(toast);
+      setTimeout(() => toast.remove(), 4000);
+    }
+
+    function finalizarAguardar() {
+      document.getElementById("div_aguardar").style.display = "none";
+    }
+
+    const inputs = document.querySelectorAll(".sem-especiais");
+    for (let i = 0; i < inputs.length; i++) {
+      inputs[i].addEventListener("input", function () {
+        this.value = this.value.replace(/[^a-zA-ZÀ-ÿ0-9\s]/g, "");
+      });
+    }
+
+    function pegarDadosDoFormulario() {
+      return {
+        nome: document.getElementById("input_nome").value,
+        email: document.getElementById("input_email").value,
+        senha: document.getElementById("input_senha").value,
+        confirmacaoSenha: document.getElementById("input_confirmacao_senha").value,
+        uf: document.getElementById("select_uf").value,
+        cidade: document.getElementById("input_cidade").value,
+      };
+    }
+
+    function validarEtapa1() {
+      const dados = pegarDadosDoFormulario();
+
+      if (!dados.nome || dados.nome.length <= 1) {
+        showToast("Nome inválido.");
+        return false;
+      }
+
+      const emailValido = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+      if (!emailValido.test(dados.email)) {
+        showToast("Email inválido.");
+        finalizarAguardar();
+        return false;
+      }
+
+      if (dados.senha !== dados.confirmacaoSenha) {
+        showToast("As senhas não coincidem.");
+        return false;
+      }
+
+      if (!dados.uf) {
+        showToast("Selecione uma UF.");
+        return false;
+      }
+
+      if (!dados.cidade || dados.cidade.length < 2) {
+        showToast("Cidade inválida.");
+        return false;
+      }
+
+      return true;
+    }
+
+    function cadastrar(event) {
+  if (!tipoSelecionado) {
+    showToast("Por favor, selecione cliente ou profissional.");
+    return;
+  }
+
+  if (!validarEtapa1()) return;
+
+  document.getElementById("div_aguardar").style.display = "block";
+
+  const dados = pegarDadosDoFormulario();
+
+  fetch("/endereco/cadastrar", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      uf: dados.uf,
+      cidade: dados.cidade,
+    }),
+  })
+    .then((res) => res.json())
+    .then((dataEndereco) => {
+  console.log("Resposta do cadastro de endereço:", dataEndereco);
+
+  if (!dataEndereco || !dataEndereco.fkEndereco) {
+    showToast("Falha ao cadastrar endereço.");
+    finalizarAguardar();
+    throw new Error("Cadastro de endereço falhou.");
+  }
+
+  return fetch("/usuario/cadastrar", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      nome: dados.nome,
+      email: dados.email,
+      senha: dados.senha,
+      tipo: tipoSelecionado,
+      fkEndereco: dataEndereco.fkEndereco,
+    }),
+  });
+})
+
+    .then((res) => {
+  console.log("Resposta do cadastro de usuário:", res);
+  if (!res.ok) {
+    throw new Error(`Erro HTTP: ${res.status}`);
+  }
+  return res.json();
+})
+.then((dataUsuario) => {
+  if (!dataUsuario || (Array.isArray(dataUsuario) && dataUsuario.length === 0)) {
+    showToast("Falha ao cadastrar usuário.");
+    finalizarAguardar();
+    return;
+  }
+
+      window.location.href = "./login.html";
     })
-    .catch(err => {
-      console.error("Erro ao cadastrar endereço:", err);
-      showToast("Erro ao cadastrar endereço.");
+    .catch((error) => {
+      console.error(error);
+      showToast("Erro no cadastro. Tente novamente.");
       finalizarAguardar();
     });
 }
 
-function cadastrarUsuario(dados) {
-  console.log("Enviando dados para o cadastro do usuário com idEndereco:", dados.idEndereco);
-  fetch("http://localhost:3333/usuario/cadastrar", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      nomeServer: dados.nome,
-      telefoneServer: dados.telefone,
-      emailServer: dados.email,
-      senhaServer: dados.senha,
-      tipoServer: tipoSelecionado,
-      idEndereco: dados.idEndereco 
-    }),
-  })
-    .then(res => res.json())
-    .then(data => {
-      console.log("Usuário cadastrado com sucesso:", data);
-      showToast("Cadastro realizado com sucesso!", "success");
-      setTimeout(() => window.location.href = "login.html", 2000);
-    })
-    .catch(err => {
-      console.error("Erro ao cadastrar usuário:", err);
-      showToast("Erro ao cadastrar usuário.");
-    })
-    .finally(finalizarAguardar);
-}
-
-
-  function mascaraTelefone(input) {
-    input.addEventListener('input', function () {
-      let valor = input.value;
-      valor = valor.replace(/\D/g, '');
-
-      if (valor.length > 11) {
-        valor = valor.slice(0, 11);
-      }
-      if (valor.length > 0) {
-        valor = '(' + valor;
-      }
-      if (valor.length > 3) {
-        valor = valor.slice(0, 3) + ') ' + valor.slice(3);
-      }
-      if (valor.length > 10) {
-        valor = valor.slice(0, 10) + '-' + valor.slice(10);
-      }
-
-      input.value = valor;
-    });
-  }
-
-  function mascaraCep(input) {
-    let valor = input.value;
-    valor = valor.replace(/\D/g, '');
-
-    if (valor.length > 5) {
-      valor = valor.slice(0, 5) + '-' + valor.slice(5, 8);
-    }
-
-    input.value = valor;
-  }
-
-
-  function limparMascara(valor) {
-    return valor.replace(/\D/g, '');
-  }
-
-  const ceps = document.querySelectorAll('#input_cep_cliente, #input_cep_profissional');
-  for (let i = 0; i < ceps.length; i++) {
-    ceps[i].addEventListener('input', () => mascaraCep(ceps[i]));
-  }
-
-  window.onload = () => {
     mostrarEtapa(0);
-
-    const telefones = document.querySelectorAll('#input_telefone_cliente, #input_telefone_profissional');
-    for (let i = 0; i < telefones.length; i++) {
-      mascaraTelefone(telefones[i]);
-    }
-  }
-</script>
-
-
+  </script>
 </body>
 
 </html>

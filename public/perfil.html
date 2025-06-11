@@ -6,9 +6,8 @@
 
 <body>
     <div class="container">
-        <button id="toggle-dark-mode"
-            style="position: fixed; top: 10px; right: 10px; padding: 8px 12px; border-radius: 4px; border: none; cursor: pointer; z-index: 1100;">
-            🌙 Modo Escuro
+        <button id="toggle-dark-mode" style="position: fixed; top: 10px; right: 10px; padding: 8px 12px; border-radius: 4px; border: none; cursor: pointer; z-index: 1100;">
+            Modo Escuro
         </button>
 
         <nav class="sidebar" id="sidebar-nav"></nav>
@@ -58,15 +57,6 @@
         </div>
     </div>
 
-    <div class="modal" id="modal-publicacao">
-        <div class="modal-content">
-            <span class="close-modal" onclick="fecharModal()">&times;</span>
-            <img id="modal-imagem" src="" alt="Imagem da publicação">
-            <h2 id="modal-titulo"></h2>
-            <p id="modal-conteudo"></p>
-        </div>
-    </div>
-
     <div class="modal" id="modal-seguidores" style="display:none;">
         <div class="modal-content">
             <span id="modal-close-btn" class="close-modal">&times;</span>
@@ -75,6 +65,24 @@
         </div>
     </div>
 
+    <div class="modal" id="modal-publicacao">
+    <div class="modal-content">
+        <span class="close-modal" onclick="fecharModal()">&times;</span>
+        
+        <img id="modal-imagem" src="" alt="Imagem da publicação">
+        
+        <input id="input-titulo" type="text" style="display:none; width: 100%; font-size: 1.5rem; margin-bottom: 10px;">
+        <h2 id="modal-titulo"></h2>
+        
+        <textarea id="input-conteudo" rows="5" style="display:none; width: 100%;"></textarea>
+        <p id="modal-conteudo"></p>
+        
+        <button id="btn-editar">Editar</button>
+        <button id="btn-salvar" style="display:none;">Salvar</button>
+        <button id="btn-cancelar" style="display:none;">Cancelar</button>
+         <button id="btn-deletar" style="background-color: #e74c3c; color: white;">Deletar</button>
+    </div>
+</div>
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const idPerfil = urlParams.get('id') || sessionStorage.ID_USUARIO;
@@ -133,9 +141,12 @@
             fetch(`/publicacoes/${userId}`)
                 .then(res => res.json())
                 .then(publicacoes => {
+                    console.log('Publicações carregadas:', publicacoes);
+
                     const container = document.getElementById("publicacoes-container");
                     container.innerHTML = '';
 
+                    
                     for (let i = 0; i < publicacoes.length; i++) {
                         const pub = publicacoes[i];
 
@@ -269,10 +280,6 @@
             }
         });
     </script>
-
-
-
-
     <script>
         const btnDarkMode = document.getElementById('toggle-dark-mode');
 
@@ -280,10 +287,10 @@
             const modo = localStorage.getItem('modo-escuro');
             if (modo === 'ativo') {
                 document.body.classList.add('dark-mode');
-                btnDarkMode.textContent = '☀️ Modo Claro';
+                btnDarkMode.textContent = 'Modo Claro';
             } else {
                 document.body.classList.remove('dark-mode');
-                btnDarkMode.textContent = '🌙 Modo Escuro';
+                btnDarkMode.textContent = 'Modo Escuro';
             }
         }
 
@@ -291,10 +298,10 @@
             document.body.classList.toggle('dark-mode');
             if (document.body.classList.contains('dark-mode')) {
                 localStorage.setItem('modo-escuro', 'ativo');
-                btnDarkMode.textContent = '☀️ Modo Claro';
+                btnDarkMode.textContent = 'Modo Claro';
             } else {
                 localStorage.setItem('modo-escuro', 'desativo');
-                btnDarkMode.textContent = '🌙 Modo Escuro';
+                btnDarkMode.textContent = 'Modo Escuro';
             }
         });
 
@@ -339,16 +346,139 @@
     </script>
 
     <script>
-        function abrirModal(pub) {
-            document.getElementById('modal-imagem').src = `/assets/${pub.imagem}`;
-            document.getElementById('modal-titulo').textContent = pub.titulo;
-            document.getElementById('modal-conteudo').textContent = pub.conteudo;
-            document.getElementById('modal-publicacao').style.display = 'flex';
-        }
+        let publicacaoAtual = null;
 
-        function fecharModal() {
-            document.getElementById('modal-publicacao').style.display = 'none';
+function abrirModal(pub) {
+    publicacaoAtual = pub;
+
+    document.getElementById('modal-imagem').src = `/assets/${pub.imagem}`;
+    document.getElementById('modal-titulo').textContent = pub.titulo;
+    document.getElementById('modal-conteudo').textContent = pub.conteudo;
+
+    document.getElementById('input-titulo').style.display = 'none';
+    document.getElementById('input-conteudo').style.display = 'none';
+
+    document.getElementById('modal-titulo').style.display = 'block';
+    document.getElementById('modal-conteudo').style.display = 'block';
+
+    document.getElementById('btn-editar').style.display = 'inline-block';
+    document.getElementById('btn-salvar').style.display = 'none';
+    document.getElementById('btn-cancelar').style.display = 'none';
+
+    document.getElementById('modal-publicacao').style.display = 'flex';
+}
+document.getElementById("btn-deletar").addEventListener("click", function() {
+  if (!confirm("Tem certeza que deseja deletar esta publicação?")) return;
+
+  fetch(`http://localhost:3333/publicacoes/${publicacaoAtual.id}`, {
+    method: "DELETE"
+  })
+  .then(res => {
+    if (!res.ok) throw new Error("Erro ao deletar publicação");
+    return res.json();
+  })
+  .then(data => {
+    alert(data.mensagem);
+    fecharModal();
+    // aqui você pode atualizar a lista/remover a publicação da tela, se quiser
+  })
+  .catch(err => {
+    alert(err.message);
+  });
+});
+
+function fecharModal() {
+    document.getElementById('modal-publicacao').style.display = 'none';
+}
+
+document.getElementById('modal-publicacao').addEventListener('click', function(e) {
+    if (e.target === this) fecharModal();
+});
+
+const btnEditar = document.getElementById('btn-editar');
+const btnSalvar = document.getElementById('btn-salvar');
+const btnCancelar = document.getElementById('btn-cancelar');
+const modalTitulo = document.getElementById('modal-titulo');
+const modalConteudo = document.getElementById('modal-conteudo');
+const inputTitulo = document.getElementById('input-titulo');
+const inputConteudo = document.getElementById('input-conteudo');
+
+btnEditar.addEventListener('click', () => {
+    inputTitulo.value = modalTitulo.textContent;
+    inputConteudo.value = modalConteudo.textContent;
+
+    modalTitulo.style.display = 'none';
+    modalConteudo.style.display = 'none';
+
+    inputTitulo.style.display = 'block';
+    inputConteudo.style.display = 'block';
+
+    btnEditar.style.display = 'none';
+    btnSalvar.style.display = 'inline-block';
+    btnCancelar.style.display = 'inline-block';
+});
+
+btnCancelar.addEventListener('click', () => {
+    inputTitulo.style.display = 'none';
+    inputConteudo.style.display = 'none';
+
+    modalTitulo.style.display = 'block';
+    modalConteudo.style.display = 'block';
+
+    btnSalvar.style.display = 'none';
+    btnCancelar.style.display = 'none';
+    btnEditar.style.display = 'inline-block';
+});
+
+btnSalvar.addEventListener('click', async () => {
+    const novoTitulo = inputTitulo.value.trim();
+    const novoConteudo = inputConteudo.value.trim();
+
+    if (!novoTitulo || !novoConteudo) {
+        alert('Título e conteúdo não podem ficar vazios.');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('titulo', novoTitulo);
+    formData.append('conteudo', novoConteudo);
+    formData.append('fkCategoria', publicacaoAtual.fkCategoria);
+    formData.append('preco', publicacaoAtual.preco || 0);
+
+    try {
+        const resposta = await fetch(`/publicacoes/${publicacaoAtual.id}`, {
+            method: 'PUT',
+            body: formData,
+        });
+
+        if (resposta.ok) {
+            alert('Publicação atualizada com sucesso!');
+
+            modalTitulo.textContent = novoTitulo;
+            modalConteudo.textContent = novoConteudo;
+
+            inputTitulo.style.display = 'none';
+            inputConteudo.style.display = 'none';
+
+            modalTitulo.style.display = 'block';
+            modalConteudo.style.display = 'block';
+
+            btnSalvar.style.display = 'none';
+            btnCancelar.style.display = 'none';
+            btnEditar.style.display = 'inline-block';
+
+            publicacaoAtual.titulo = novoTitulo;
+            publicacaoAtual.conteudo = novoConteudo;
+        } else {
+            alert('Erro ao atualizar publicação.');
         }
+    } catch (erro) {
+        alert('Erro na comunicação com o servidor.');
+        console.error(erro);
+    }
+});
+
+
 
         document.getElementById('modal-publicacao').addEventListener('click', function (e) {
             if (e.target === this) {
@@ -368,7 +498,7 @@
 
             if (enderecosUsuario.length > 0) {
                 const endereco = enderecosUsuario[0];
-                locElem.innerHTML = `${endereco.cidade} - ${endereco.uf}<br />Bairro: ${endereco.bairro}`;
+                locElem.innerHTML = `${endereco.cidade} - ${endereco.uf}<br>`;
             } else {
                 locElem.textContent = 'Localização não informada';
             }
@@ -437,25 +567,6 @@
             }
         }
 
-        function salvarEdicaoPerfil() {
-            const userId = sessionStorage.ID_USUARIO;
-            const novoNome = document.getElementById('input-nome').value;
-
-            fetch(`/usuario/${userId}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ nome: novoNome })
-            }).then(res => {
-                if (res.ok) {
-                    alert("Perfil atualizado com sucesso!");
-                    document.getElementById('name-display').textContent = novoNome;
-                    sessionStorage.NOME_USUARIO = novoNome;
-                    fecharModalPerfil();
-                } else {
-                    alert("Erro ao atualizar perfil.");
-                }
-            });
-        }
         async function carregarFotoPerfil() {
             const userId = sessionStorage.ID_USUARIO;
             if (!userId) {

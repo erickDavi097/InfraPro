@@ -142,7 +142,6 @@ button:active {
   background-color: #145374;
 }
 
-/* Botão modo escuro fixo no topo direito */
 #toggle-dark-mode {
   position: fixed;
   top: 10px;
@@ -170,7 +169,6 @@ button:active {
   background-color: #145374;
 }
 
-/* Modo escuro */
 body.dark-mode #conteudo-principal{
   background-color: #575757;
   color: #eee;

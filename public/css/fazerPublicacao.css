@@ -163,7 +163,7 @@ button[type="submit"]:hover {
 }
 
 .toast.error {
-  background-color: #f44336;
+  background-color: #90db68;
 }
 @keyframes fadeInOut {
   0% { opacity: 0; bottom: 0; }

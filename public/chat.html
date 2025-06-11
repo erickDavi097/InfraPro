@@ -9,7 +9,7 @@
 
 <body>
     <button id="toggle-dark-mode" style="position: fixed; top: 10px; right: 10px; padding: 8px 12px; border-radius: 4px; border: none; cursor: pointer; z-index: 1100;">
-        🌙 Modo Escuro
+        Modo Escuro
     </button>
 
     <nav class="sidebar" id="sidebar-nav"></nav>
@@ -122,10 +122,20 @@
                     divMsg.classList.add('recebida');
                 }
 
+                const myTime = new Date(mensagem.horario)
+                const horarioMinutos = myTime.getMinutes()
+                var horaFormatada = "";
+                if (horarioMinutos > 9 ){
+                horaFormatada = `${myTime.getHours()}:${myTime.getMinutes()}`
+                }
+                else{
+                horaFormatada = `${myTime.getHours()}:0${myTime.getMinutes()}`
+                }
+
                 divMsg.innerHTML = `
-            <span class="remetente">${mensagem.Remetente}</span>
+            <p style="display:none;" id="${mensagem.id}"></p>
             <span class="conteudo">${mensagem.conteudo}</span>
-            <span class="horario">${new Date(mensagem.horario).toLocaleString()}</span>
+            <span class="horario">${horaFormatada}</span>
         `;
 
                 if (mensagem.Remetente === nomeUsuario) {
@@ -218,8 +228,6 @@
                 container.scrollTop = container.scrollHeight;
             }
         }
-
-
         function carregarMensagensIniciais() {
             offset = 0;
             mensagensCarregadas.clear();
@@ -244,6 +252,37 @@
                     esconderCarregando();
                 });
         }
+
+        function ultimaMensagem() {
+            offset = 0;
+            fetch(`/chat/ultimaMensagem/${idUsuario}/${idDestinatario}?offset=${offset}&limit=${limit}`)
+                .then(res => {
+                    if (!res.ok) throw new Error('Erro na resposta do servidor: ' + res.status);
+                    return res.text();
+                })
+                .then(text => {
+                    if (!text) return [];
+                    return JSON.parse(text);
+                })
+                .then(mensagem => {
+                    console.log(mensagem[0].id)
+                    const ultimaMensagemEnviada = document.getElementById(mensagem[0].id)
+                    console.log(ultimaMensagemEnviada)
+
+                    if(!ultimaMensagemEnviada){
+                        carregarMensagensIniciais()
+                    }
+                    else{
+                        return console.log('Nenhuma nova mensagem')
+                    }
+                })
+                .catch(err => {
+                    console.error('Erro ao carregar mensagens iniciais:', err);
+                });
+                setTimeout( ultimaMensagem, 1000)
+
+        }
+        
 
         function carregarMensagensPaginado() {
             if (carregando) return;
@@ -391,10 +430,10 @@
             const modo = localStorage.getItem('modo-escuro');
             if (modo === 'ativo') {
                 document.body.classList.add('dark-mode');
-                btnDarkMode.textContent = '☀️ Modo Claro';
+                btnDarkMode.textContent = 'Modo Claro';
             } else {
                 document.body.classList.remove('dark-mode');
-                btnDarkMode.textContent = '🌙 Modo Escuro';
+                btnDarkMode.textContent = 'Modo Escuro';
             }
         }
 
@@ -402,10 +441,10 @@
             document.body.classList.toggle('dark-mode');
             if (document.body.classList.contains('dark-mode')) {
                 localStorage.setItem('modo-escuro', 'ativo');
-                btnDarkMode.textContent = '☀️ Modo Claro';
+                btnDarkMode.textContent = 'Modo Claro';
             } else {
                 localStorage.setItem('modo-escuro', 'desativo');
-                btnDarkMode.textContent = '🌙 Modo Escuro';
+                btnDarkMode.textContent = 'Modo Escuro';
             }
         });
 
@@ -477,6 +516,7 @@
         aplicarModoSalvo();
         carregarClientes();
         carregarMensagensIniciais();
+        ultimaMensagem();
     </script>
 
 </body>

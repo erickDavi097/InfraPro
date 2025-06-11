@@ -52,10 +52,53 @@ function listarTodas(req, res) {
     })
     .catch(erro => res.status(500).json({ erro: erro.message }));
 }
+function editarPublicacao(req, res) {
+  const id = req.params.id;
+  const { titulo, conteudo, fkCategoria, preco } = req.body;
+  const imagem = req.file ? req.file.filename : null;
+
+  const publicacaoAtualizada = {};
+
+  if (titulo !== undefined) publicacaoAtualizada.titulo = titulo;
+  if (conteudo !== undefined) publicacaoAtualizada.conteudo = conteudo;
+  if (fkCategoria !== undefined) publicacaoAtualizada.fkCategoria = fkCategoria;
+  if (preco !== undefined) publicacaoAtualizada.preco = preco;
+  if (imagem) publicacaoAtualizada.imagem = imagem;
+
+  if (Object.keys(publicacaoAtualizada).length === 0) {
+    return res.status(400).send("Nenhum dado para atualizar.");
+  }
+console.log("Dados recebidos no PUT:");
+console.log("body:", req.body);
+console.log("file:", req.file);
+
+  publicacaoModel.editar(id, publicacaoAtualizada)
+    .then(() => res.status(200).send("Publicação atualizada com sucesso"))
+    .catch(err => {
+      console.error("Erro ao atualizar:", err);
+      res.status(500).send("Erro interno ao atualizar publicação.");
+    });
+}
+
+
+function deletar(req, res) {
+  const id = req.params.id;
+
+  publicacaoModel.deletar(id)
+    .then(resultado => {
+      res.status(200).json({ mensagem: "Publicação deletada com sucesso!" });
+    })
+    .catch(erro => {
+      console.error("Erro ao deletar publicação:", erro);
+      res.status(500).json(erro);
+    });
+}
 
 
 module.exports = {
     salvarFoto,
     listarPorUsuario,
-    listarTodas
+    listarTodas,
+    editarPublicacao,
+    deletar
 };

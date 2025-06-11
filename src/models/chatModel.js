@@ -13,6 +13,19 @@ function pegarMensagens(fkRemetente, fkDestinatario, offset = 0, limit = 20) {
     `;
     return database.executar(instrucaoSql);
 }
+function ultimaMensagem(fkRemetente, fkDestinatario, offset = 0){
+        var instrucaoSql = `
+        SELECT m.id, r.nome AS Remetente, d.nome AS Destinatario, m.conteudo, m.horario
+        FROM mensagem m
+        JOIN usuario r ON m.fkRemetente = r.id
+        JOIN usuario d ON m.fkDestinatario = d.id
+        WHERE (m.fkRemetente = ${fkRemetente} AND m.fkDestinatario = ${fkDestinatario})
+           OR (m.fkRemetente = ${fkDestinatario} AND m.fkDestinatario = ${fkRemetente})
+        ORDER BY m.horario DESC, m.id DESC
+        LIMIT 1 OFFSET ${offset};
+    `;
+    return database.executar(instrucaoSql);
+}
 
 function inserirMensagem(fkRemetente, fkDestinatario, conteudo) {
     var instrucaoSql = `
@@ -45,6 +58,7 @@ function listarChats(profissionalId) {
 
 module.exports = {
     pegarMensagens,
+    ultimaMensagem,
     inserirMensagem,
     editarMensagem,
     removerMensagem,

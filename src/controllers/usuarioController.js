@@ -89,30 +89,20 @@ function autenticarAdmin(req, res) {
 
 
 function cadastrar(req, res) {
-    var {
-        nomeServer: nome,
-        telefoneServer: telefone,
-        emailServer: email,
-        senhaServer: senha,
-        tipoServer: tipo,
-        idEndereco
-    } = req.body;
+    const { nome, email, senha, fkEndereco, tipo } = req.body;
 
-    console.log("Requisição recebida para cadastrar usuário:", req.body);
+    console.log(`Recebido: nome=${nome}, email=${email}, senha=${senha}, idEndereco=${fkEndereco}, tipo=${tipo}`);
 
-    if (!idEndereco) {
-        return res.status(400).json({ mensagem: "idEndereco é obrigatório" });
-    }
-
-    usuarioModel.cadastrar(idEndereco, nome, telefone, email, senha, tipo)
-        .then(resultadoUsuario => {
-            res.status(200).json({ mensagem: "Cadastro realizado com sucesso!", resultadoUsuario });
+    usuarioModel.cadastrar(nome, email, senha, fkEndereco, tipo)
+        .then(resultado => {
+            res.status(200).json({ mensagem: "Usuário cadastrado com sucesso", idUsuario: resultado.insertId });
         })
         .catch(erro => {
-            console.error("Erro ao cadastrar usuário:", erro);
-            res.status(500).json({ mensagem: "Erro ao cadastrar o usuário", erro: erro.sqlMessage });
+            console.log(erro);
+            res.status(500).json({ erro: "Erro ao cadastrar usuário", detalhes: erro });
         });
 }
+
 
 function cadastrarAdmin(req, res) {
     const {
@@ -130,7 +120,7 @@ function cadastrarAdmin(req, res) {
         return res.status(400).send("Código de verificação inválido.");
     }
 
-    usuarioModel.cadastrar(idEndereco || 1, nomeServer, '', emailServer, senhaServer, tipoServer)
+    usuarioModel.cadastrar(nomeServer, emailServer, senhaServer,idEndereco || 1, tipoServer)
         .then(() => {
             res.status(200).json({ mensagem: "Admin cadastrado com sucesso!" });
         })

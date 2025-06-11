@@ -34,7 +34,7 @@
                 Seguidores:
                 <span
                     id="numSeguidores"
-                    style="cursor:pointer; color:blue; text-decoration:underline"
+                    style="cursor:pointer; text-decoration:underline"
                     >0</span
                 >
             </p>
@@ -52,6 +52,10 @@
         <section class="cards-container">
             <div id="publicacoes"></div>
         </section>
+        <section class="cards-container">
+    <div id="publicacoes-container"></div>
+</section>
+
     </main>
 
     <div id="modalSeguidores" style="display:none;">
@@ -78,6 +82,39 @@
         const idPerfil = urlParams.get("id");
         const idLogado = sessionStorage.ID_USUARIO;
 
+        function carregarPublicacoes(userId) {
+            fetch(`/publicacoes/${userId}`)
+                .then(res => res.json())
+                .then(publicacoes => {
+                    const container = document.getElementById("publicacoes-container");
+                    container.innerHTML = '';
+
+                    for (let i = 0; i < publicacoes.length; i++) {
+                        const pub = publicacoes[i];
+
+                        const div = document.createElement("div");
+                        div.classList.add("publicacao");
+
+                        const imagem = document.createElement("img");
+                        imagem.src = `/assets/${pub.imagem}`;
+                        imagem.alt = pub.titulo;
+
+                        const titulo = document.createElement("h2");
+                        titulo.textContent = pub.titulo;
+
+                        const conteudo = document.createElement("p");
+                        conteudo.textContent = pub.conteudo;
+
+                        div.append(imagem, titulo, conteudo);
+
+                        div.addEventListener('click', () => abrirModal(pub));
+
+                        container.appendChild(div);
+                    }
+                })
+                .catch(err => console.error('Erro ao carregar publicações:', err));
+        }
+
         function carregarPerfil() {
             fetch(`/usuario/perfilPublicoCompleto/${idPerfil}`)
                 .then((res) => {
@@ -98,49 +135,16 @@
                     }
 
                     if (endereco) {
-                        document.getElementById("areaAtuacao").textContent = `${endereco.cidade || ""}, ${
-                            endereco.bairro || ""
-                        }, ${endereco.uf || ""}`;
+                        document.getElementById("areaAtuacao").textContent = `${endereco.cidade || ""}, ${endereco.uf || ""}`;
                     } else {
                         document.getElementById("areaAtuacao").textContent = "Endereço não disponível";
                     }
 
-                    mostrarPublicacoes(publicacoes);
+                    carregarPublicacoes(idPerfil);
                 })
                 .catch((err) => {
                     alert("Não foi possível carregar o perfil: " + err.message);
                 });
-        }
-
-        
-
-        function mostrarPublicacoes(publicacoes) {
-            const div = document.getElementById("publicacoes");
-            if (!publicacoes || publicacoes.length === 0) {
-                div.innerHTML = "<p>Sem publicações ainda.</p>";
-                return;
-            }
-
-            div.innerHTML = publicacoes
-                .map((pub) => {
-                    const dataPub = new Date(pub.dtCriacao);
-                    let dataFormatada;
-
-                    if (isNaN(dataPub)) {
-                        dataFormatada = "Data inválida";
-                    } else {
-                        dataFormatada = dataPub.toLocaleDateString();
-                    }
-
-                    return `
-                        <div class="card">
-                        <h3>${pub.titulo}</h3>
-                        <p>${pub.conteudo}</p>
-                        <small>Publicado em: ${dataFormatada}</small>
-                        </div>
-                    `;
-                })
-                .join("");
         }
 
         function atualizarBotaoSeguir() {
@@ -290,7 +294,7 @@
             }
 
             btnChat.onclick = () => {
-                window.location.href = `http://localhost:3333/chat.html?destinatario=${idPerfil}`;
+                window.location.href = `/chat.html?destinatario=${idPerfil}`;
             };
         }
 

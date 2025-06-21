@@ -13,6 +13,12 @@ body {
     min-height: 100vh;
 }
 
+/* DARK MODE */
+body.dark-mode {
+    background: #1e1e1e;
+    color: #f0f0f0;
+}
+
 .container {
     background: #fff;
     padding: 30px 40px;
@@ -22,10 +28,19 @@ body {
     width: 100%;
 }
 
+body.dark-mode .container {
+    background: #2c2c2c;
+    box-shadow: 0 4px 12px rgba(255,255,255,0.1);
+}
+
 h1 {
     margin-bottom: 25px;
     color: #333;
     text-align: center;
+}
+
+body.dark-mode h1 {
+    color: #f0f0f0;
 }
 
 form label {
@@ -33,6 +48,10 @@ form label {
     margin-bottom: 6px;
     font-weight: 600;
     color: #555;
+}
+
+body.dark-mode form label {
+    color: #ccc;
 }
 
 form input[type="text"],
@@ -47,6 +66,18 @@ form input[type="file"] {
     border-radius: 6px;
     font-size: 1rem;
     transition: border-color 0.3s ease;
+    background-color: white;
+    color: black;
+}
+
+body.dark-mode form input[type="text"],
+body.dark-mode form input[type="number"],
+body.dark-mode form select,
+body.dark-mode form textarea,
+body.dark-mode form input[type="file"] {
+    background-color: #444;
+    border-color: #666;
+    color: #eee;
 }
 
 form input[type="text"]:focus,
@@ -76,66 +107,116 @@ button[type="submit"] {
     transition: background-color 0.3s ease;
 }
 
+button[type="submit"]:hover {
+    background-color: #265ecf;
+}
+
 .container-nav {
-  margin-left: 10%;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  height: 100%;
-  width: auto;
+    margin-left: 10%;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    width: auto;
 }
 
 nav.sidebar {
-  width: 15%;
-  background: #2c3e50;
-  color: #ecf0f1;
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-  height: 100vh;
-  position: fixed;
-  left: 0;
-  top: 0;
+    width: 15%;
+    background: #2c3e50;
+    color: #ecf0f1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+}
+
+body.dark-mode nav.sidebar {
+    background: #121212;
+    color: #f5f5f5;
 }
 
 nav.sidebar h2 {
-  margin: 0 0 40px 0;
-  font-weight: 700;
-  letter-spacing: 2px;
+    margin: 0 0 40px 0;
+    font-weight: 700;
+    letter-spacing: 2px;
 }
 
 nav.sidebar a {
-  color: #ecf0f1;
-  text-decoration: none;
-  margin-bottom: 15px;
-  font-weight: 500;
-  padding: 10px;
-  border-radius: 5px;
-  transition: background-color 0.3s;
+    color: #ecf0f1;
+    text-decoration: none;
+    margin-bottom: 15px;
+    font-weight: 500;
+    padding: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
 }
 
 nav.sidebar a:hover {
-  background: #34495e;
+    background: #34495e;
+}
+
+body.dark-mode nav.sidebar a:hover {
+    background: #1f1f1f;
 }
 
 #toggleDarkMode {
-  display: block;
-  margin: 0 auto 40px;
-  background-color: #007bff;
-  border: none;
-  color: white;
-  font-weight: 600;
-  padding: 12px 24px;
-  border-radius: 25px;
-  cursor: pointer;
-  transition: background-color 0.25s ease;
-  box-shadow: 0 4px 10px rgba(0, 123, 255, 0.4);
-  user-select: none;
+    display: block;
+    margin: 0 auto 40px;
+    background-color: #007bff;
+    border: none;
+    color: white;
+    font-weight: 600;
+    padding: 12px 24px;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background-color 0.25s ease;
+    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.4);
+    user-select: none;
 }
 
-button[type="submit"]:hover {
-    background-color: #265ecf;
+.toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #f44336;
+    color: white;
+    padding: 16px;
+    border-radius: 8px;
+    font-size: 16px;
+    opacity: 0;
+    animation: fadeInOut 4s forwards;
+}
+
+.toast.success {
+    background-color: #4caf50;
+}
+
+.toast.error {
+    background-color: #90db68;
+}
+
+body.dark-mode .toast {
+    background-color: #cc3333;
+}
+
+body.dark-mode .toast.success {
+    background-color: #338f33;
+}
+
+body.dark-mode .toast.error {
+    background-color: #6ea850;
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; bottom: 0; }
+    10% { opacity: 1; bottom: 20px; }
+    90% { opacity: 1; bottom: 20px; }
+    100% { opacity: 0; bottom: 0; }
 }
 
 @media (max-width: 500px) {
@@ -144,31 +225,3 @@ button[type="submit"]:hover {
         margin: 10px;
     }
 }
-.toast {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #f44336;
-  color: white;
-  padding: 16px;
-  border-radius: 8px;
-  font-size: 16px;
-  opacity: 0;
-  animation: fadeInOut 4s forwards;
-}
-
-.toast.success {
-  background-color: #4caf50;
-}
-
-.toast.error {
-  background-color: #90db68;
-}
-@keyframes fadeInOut {
-  0% { opacity: 0; bottom: 0; }
-  10% { opacity: 1; bottom: 20px; }
-  90% { opacity: 1; bottom: 20px; }
-  100% { opacity: 0; bottom: 0; }
-}
-
